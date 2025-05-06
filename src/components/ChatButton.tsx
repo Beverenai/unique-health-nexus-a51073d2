@@ -1,8 +1,12 @@
 
-import React, { useState } from 'react';
-import { MessageSquare, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { MessageSquare, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { sendChatMessage, getChatMessages } from '@/services/supabaseService';
+import { toast } from 'sonner';
+import { ChatMessage } from '@/types/supabase';
 
 interface ChatButtonProps {
   className?: string;
@@ -10,9 +14,70 @@ interface ChatButtonProps {
 
 const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchMessages();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const fetchMessages = async () => {
+    try {
+      const data = await getChatMessages();
+      setMessages(data);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!inputValue.trim()) return;
+    
+    setLoading(true);
+    
+    try {
+      // Send user message
+      await sendChatMessage(inputValue, true);
+      setInputValue('');
+      
+      // Fetch all messages again to update UI
+      await fetchMessages();
+      
+      // In a real app, you'd have an AI response here
+      // For demo purposes, we'll just add a simple response after a delay
+      setTimeout(async () => {
+        await sendChatMessage('Takk for din melding. Dette er en automatisk respons siden dette er en demo.', false);
+        await fetchMessages();
+        setLoading(false);
+      }, 1500);
+      
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast.error('Det oppsto en feil ved sending av meldingen');
+      setLoading(false);
+    }
   };
 
   return (
@@ -44,19 +109,49 @@ const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
           </div>
           
           <div className="h-64 bg-gray-50 rounded-lg p-3 mb-3 overflow-y-auto">
-            <div className="bg-gray-200 rounded-lg p-2 mb-2 text-sm inline-block">
-              Hei! Jeg er din personlige helseassistent. Hvordan kan jeg hjelpe deg i dag?
-            </div>
+            {messages.length === 0 ? (
+              <div className="bg-gray-200 rounded-lg p-2 mb-2 text-sm inline-block">
+                Hei! Jeg er din personlige helseassistent. Hvordan kan jeg hjelpe deg i dag?
+              </div>
+            ) : (
+              messages.map((msg) => (
+                <div 
+                  key={msg.id} 
+                  className={cn(
+                    "p-2 mb-2 text-sm max-w-[85%] rounded-lg",
+                    msg.is_user 
+                      ? "bg-primary text-white ml-auto" 
+                      : "bg-gray-200 text-gray-800"
+                  )}
+                >
+                  {msg.message}
+                </div>
+              ))
+            )}
+            <div ref={messagesEndRef} />
           </div>
           
-          <div className="flex">
-            <input 
+          <form onSubmit={handleSubmit} className="flex">
+            <Input 
               type="text" 
               placeholder="Skriv en melding..." 
-              className="flex-grow border rounded-l-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+              className="flex-grow rounded-l-lg border focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+              value={inputValue}
+              onChange={handleInputChange}
+              disabled={loading}
             />
-            <Button className="rounded-l-none">Send</Button>
-          </div>
+            <Button 
+              type="submit" 
+              className="rounded-l-none"
+              disabled={loading || !inputValue.trim()}
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-t-2 border-r-2 border-white rounded-full animate-spin" />
+              ) : (
+                <Send size={18} />
+              )}
+            </Button>
+          </form>
         </div>
       )}
     </>

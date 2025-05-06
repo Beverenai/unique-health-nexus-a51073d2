@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
-import { HealthIssue } from '@/types/health';
+import { HealthIssue } from '@/types/supabase';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 

@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { HealthDetail } from '@/types/health';
+import { IssueDetail } from '@/types/supabase';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 
 interface DetailCardProps {
-  detail: HealthDetail;
+  detail: IssueDetail;
 }
 
 const DetailCard: React.FC<DetailCardProps> = ({ detail }) => {

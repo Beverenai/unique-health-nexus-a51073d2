@@ -1,0 +1,274 @@
+
+import { supabase } from "@/integrations/supabase/client";
+import { HealthIssue, CoherenceData, IssueDetail, IssueRecommendation } from "@/types/supabase";
+
+export const getLatestCoherenceData = async (): Promise<CoherenceData | null> => {
+  const { data: scans, error: scanError } = await supabase
+    .from('scans')
+    .select('id')
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  if (scanError || !scans || scans.length === 0) {
+    console.error('Error fetching latest scan:', scanError);
+    return null;
+  }
+
+  const latestScanId = scans[0].id;
+
+  const { data, error } = await supabase
+    .from('coherence_data')
+    .select('*')
+    .eq('scan_id', latestScanId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching coherence data:', error);
+    return null;
+  }
+
+  return data;
+};
+
+export const getHealthIssues = async (scanId?: string): Promise<HealthIssue[]> => {
+  if (!scanId) {
+    // Get the latest scan ID if not provided
+    const { data: scans, error: scanError } = await supabase
+      .from('scans')
+      .select('id')
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    if (scanError || !scans || scans.length === 0) {
+      console.error('Error fetching latest scan:', scanError);
+      return [];
+    }
+
+    scanId = scans[0].id;
+  }
+
+  const { data, error } = await supabase
+    .from('health_issues')
+    .select('*')
+    .eq('scan_id', scanId);
+
+  if (error) {
+    console.error('Error fetching health issues:', error);
+    return [];
+  }
+
+  return data || [];
+};
+
+export const getIssueDetails = async (issueId: string): Promise<{
+  issue: HealthIssue | null;
+  details: IssueDetail[];
+  recommendations: IssueRecommendation[];
+}> => {
+  // Get the issue
+  const { data: issue, error: issueError } = await supabase
+    .from('health_issues')
+    .select('*')
+    .eq('id', issueId)
+    .single();
+
+  if (issueError) {
+    console.error('Error fetching issue:', issueError);
+    return { issue: null, details: [], recommendations: [] };
+  }
+
+  // Get the details
+  const { data: details, error: detailsError } = await supabase
+    .from('issue_details')
+    .select('*')
+    .eq('issue_id', issueId);
+
+  if (detailsError) {
+    console.error('Error fetching issue details:', detailsError);
+    return { issue, details: [], recommendations: [] };
+  }
+
+  // Get the recommendations
+  const { data: recommendations, error: recommendationsError } = await supabase
+    .from('issue_recommendations')
+    .select('*')
+    .eq('issue_id', issueId);
+
+  if (recommendationsError) {
+    console.error('Error fetching issue recommendations:', recommendationsError);
+    return { issue, details: details || [], recommendations: [] };
+  }
+
+  return {
+    issue,
+    details: details || [],
+    recommendations: recommendations || []
+  };
+};
+
+export const sendChatMessage = async (message: string, isUser = true): Promise<{success: boolean, data?: any}> => {
+  const { data: user } = await supabase.auth.getUser();
+  
+  if (!user.user) {
+    console.error('No authenticated user found');
+    return { success: false };
+  }
+
+  const { data, error } = await supabase
+    .from('chat_messages')
+    .insert({ 
+      user_id: user.user.id,
+      message,
+      is_user: isUser,
+      context: null
+    })
+    .select();
+
+  if (error) {
+    console.error('Error sending chat message:', error);
+    return { success: false };
+  }
+
+  return { success: true, data };
+};
+
+export const getChatMessages = async (): Promise<any[]> => {
+  const { data, error } = await supabase
+    .from('chat_messages')
+    .select('*')
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching chat messages:', error);
+    return [];
+  }
+
+  return data || [];
+};
+
+// Function to seed initial data for development
+export const seedDemoData = async (): Promise<void> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    console.error('No authenticated user found');
+    return;
+  }
+
+  // Check if user already has data
+  const { data: existingScans } = await supabase
+    .from('scans')
+    .select('id')
+    .eq('user_id', user.id);
+
+  if (existingScans && existingScans.length > 0) {
+    console.log('User already has scan data, skipping seed');
+    return;
+  }
+
+  // Create a scan
+  const { data: scan, error: scanError } = await supabase
+    .from('scans')
+    .insert({ user_id: user.id })
+    .select();
+
+  if (scanError || !scan || scan.length === 0) {
+    console.error('Error creating scan:', scanError);
+    return;
+  }
+
+  const scanId = scan[0].id;
+
+  // Add coherence data
+  await supabase
+    .from('coherence_data')
+    .insert({
+      scan_id: scanId,
+      score: 75
+    });
+
+  // Add health issues
+  const healthIssues = [
+    {
+      scan_id: scanId,
+      name: 'Stress',
+      description: 'Høye stressnivåer påvirker flere kroppssystemer negativt. Langvarig stress kan føre til nedsatt immunforsvar, fordøyelsesproblemer og økt risiko for hjerte- og karsykdommer.',
+      load: 78
+    },
+    {
+      scan_id: scanId,
+      name: 'Søvnkvalitet',
+      description: 'Din søvnkvalitet er under optimalt nivå. Dette kan påvirke din kognitive funksjon, metabolisme og generelle helse.',
+      load: 65
+    },
+    {
+      scan_id: scanId,
+      name: 'Vitamin D Mangel',
+      description: 'Dine vitamin D-nivåer er lavere enn anbefalt. Vitamin D er viktig for immunforsvar, benhelse og generell velvære.',
+      load: 52
+    }
+  ];
+
+  const issuePromises = healthIssues.map(async (issue) => {
+    const { data: createdIssue, error } = await supabase
+      .from('health_issues')
+      .insert(issue)
+      .select();
+
+    if (error || !createdIssue || createdIssue.length === 0) {
+      console.error('Error creating health issue:', error);
+      return null;
+    }
+
+    const issueId = createdIssue[0].id;
+
+    // Add recommendations for this issue
+    if (issue.name === 'Stress') {
+      await supabase.from('issue_recommendations').insert([
+        { issue_id: issueId, recommendation: 'Praktiser daglig meditasjon eller pusteøvelser i 10-15 minutter' },
+        { issue_id: issueId, recommendation: 'Reduser koffeininntak, spesielt etter kl 14:00' },
+        { issue_id: issueId, recommendation: 'Sett av tid til regelmessig fysisk aktivitet, minst 30 minutter daglig' }
+      ]);
+      
+      // Add details for stress
+      await supabase.from('issue_details').insert([
+        { issue_id: issueId, title: 'Kortisolnivå', description: 'Ditt kortisolnivå er forhøyet, noe som indikerer kronisk stress', impact: 85 },
+        { issue_id: issueId, title: 'HRV (Hjerterytmevariabilitet)', description: 'Redusert HRV indikerer at kroppen er i en konstant stresstilstand', impact: 72 },
+        { issue_id: issueId, title: 'Søvnkvalitet', description: 'Stress påvirker din søvn negativt, spesielt REM-søvnfasen', impact: 68 }
+      ]);
+    }
+    else if (issue.name === 'Søvnkvalitet') {
+      await supabase.from('issue_recommendations').insert([
+        { issue_id: issueId, recommendation: 'Etabler en fast rutine for leggetid og oppvåkning' },
+        { issue_id: issueId, recommendation: 'Unngå skjermbruk minst 1 time før leggetid' },
+        { issue_id: issueId, recommendation: 'Hold soverommet mørkt, svalt og stille' }
+      ]);
+      
+      // Add details for sleep
+      await supabase.from('issue_details').insert([
+        { issue_id: issueId, title: 'Søvneffektivitet', description: 'Tiden du tilbringer i sengen vs. faktisk søvntid er ikke optimal', impact: 70 },
+        { issue_id: issueId, title: 'Dyp søvn', description: 'Din andel av dyp søvn er under det anbefalte nivået', impact: 65 },
+        { issue_id: issueId, title: 'Søvnsykluser', description: 'Du gjennomgår færre komplette søvnsykluser enn ideelt', impact: 60 }
+      ]);
+    }
+    else if (issue.name === 'Vitamin D Mangel') {
+      await supabase.from('issue_recommendations').insert([
+        { issue_id: issueId, recommendation: 'Ta et vitamin D-tilskudd på 1000-2000 IE daglig' },
+        { issue_id: issueId, recommendation: 'Få 15-30 minutter med sollys daglig når mulig' },
+        { issue_id: issueId, recommendation: 'Inkluder vitamin D-rike matvarer som fet fisk og egg i kostholdet' }
+      ]);
+      
+      // Add details for vitamin D
+      await supabase.from('issue_details').insert([
+        { issue_id: issueId, title: 'Serum 25(OH)D nivå', description: 'Ditt blodnivå av vitamin D er under optimal verdi', impact: 60 },
+        { issue_id: issueId, title: 'Kalsiumopptak', description: 'Lavt vitamin D påvirker kroppens evne til å absorbere kalsium', impact: 50 },
+        { issue_id: issueId, title: 'Immunfunksjon', description: 'Vitamin D-mangel kan påvirke immunforsvarets effektivitet', impact: 45 }
+      ]);
+    }
+
+    return createdIssue[0];
+  });
+
+  await Promise.all(issuePromises);
+  console.log('Demo data seeded successfully');
+};
