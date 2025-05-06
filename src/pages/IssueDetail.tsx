@@ -86,9 +86,7 @@ const IssueDetailPage: React.FC = () => {
             {details.map(detail => (
               <DetailCard 
                 key={detail.id} 
-                title={detail.title}
-                description={detail.description}
-                impact={detail.impact} 
+                detail={detail} 
               />
             ))}
           </div>
