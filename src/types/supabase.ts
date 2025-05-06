@@ -20,6 +20,7 @@ export type CoherenceData = {
   id: string;
   scan_id: string;
   score: number;
+  message?: string;
   created_at: string;
 };
 
@@ -30,6 +31,13 @@ export type HealthIssue = {
   description: string;
   load: number;
   created_at: string;
+  recommendations?: string[];
+  detailed_info?: string;
+  specific_advice?: {
+    diet: string;
+    lifestyle: string;
+    supplements: string;
+  };
 };
 
 export type IssueRecommendation = {

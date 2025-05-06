@@ -1,8 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Bacteria, Virus, Mushroom } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import DetailCard from '@/components/DetailCard';
 import { getIssueDetails } from '@/services/supabaseService';
 import { HealthIssue, IssueDetail, IssueRecommendation } from '@/types/supabase';
@@ -37,6 +39,13 @@ const IssueDetailPage: React.FC = () => {
     loadIssueData();
   }, [issueId]);
 
+  const getIssueIcon = (name: string) => {
+    const lowerName = name.toLowerCase();
+    if (lowerName.includes('bakter')) return <Bacteria className="text-danger" />;
+    if (lowerName.includes('sopp')) return <Mushroom className="text-warning" />;
+    return <Virus className="text-warning" />;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -58,6 +67,13 @@ const IssueDetailPage: React.FC = () => {
       </div>
     );
   }
+  
+  // Determine load severity color
+  const getSeverityColor = (load: number): string => {
+    if (load < 40) return 'bg-success text-success-foreground';
+    if (load < 70) return 'bg-warning text-warning-foreground';
+    return 'bg-danger text-danger-foreground';
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 pb-20 pt-6">
@@ -70,14 +86,31 @@ const IssueDetailPage: React.FC = () => {
         <span>Tilbake</span>
       </Button>
       
-      <div className="mb-8">
-        <h1 className="text-3xl font-semibold">{issue.name}</h1>
-        <div className="flex items-center mt-2 mb-4">
-          <div className="h-2 bg-primary rounded-full" style={{ width: `${issue.load}%` }}></div>
-          <span className="ml-2 text-sm text-gray-500">Belastning: {issue.load}%</span>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-full bg-gray-100">
+          {getIssueIcon(issue.name)}
         </div>
-        <p className="text-gray-700">{issue.description}</p>
+        <h1 className="text-2xl font-semibold">{issue.name}</h1>
       </div>
+      
+      <div className="flex items-center mb-4">
+        <div className="h-2 bg-primary rounded-full" style={{ width: `${issue.load}%` }}></div>
+        <Badge className={cn("ml-2", getSeverityColor(issue.load))}>
+          Belastning: {issue.load}%
+        </Badge>
+      </div>
+      
+      <p className="text-gray-700 mb-6">{issue.description}</p>
+      
+      {/* Detailed information section */}
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <h2 className="text-lg font-medium mb-3">Detaljert informasjon</h2>
+          <p className="text-gray-700">
+            {issue.detailed_info || "Dine resultater viser forhøyede verdier som kan påvirke helsetilstanden din. Se anbefalinger nedenfor for hvordan du kan forbedre dette området."}
+          </p>
+        </CardContent>
+      </Card>
       
       {details.length > 0 && (
         <div className="mb-8">
@@ -93,23 +126,37 @@ const IssueDetailPage: React.FC = () => {
         </div>
       )}
       
-      {recommendations.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-xl font-medium mb-4">Anbefalinger</h2>
-          <div className="bg-white rounded-lg p-5 shadow-sm border border-gray-100">
-            <ul className="space-y-3">
-              {recommendations.map((rec, index) => (
-                <li key={rec.id} className="flex gap-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center text-primary font-medium">
-                    {index + 1}
-                  </div>
-                  <p>{rec.recommendation}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
+      {/* Specific advice section */}
+      <div className="mb-8">
+        <h2 className="text-xl font-medium mb-4">Spesifikke råd</h2>
+        
+        <Card className="mb-4">
+          <CardContent className="pt-6">
+            <h3 className="font-medium mb-2">Kosthold</h3>
+            <p>{issue.specific_advice?.diet || (recommendations[0]?.recommendation || "Ingen spesifikke kostholdsanbefalinger tilgjengelig.")}</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="mb-4">
+          <CardContent className="pt-6">
+            <h3 className="font-medium mb-2">Livsstil</h3>
+            <p>{issue.specific_advice?.lifestyle || (recommendations[1]?.recommendation || "Ingen spesifikke livsstilsanbefalinger tilgjengelig.")}</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="mb-4">
+          <CardContent className="pt-6">
+            <h3 className="font-medium mb-2">Tilskudd</h3>
+            <p>{issue.specific_advice?.supplements || (recommendations[2]?.recommendation || "Ingen spesifikke tilskuddsanbefalinger tilgjengelig.")}</p>
+          </CardContent>
+        </Card>
+      </div>
+      
+      <div className="text-center py-4">
+        <p className="text-sm text-gray-500 italic">
+          Chat med AI-assistenten vår for mer personlig veiledning om {issue.name.toLowerCase()}.
+        </p>
+      </div>
       
       <ChatButton />
       <NavigationBar />

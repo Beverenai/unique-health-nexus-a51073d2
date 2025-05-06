@@ -6,6 +6,12 @@ export interface HealthIssue {
   load: number; // 0-100%
   recommendations: string[];
   details?: HealthDetail[];
+  detailed_info?: string;
+  specific_advice?: {
+    diet: string;
+    lifestyle: string;
+    supplements: string;
+  };
 }
 
 export interface HealthDetail {
@@ -17,5 +23,6 @@ export interface HealthDetail {
 
 export interface CoherenceData {
   score: number; // 0-100%
+  message?: string;
   issues: HealthIssue[];
 }

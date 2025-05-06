@@ -9,7 +9,6 @@ import NavigationBar from '@/components/NavigationBar';
 import { supabase } from '@/integrations/supabase/client';
 import { getLatestCoherenceData, getHealthIssues, seedDemoData } from '@/services/supabaseService';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
-import { Button } from '@/components/ui/button';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -65,7 +64,6 @@ const Home: React.FC = () => {
     );
   }
 
-  // Always show the main app content, no login check
   return (
     <div className="min-h-screen bg-gray-50 px-6 pb-20 pt-10">
       <header className="mb-8 flex justify-between items-center">
@@ -75,11 +73,10 @@ const Home: React.FC = () => {
         </div>
       </header>
 
-      <div className="flex flex-col items-center justify-center mb-12">
+      <div className="flex flex-col items-center justify-center mb-8">
         <CoherenceRing score={coherenceData?.score || 0} />
-        <p className="text-gray-600 mt-8 text-center max-w-xs">
-          Din kroppskanning indikerer en total koherens-score på {coherenceData?.score || 0}%.
-          {healthIssues.length > 0 && ' Sjekk dine prioriterte områder nedenfor.'}
+        <p className="text-gray-600 mt-6 text-center max-w-xs">
+          {coherenceData?.message || "Din kroppskanning indikerer en total koherens-score på " + (coherenceData?.score || 0) + "%."}
         </p>
       </div>
 

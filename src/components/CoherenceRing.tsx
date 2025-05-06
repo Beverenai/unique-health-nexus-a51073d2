@@ -5,6 +5,7 @@ import { getScoreColor, getScoreTextColor } from '@/data/mockData';
 
 interface CoherenceRingProps {
   score: number;
+  message?: string;
   size?: 'sm' | 'md' | 'lg';
   showText?: boolean;
   className?: string;
@@ -12,6 +13,7 @@ interface CoherenceRingProps {
 
 const CoherenceRing: React.FC<CoherenceRingProps> = ({ 
   score, 
+  message,
   size = 'lg', 
   showText = true,
   className
