@@ -169,7 +169,7 @@ export const seedDemoData = async (): Promise<void> => {
   // Create a scan
   const { data: scan, error: scanError } = await supabase
     .from('scans')
-    .insert({ user_id: user.id })
+    .insert({ user_id: user.id, status: 'completed' })
     .select();
 
   if (scanError || !scan || scan.length === 0) {
