@@ -27,7 +27,7 @@ export const getLatestCoherenceData = async (): Promise<CoherenceData | null> =>
     return null;
   }
 
-  return data;
+  return data as CoherenceData;
 };
 
 export const getHealthIssues = async (scanId?: string): Promise<HealthIssue[]> => {
@@ -57,7 +57,7 @@ export const getHealthIssues = async (scanId?: string): Promise<HealthIssue[]> =
     return [];
   }
 
-  return data || [];
+  return data as HealthIssue[];
 };
 
 export const getIssueDetails = async (issueId: string): Promise<{
@@ -85,7 +85,7 @@ export const getIssueDetails = async (issueId: string): Promise<{
 
   if (detailsError) {
     console.error('Error fetching issue details:', detailsError);
-    return { issue, details: [], recommendations: [] };
+    return { issue: issue as HealthIssue, details: [], recommendations: [] };
   }
 
   // Get the recommendations
@@ -96,13 +96,17 @@ export const getIssueDetails = async (issueId: string): Promise<{
 
   if (recommendationsError) {
     console.error('Error fetching issue recommendations:', recommendationsError);
-    return { issue, details: details || [], recommendations: [] };
+    return { 
+      issue: issue as HealthIssue, 
+      details: details as IssueDetail[] || [], 
+      recommendations: [] 
+    };
   }
 
   return {
-    issue,
-    details: details || [],
-    recommendations: recommendations || []
+    issue: issue as HealthIssue,
+    details: details as IssueDetail[] || [],
+    recommendations: recommendations as IssueRecommendation[] || []
   };
 };
 

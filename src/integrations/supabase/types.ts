@@ -9,606 +9,55 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      body_model_data: {
-        Row: {
-          body_part: string
-          color_code: string | null
-          created_at: string
-          health_score: number
-          id: string
-          insights: string[] | null
-          scan_id: string
-        }
-        Insert: {
-          body_part: string
-          color_code?: string | null
-          created_at?: string
-          health_score: number
-          id?: string
-          insights?: string[] | null
-          scan_id: string
-        }
-        Update: {
-          body_part?: string
-          color_code?: string | null
-          created_at?: string
-          health_score?: number
-          id?: string
-          insights?: string[] | null
-          scan_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "body_model_data_scan_id_fkey"
-            columns: ["scan_id"]
-            isOneToOne: false
-            referencedRelation: "scans"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      chat_health_insights: {
-        Row: {
-          chat_session_id: string | null
-          created_at: string
-          detailed_information: Json | null
-          id: string
-          insight_type: string
-          scan_health_id: string | null
-          summary: string | null
-        }
-        Insert: {
-          chat_session_id?: string | null
-          created_at?: string
-          detailed_information?: Json | null
-          id?: string
-          insight_type: string
-          scan_health_id?: string | null
-          summary?: string | null
-        }
-        Update: {
-          chat_session_id?: string | null
-          created_at?: string
-          detailed_information?: Json | null
-          id?: string
-          insight_type?: string
-          scan_health_id?: string | null
-          summary?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "chat_health_insights_chat_session_id_fkey"
-            columns: ["chat_session_id"]
-            isOneToOne: false
-            referencedRelation: "chat_sessions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "chat_health_insights_scan_health_id_fkey"
-            columns: ["scan_health_id"]
-            isOneToOne: false
-            referencedRelation: "scan_health_data"
-            referencedColumns: ["Name"]
-          },
-        ]
-      }
-      chat_interactions: {
-        Row: {
-          content: string | null
-          created_at: string
-          id: string
-          interaction_type: string
-          metadata: Json | null
-          session_id: string
-        }
-        Insert: {
-          content?: string | null
-          created_at?: string
-          id?: string
-          interaction_type: string
-          metadata?: Json | null
-          session_id: string
-        }
-        Update: {
-          content?: string | null
-          created_at?: string
-          id?: string
-          interaction_type?: string
-          metadata?: Json | null
-          session_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "chat_interactions_session_id_fkey"
-            columns: ["session_id"]
-            isOneToOne: false
-            referencedRelation: "chat_sessions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      chat_message_insights: {
-        Row: {
-          created_at: string
-          health_parameter_id: string
-          id: string
-          message_id: string
-          relevance_score: number | null
-        }
-        Insert: {
-          created_at?: string
-          health_parameter_id: string
-          id?: string
-          message_id: string
-          relevance_score?: number | null
-        }
-        Update: {
-          created_at?: string
-          health_parameter_id?: string
-          id?: string
-          message_id?: string
-          relevance_score?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "chat_message_insights_message_id_fkey"
-            columns: ["message_id"]
-            isOneToOne: false
-            referencedRelation: "chat_messages"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       chat_messages: {
-        Row: {
-          created_at: string
-          id: string
-          is_user: boolean
-          message: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          is_user?: boolean
-          message: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          is_user?: boolean
-          message?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "chat_messages_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      chat_sessions: {
         Row: {
           context: Json | null
           created_at: string
           id: string
-          last_interaction: string
-          session_name: string | null
+          is_user: boolean
+          message: string
           user_id: string
         }
         Insert: {
           context?: Json | null
           created_at?: string
           id?: string
-          last_interaction?: string
-          session_name?: string | null
+          is_user?: boolean
+          message: string
           user_id: string
         }
         Update: {
           context?: Json | null
           created_at?: string
           id?: string
-          last_interaction?: string
-          session_name?: string | null
+          is_user?: boolean
+          message?: string
           user_id?: string
         }
         Relationships: []
       }
-      diagnoses: {
-        Row: {
-          created_at: string
-          diagnosed_at: string | null
-          history: Json[] | null
-          id: string
-          name: string
-          notes: string | null
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          diagnosed_at?: string | null
-          history?: Json[] | null
-          id?: string
-          name: string
-          notes?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          diagnosed_at?: string | null
-          history?: Json[] | null
-          id?: string
-          name?: string
-          notes?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      health_goals: {
-        Row: {
-          created_at: string | null
-          current_value: number
-          id: string
-          metric_id: string | null
-          start_date: string | null
-          status: string | null
-          target_date: string | null
-          target_value: number
-          title: string
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          current_value?: number
-          id?: string
-          metric_id?: string | null
-          start_date?: string | null
-          status?: string | null
-          target_date?: string | null
-          target_value: number
-          title: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          current_value?: number
-          id?: string
-          metric_id?: string | null
-          start_date?: string | null
-          status?: string | null
-          target_date?: string | null
-          target_value?: number
-          title?: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      health_notifications: {
-        Row: {
-          created_at: string | null
-          id: string
-          message: string
-          read: boolean | null
-          title: string
-          type: string
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          message: string
-          read?: boolean | null
-          title: string
-          type: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          message?: string
-          read?: boolean | null
-          title?: string
-          type?: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      health_parameter_nutrition: {
+      coherence_data: {
         Row: {
           created_at: string
           id: string
-          reason: string
-          recommendation_id: string | null
-          relevance_score: number | null
-          scan_health_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          reason: string
-          recommendation_id?: string | null
-          relevance_score?: number | null
-          scan_health_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          reason?: string
-          recommendation_id?: string | null
-          relevance_score?: number | null
-          scan_health_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "health_parameter_nutrition_recommendation_id_fkey"
-            columns: ["recommendation_id"]
-            isOneToOne: false
-            referencedRelation: "nutrition_recommendations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "health_parameter_nutrition_scan_health_id_fkey"
-            columns: ["scan_health_id"]
-            isOneToOne: false
-            referencedRelation: "scan_health_data"
-            referencedColumns: ["Name"]
-          },
-        ]
-      }
-      health_parameter_recommendations: {
-        Row: {
-          created_at: string
-          id: string
-          recommendation_id: string | null
-          relevance_score: number | null
-          scan_health_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          recommendation_id?: string | null
-          relevance_score?: number | null
-          scan_health_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          recommendation_id?: string | null
-          relevance_score?: number | null
-          scan_health_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "health_parameter_recommendations_recommendation_id_fkey"
-            columns: ["recommendation_id"]
-            isOneToOne: false
-            referencedRelation: "health_recommendations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "health_parameter_recommendations_scan_health_id_fkey"
-            columns: ["scan_health_id"]
-            isOneToOne: false
-            referencedRelation: "scan_health_data"
-            referencedColumns: ["Name"]
-          },
-        ]
-      }
-      health_parameters: {
-        Row: {
-          adjustment_guidance: string | null
-          Category: string | null
-          category_description: string | null
-          created_at: string | null
-          "Example Metric": string | null
-          id: string
-          is_latest: boolean | null
-          level_explanation: string | null
-          lifestyle_recommendations: Json | null
-          main_category: string | null
-          "Measurement Value": string | null
-          replaced_by: string | null
-          scan_date: string | null
-          status: string | null
-          Subcategory: string | null
-          Trend: string | null
-          trend_status: string | null
-          user_id: string | null
-        }
-        Insert: {
-          adjustment_guidance?: string | null
-          Category?: string | null
-          category_description?: string | null
-          created_at?: string | null
-          "Example Metric"?: string | null
-          id?: string
-          is_latest?: boolean | null
-          level_explanation?: string | null
-          lifestyle_recommendations?: Json | null
-          main_category?: string | null
-          "Measurement Value"?: string | null
-          replaced_by?: string | null
-          scan_date?: string | null
-          status?: string | null
-          Subcategory?: string | null
-          Trend?: string | null
-          trend_status?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          adjustment_guidance?: string | null
-          Category?: string | null
-          category_description?: string | null
-          created_at?: string | null
-          "Example Metric"?: string | null
-          id?: string
-          is_latest?: boolean | null
-          level_explanation?: string | null
-          lifestyle_recommendations?: Json | null
-          main_category?: string | null
-          "Measurement Value"?: string | null
-          replaced_by?: string | null
-          scan_date?: string | null
-          status?: string | null
-          Subcategory?: string | null
-          Trend?: string | null
-          trend_status?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      health_parameters_backup: {
-        Row: {
-          adjustment_guidance: string | null
-          Category: string | null
-          category_description: string | null
-          "Example Metric": string | null
-          id: string | null
-          is_latest: boolean | null
-          level_explanation: string | null
-          lifestyle_recommendations: Json | null
-          main_category: Database["public"]["Enums"]["health_category"] | null
-          "Measurement Value": string | null
-          replaced_by: string | null
-          scan_date: string | null
-          scan_id: string | null
-          status: Database["public"]["Enums"]["health_parameter_status"] | null
-          Subcategory: string | null
-          Trend: string | null
-          trend_status: string | null
-          user_id: string | null
-        }
-        Insert: {
-          adjustment_guidance?: string | null
-          Category?: string | null
-          category_description?: string | null
-          "Example Metric"?: string | null
-          id?: string | null
-          is_latest?: boolean | null
-          level_explanation?: string | null
-          lifestyle_recommendations?: Json | null
-          main_category?: Database["public"]["Enums"]["health_category"] | null
-          "Measurement Value"?: string | null
-          replaced_by?: string | null
-          scan_date?: string | null
-          scan_id?: string | null
-          status?: Database["public"]["Enums"]["health_parameter_status"] | null
-          Subcategory?: string | null
-          Trend?: string | null
-          trend_status?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          adjustment_guidance?: string | null
-          Category?: string | null
-          category_description?: string | null
-          "Example Metric"?: string | null
-          id?: string | null
-          is_latest?: boolean | null
-          level_explanation?: string | null
-          lifestyle_recommendations?: Json | null
-          main_category?: Database["public"]["Enums"]["health_category"] | null
-          "Measurement Value"?: string | null
-          replaced_by?: string | null
-          scan_date?: string | null
-          scan_id?: string | null
-          status?: Database["public"]["Enums"]["health_parameter_status"] | null
-          Subcategory?: string | null
-          Trend?: string | null
-          trend_status?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      health_recommendations: {
-        Row: {
-          category: Database["public"]["Enums"]["recommendation_category"]
-          created_at: string
-          description: string | null
-          health_risks: string[] | null
-          id: string
-          recommended_actions: string[] | null
-          substance_name: string
-          updated_at: string
-        }
-        Insert: {
-          category: Database["public"]["Enums"]["recommendation_category"]
-          created_at?: string
-          description?: string | null
-          health_risks?: string[] | null
-          id?: string
-          recommended_actions?: string[] | null
-          substance_name: string
-          updated_at?: string
-        }
-        Update: {
-          category?: Database["public"]["Enums"]["recommendation_category"]
-          created_at?: string
-          description?: string | null
-          health_risks?: string[] | null
-          id?: string
-          recommended_actions?: string[] | null
-          substance_name?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      measurements: {
-        Row: {
-          category: Database["public"]["Enums"]["measurement_category"]
-          created_at: string
-          id: string
-          notes: string | null
-          parameter_name: string
-          reference_max: number | null
-          reference_min: number | null
           scan_id: string
-          unit: string | null
-          value: number
+          score: number
         }
         Insert: {
-          category: Database["public"]["Enums"]["measurement_category"]
           created_at?: string
           id?: string
-          notes?: string | null
-          parameter_name: string
-          reference_max?: number | null
-          reference_min?: number | null
           scan_id: string
-          unit?: string | null
-          value: number
+          score: number
         }
         Update: {
-          category?: Database["public"]["Enums"]["measurement_category"]
           created_at?: string
           id?: string
-          notes?: string | null
-          parameter_name?: string
-          reference_max?: number | null
-          reference_min?: number | null
           scan_id?: string
-          unit?: string | null
-          value?: number
+          score?: number
         }
         Relationships: [
           {
-            foreignKeyName: "measurements_scan_id_fkey"
+            foreignKeyName: "coherence_data_scan_id_fkey"
             columns: ["scan_id"]
             isOneToOne: false
             referencedRelation: "scans"
@@ -616,355 +65,153 @@ export type Database = {
           },
         ]
       }
-      nutrition_recommendations: {
+      health_issues: {
         Row: {
-          benefits: string[] | null
           created_at: string
-          description: string | null
+          description: string
           id: string
-          image_url: string | null
+          load: number
           name: string
-          nutrients: string[] | null
-          type: Database["public"]["Enums"]["nutrition_recommendation_type"]
+          scan_id: string
         }
         Insert: {
-          benefits?: string[] | null
           created_at?: string
-          description?: string | null
+          description: string
           id?: string
-          image_url?: string | null
+          load: number
           name: string
-          nutrients?: string[] | null
-          type: Database["public"]["Enums"]["nutrition_recommendation_type"]
+          scan_id: string
         }
         Update: {
-          benefits?: string[] | null
           created_at?: string
-          description?: string | null
+          description?: string
           id?: string
-          image_url?: string | null
+          load?: number
           name?: string
-          nutrients?: string[] | null
-          type?: Database["public"]["Enums"]["nutrition_recommendation_type"]
-        }
-        Relationships: []
-      }
-      nutrition_tracking: {
-        Row: {
-          created_at: string
-          followed_at: string
-          id: string
-          notes: string | null
-          recommendation_id: string | null
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          followed_at?: string
-          id?: string
-          notes?: string | null
-          recommendation_id?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          followed_at?: string
-          id?: string
-          notes?: string | null
-          recommendation_id?: string | null
-          user_id?: string | null
+          scan_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "nutrition_tracking_recommendation_id_fkey"
-            columns: ["recommendation_id"]
+            foreignKeyName: "health_issues_scan_id_fkey"
+            columns: ["scan_id"]
             isOneToOne: false
-            referencedRelation: "nutrition_recommendations"
+            referencedRelation: "scans"
             referencedColumns: ["id"]
           },
         ]
       }
-      predictive_insights: {
+      issue_details: {
         Row: {
-          confidence_score: number | null
-          created_at: string | null
-          current_value: string | null
+          created_at: string
+          description: string
           id: string
-          parameter_name: string
-          predicted_value: string | null
-          prediction_date: string | null
-          recommendation: string | null
-          severity: string | null
-          trend_direction: string | null
-          type: Database["public"]["Enums"]["prediction_type"]
-          updated_at: string | null
-          user_id: string | null
-          valid_until: string | null
+          impact: number
+          issue_id: string
+          title: string
         }
         Insert: {
-          confidence_score?: number | null
-          created_at?: string | null
-          current_value?: string | null
+          created_at?: string
+          description: string
           id?: string
-          parameter_name: string
-          predicted_value?: string | null
-          prediction_date?: string | null
-          recommendation?: string | null
-          severity?: string | null
-          trend_direction?: string | null
-          type: Database["public"]["Enums"]["prediction_type"]
-          updated_at?: string | null
-          user_id?: string | null
-          valid_until?: string | null
+          impact: number
+          issue_id: string
+          title: string
         }
         Update: {
-          confidence_score?: number | null
-          created_at?: string | null
-          current_value?: string | null
+          created_at?: string
+          description?: string
           id?: string
-          parameter_name?: string
-          predicted_value?: string | null
-          prediction_date?: string | null
-          recommendation?: string | null
-          severity?: string | null
-          trend_direction?: string | null
-          type?: Database["public"]["Enums"]["prediction_type"]
-          updated_at?: string | null
-          user_id?: string | null
-          valid_until?: string | null
+          impact?: number
+          issue_id?: string
+          title?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "issue_details_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "health_issues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      issue_recommendations: {
+        Row: {
+          created_at: string
+          id: string
+          issue_id: string
+          recommendation: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          issue_id: string
+          recommendation: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          issue_id?: string
+          recommendation?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "issue_recommendations_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "health_issues"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
           avatar_url: string | null
-          blood_type: string | null
-          created_at: string | null
-          date_of_birth: string | null
+          created_at: string
           email: string | null
           first_name: string | null
-          gender_type: string | null
-          height: number | null
           id: string
           last_name: string | null
-          sex: string | null
-          updated_at: string | null
-          username: string | null
-          weight: number | null
+          updated_at: string
         }
         Insert: {
           avatar_url?: string | null
-          blood_type?: string | null
-          created_at?: string | null
-          date_of_birth?: string | null
+          created_at?: string
           email?: string | null
           first_name?: string | null
-          gender_type?: string | null
-          height?: number | null
           id: string
           last_name?: string | null
-          sex?: string | null
-          updated_at?: string | null
-          username?: string | null
-          weight?: number | null
+          updated_at?: string
         }
         Update: {
           avatar_url?: string | null
-          blood_type?: string | null
-          created_at?: string | null
-          date_of_birth?: string | null
+          created_at?: string
           email?: string | null
           first_name?: string | null
-          gender_type?: string | null
-          height?: number | null
           id?: string
           last_name?: string | null
-          sex?: string | null
-          updated_at?: string | null
-          username?: string | null
-          weight?: number | null
-        }
-        Relationships: []
-      }
-      scan_health_data: {
-        Row: {
-          Category: string | null
-          Dietary_Recommendations: string | null
-          Info: string | null
-          Measurement_Value: string | null
-          Name: string
-          Physical_Activity: string | null
-          Possible_Symptoms: string | null
-          Potential_Risks: string | null
-          Related_Metrics: string | null
-          Severity_Level: string | null
-          Subcategory: string | null
-          Suggested_Health_Goal: string | null
-          Supplements: string | null
-          Trend: string | null
-          user_id: string | null
-        }
-        Insert: {
-          Category?: string | null
-          Dietary_Recommendations?: string | null
-          Info?: string | null
-          Measurement_Value?: string | null
-          Name: string
-          Physical_Activity?: string | null
-          Possible_Symptoms?: string | null
-          Potential_Risks?: string | null
-          Related_Metrics?: string | null
-          Severity_Level?: string | null
-          Subcategory?: string | null
-          Suggested_Health_Goal?: string | null
-          Supplements?: string | null
-          Trend?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          Category?: string | null
-          Dietary_Recommendations?: string | null
-          Info?: string | null
-          Measurement_Value?: string | null
-          Name?: string
-          Physical_Activity?: string | null
-          Possible_Symptoms?: string | null
-          Potential_Risks?: string | null
-          Related_Metrics?: string | null
-          Severity_Level?: string | null
-          Subcategory?: string | null
-          Suggested_Health_Goal?: string | null
-          Supplements?: string | null
-          Trend?: string | null
-          user_id?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
       scans: {
         Row: {
-          completed_at: string | null
           created_at: string
           id: string
-          started_at: string
-          status: Database["public"]["Enums"]["scan_status"] | null
-          updated_at: string
+          status: string
           user_id: string
         }
         Insert: {
-          completed_at?: string | null
           created_at?: string
           id?: string
-          started_at?: string
-          status?: Database["public"]["Enums"]["scan_status"] | null
-          updated_at?: string
+          status?: string
           user_id: string
         }
         Update: {
-          completed_at?: string | null
           created_at?: string
           id?: string
-          started_at?: string
-          status?: Database["public"]["Enums"]["scan_status"] | null
-          updated_at?: string
+          status?: string
           user_id?: string
-        }
-        Relationships: []
-      }
-      symptom_logs: {
-        Row: {
-          created_at: string
-          id: string
-          logged_at: string
-          notes: string | null
-          severity: number
-          symptom_id: string
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          logged_at?: string
-          notes?: string | null
-          severity: number
-          symptom_id: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          logged_at?: string
-          notes?: string | null
-          severity?: number
-          symptom_id?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "symptom_logs_symptom_id_fkey"
-            columns: ["symptom_id"]
-            isOneToOne: false
-            referencedRelation: "symptoms"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      symptoms: {
-        Row: {
-          category: string | null
-          created_at: string
-          description: string | null
-          id: string
-          is_custom: boolean | null
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          category?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          is_custom?: boolean | null
-          name: string
-          updated_at?: string
-        }
-        Update: {
-          category?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          is_custom?: boolean | null
-          name?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      voice_settings: {
-        Row: {
-          created_at: string
-          id: string
-          updated_at: string
-          user_id: string
-          voice_enabled: boolean | null
-          voice_type: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id: string
-          voice_enabled?: boolean | null
-          voice_type?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id?: string
-          voice_enabled?: boolean | null
-          voice_type?: string | null
         }
         Relationships: []
       }
