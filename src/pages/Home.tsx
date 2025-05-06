@@ -19,31 +19,26 @@ const Home: React.FC = () => {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const checkUser = async () => {
+    const loadData = async () => {
+      // Check if there's a real user
       const { data } = await supabase.auth.getUser();
       setUser(data.user);
       
-      if (!data.user) {
-        setLoading(false);
-        return;
-      }
-
       try {
-        // Load data or seed if empty
-        const coherenceData = await getLatestCoherenceData();
-        const issues = await getHealthIssues();
+        // Always load data regardless of authentication
+        let coherenceData = await getLatestCoherenceData();
+        let issues = await getHealthIssues();
         
         if (!coherenceData || issues.length === 0) {
+          // Seed demo data if no data is present
           await seedDemoData();
           // Fetch data again after seeding
-          const newCoherenceData = await getLatestCoherenceData();
-          const newIssues = await getHealthIssues();
-          setCoherenceData(newCoherenceData);
-          setHealthIssues(newIssues);
-        } else {
-          setCoherenceData(coherenceData);
-          setHealthIssues(issues);
+          coherenceData = await getLatestCoherenceData();
+          issues = await getHealthIssues();
         }
+        
+        setCoherenceData(coherenceData);
+        setHealthIssues(issues);
       } catch (error) {
         console.error('Error loading data:', error);
         toast.error('Det oppsto en feil ved lasting av data');
@@ -52,46 +47,11 @@ const Home: React.FC = () => {
       }
     };
 
-    checkUser();
+    loadData();
   }, []);
 
   const handleIssueClick = (issueId: string) => {
     navigate(`/issue/${issueId}`);
-  };
-
-  const handleLogin = async () => {
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin,
-        }
-      });
-      
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error logging in:', error);
-      toast.error('Det oppsto en feil ved innlogging');
-    }
-  };
-
-  const handleEmailLogin = async () => {
-    // In a real app, you'd have a form for email/password input
-    // For demo purposes, we'll use a magic link to a test email
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: 'test@example.com',
-        options: {
-          emailRedirectTo: window.location.origin,
-        }
-      });
-      
-      if (error) throw error;
-      toast.success('Magisk lenke sendt til din e-post');
-    } catch (error) {
-      console.error('Error sending magic link:', error);
-      toast.error('Det oppsto en feil ved sending av magisk lenke');
-    }
   };
 
   if (loading) {
@@ -105,31 +65,7 @@ const Home: React.FC = () => {
     );
   }
 
-  // If no user is logged in, show auth screen
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gray-50 px-6 py-10">
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl font-semibold">Unique</h1>
-          <p className="text-gray-500">Din personlige helseassistent</p>
-        </header>
-        
-        <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-          <h2 className="text-xl font-medium mb-6 text-center">Logg inn for å fortsette</h2>
-          
-          <div className="space-y-4">
-            <Button onClick={handleLogin} className="w-full">
-              Logg inn med Google
-            </Button>
-            <Button onClick={handleEmailLogin} variant="outline" className="w-full">
-              Logg inn med e-post
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+  // Always show the main app content, no login check
   return (
     <div className="min-h-screen bg-gray-50 px-6 pb-20 pt-10">
       <header className="mb-8 flex justify-between items-center">

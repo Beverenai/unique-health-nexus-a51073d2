@@ -12,6 +12,7 @@ const Profile: React.FC = () => {
   const [profile, setProfile] = useState<ProfileType | null>(null);
   const [loading, setLoading] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
+  const [isDemo, setIsDemo] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -19,6 +20,17 @@ const Profile: React.FC = () => {
         const { data: { user } } = await supabase.auth.getUser();
         
         if (!user) {
+          // Create a demo profile for non-authenticated users
+          setProfile({
+            id: '00000000-0000-0000-0000-000000000000',
+            first_name: 'Demo',
+            last_name: 'Bruker',
+            email: 'demo@example.com',
+            avatar_url: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+          setIsDemo(true);
           setLoading(false);
           return;
         }
@@ -54,6 +66,22 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleLogin = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+        }
+      });
+      
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error logging in:', error);
+      toast.error('Det oppsto en feil ved innlogging');
+    }
+  };
+
   const handleUpgrade = () => {
     toast.success('Takk! Du er nå oppgradert til Unique+');
     setIsPremium(true);
@@ -70,39 +98,28 @@ const Profile: React.FC = () => {
     );
   }
 
-  if (!profile) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto px-6">
-          <h2 className="text-2xl font-medium mb-4">Ikke logget inn</h2>
-          <p className="mb-6">Du må logge inn for å se din profil.</p>
-          <Button onClick={() => window.location.href = '/'}>
-            Gå til innlogging
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 px-6 pb-20 pt-10">
       <header className="mb-8">
         <h1 className="text-3xl font-semibold">Min Profil</h1>
-        <p className="text-gray-500">Administrer din konto og innstillinger</p>
+        <p className="text-gray-500">
+          {isDemo ? 'Demo-modus' : 'Administrer din konto og innstillinger'}
+        </p>
       </header>
 
       <Card className="mb-8">
         <CardContent className="pt-6">
           <div className="flex items-center">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary font-medium text-xl">
-              {profile.first_name ? profile.first_name[0] : ''}
-              {profile.last_name ? profile.last_name[0] : ''}
+              {profile?.first_name ? profile.first_name[0] : ''}
+              {profile?.last_name ? profile.last_name[0] : ''}
             </div>
             <div className="ml-4">
               <h2 className="text-xl font-medium">
-                {profile.first_name} {profile.last_name}
+                {profile?.first_name} {profile?.last_name}
+                {isDemo && <span className="ml-2 text-sm text-gray-500">(Demo)</span>}
               </h2>
-              <p className="text-gray-500">{profile.email}</p>
+              <p className="text-gray-500">{profile?.email}</p>
             </div>
           </div>
           
@@ -180,9 +197,15 @@ const Profile: React.FC = () => {
       </Card>
 
       <div className="text-center">
-        <Button variant="outline" onClick={handleLogout}>
-          Logg ut
-        </Button>
+        {isDemo ? (
+          <Button onClick={handleLogin}>
+            Logg inn med Google
+          </Button>
+        ) : (
+          <Button variant="outline" onClick={handleLogout}>
+            Logg ut
+          </Button>
+        )}
       </div>
 
       <ChatButton />

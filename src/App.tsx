@@ -25,32 +25,24 @@ const App = () => {
     // Check if onboarding has been completed
     const onboardingCompleted = localStorage.getItem('onboardingCompleted');
     
-    // Check active session
+    // Show onboarding if it hasn't been completed (no login check)
+    if (!onboardingCompleted) {
+      setShowOnboarding(true);
+      
+      // Also seed historical data for the demo
+      seedHistoricalData();
+    }
+    
+    // Still check auth just to have the session if the user is logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
-      
-      // Show onboarding if it hasn't been completed and user is logged in
-      if (!onboardingCompleted && session) {
-        setShowOnboarding(true);
-        
-        // Also seed historical data for the demo
-        seedHistoricalData();
-      }
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setLoading(false);
-      
-      // Show onboarding if it's a new sign-in and onboarding hasn't been completed
-      if (!onboardingCompleted && session) {
-        setShowOnboarding(true);
-        
-        // Also seed historical data for the demo
-        seedHistoricalData();
-      }
     });
 
     return () => {
