@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { HealthIssue, CoherenceData, IssueDetail, IssueRecommendation } from "@/types/supabase";
+import { HealthIssue, CoherenceData, IssueDetail, IssueRecommendation, ScannerComponent } from "@/types/supabase";
 
 // Demo user ID to use when not authenticated
 const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
@@ -83,6 +83,7 @@ export const getIssueDetails = async (issueId: string): Promise<{
   issue: HealthIssue | null;
   details: IssueDetail[];
   recommendations: IssueRecommendation[];
+  scannerComponents: ScannerComponent[];
 }> => {
   // Get the issue
   const { data: issue, error: issueError } = await supabase
@@ -93,7 +94,7 @@ export const getIssueDetails = async (issueId: string): Promise<{
 
   if (issueError) {
     console.error('Error fetching issue:', issueError);
-    return { issue: null, details: [], recommendations: [] };
+    return { issue: null, details: [], recommendations: [], scannerComponents: [] };
   }
 
   // Get the details
@@ -104,7 +105,7 @@ export const getIssueDetails = async (issueId: string): Promise<{
 
   if (detailsError) {
     console.error('Error fetching issue details:', detailsError);
-    return { issue: issue as HealthIssue, details: [], recommendations: [] };
+    return { issue: issue as HealthIssue, details: [], recommendations: [], scannerComponents: [] };
   }
 
   // Get the recommendations
@@ -118,14 +119,32 @@ export const getIssueDetails = async (issueId: string): Promise<{
     return { 
       issue: issue as HealthIssue, 
       details: details as IssueDetail[] || [], 
-      recommendations: [] 
+      recommendations: [],
+      scannerComponents: []
+    };
+  }
+
+  // Get the scanner components
+  const { data: scannerComponents, error: componentsError } = await supabase
+    .from('scanner_components')
+    .select('*')
+    .eq('issue_id', issueId);
+
+  if (componentsError) {
+    console.error('Error fetching scanner components:', componentsError);
+    return {
+      issue: issue as HealthIssue,
+      details: details as IssueDetail[] || [],
+      recommendations: recommendations as IssueRecommendation[] || [],
+      scannerComponents: []
     };
   }
 
   return {
     issue: issue as HealthIssue,
     details: details as IssueDetail[] || [],
-    recommendations: recommendations as IssueRecommendation[] || []
+    recommendations: recommendations as IssueRecommendation[] || [],
+    scannerComponents: scannerComponents as ScannerComponent[] || []
   };
 };
 

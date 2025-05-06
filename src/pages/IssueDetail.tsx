@@ -1,13 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Bug, Zap, Skull } from 'lucide-react';
+import { ArrowLeft, Bug, Zap, Skull, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DetailCard from '@/components/DetailCard';
+import ScannerComponentTable from '@/components/ScannerComponentTable';
 import { getIssueDetails } from '@/services/supabaseService';
-import { HealthIssue, IssueDetail, IssueRecommendation } from '@/types/supabase';
+import { HealthIssue, IssueDetail, IssueRecommendation, ScannerComponent } from '@/types/supabase';
 import ChatButton from '@/components/ChatButton';
 import NavigationBar from '@/components/NavigationBar';
 import { cn } from '@/lib/utils';
@@ -19,7 +21,9 @@ const IssueDetailPage: React.FC = () => {
   const [issue, setIssue] = useState<HealthIssue | null>(null);
   const [details, setDetails] = useState<IssueDetail[]>([]);
   const [recommendations, setRecommendations] = useState<IssueRecommendation[]>([]);
+  const [scannerComponents, setScannerComponents] = useState<ScannerComponent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<string>("recommendations");
 
   useEffect(() => {
     const loadIssueData = async () => {
@@ -30,6 +34,7 @@ const IssueDetailPage: React.FC = () => {
         setIssue(data.issue);
         setDetails(data.details);
         setRecommendations(data.recommendations);
+        setScannerComponents(data.scannerComponents);
       } catch (error) {
         console.error('Error loading issue data:', error);
       } finally {
@@ -103,55 +108,89 @@ const IssueDetailPage: React.FC = () => {
       
       <p className="text-gray-700 mb-6">{issue.description}</p>
       
-      {/* Detailed information section */}
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <h2 className="text-lg font-medium mb-3">Detaljert informasjon</h2>
-          <p className="text-gray-700">
-            {issue.detailed_info || "Dine resultater viser forhøyede verdier som kan påvirke helsetilstanden din. Se anbefalinger nedenfor for hvordan du kan forbedre dette området."}
-          </p>
-        </CardContent>
-      </Card>
-      
-      {details.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-xl font-medium mb-4">Detaljer</h2>
-          <div className="space-y-4">
-            {details.map(detail => (
-              <DetailCard 
-                key={detail.id} 
-                detail={detail} 
-              />
-            ))}
+      <Tabs 
+        value={activeTab} 
+        onValueChange={setActiveTab}
+        className="mb-6"
+      >
+        <TabsList className="grid grid-cols-2 mb-4">
+          <TabsTrigger value="recommendations">Anbefalinger</TabsTrigger>
+          <TabsTrigger value="rawData">Rådata fra scanner</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="recommendations">
+          {/* Detailed information section */}
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <h2 className="text-lg font-medium mb-3">Detaljert informasjon</h2>
+              <p className="text-gray-700">
+                {issue.detailed_info || "Dine resultater viser forhøyede verdier som kan påvirke helsetilstanden din. Se anbefalinger nedenfor for hvordan du kan forbedre dette området."}
+              </p>
+            </CardContent>
+          </Card>
+          
+          {details.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-medium mb-4">Detaljer</h2>
+              <div className="space-y-4">
+                {details.map(detail => (
+                  <DetailCard 
+                    key={detail.id} 
+                    detail={detail} 
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Specific advice section */}
+          <div className="mb-8">
+            <h2 className="text-xl font-medium mb-4">Spesifikke råd</h2>
+            
+            <Card className="mb-4">
+              <CardContent className="pt-6">
+                <h3 className="font-medium mb-2">Kosthold</h3>
+                <p>{issue.specific_advice?.diet || (recommendations[0]?.recommendation || "Ingen spesifikke kostholdsanbefalinger tilgjengelig.")}</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="mb-4">
+              <CardContent className="pt-6">
+                <h3 className="font-medium mb-2">Livsstil</h3>
+                <p>{issue.specific_advice?.lifestyle || (recommendations[1]?.recommendation || "Ingen spesifikke livsstilsanbefalinger tilgjengelig.")}</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="mb-4">
+              <CardContent className="pt-6">
+                <h3 className="font-medium mb-2">Tilskudd</h3>
+                <p>{issue.specific_advice?.supplements || (recommendations[2]?.recommendation || "Ingen spesifikke tilskuddsanbefalinger tilgjengelig.")}</p>
+              </CardContent>
+            </Card>
           </div>
-        </div>
-      )}
-      
-      {/* Specific advice section */}
-      <div className="mb-8">
-        <h2 className="text-xl font-medium mb-4">Spesifikke råd</h2>
+        </TabsContent>
         
-        <Card className="mb-4">
-          <CardContent className="pt-6">
-            <h3 className="font-medium mb-2">Kosthold</h3>
-            <p>{issue.specific_advice?.diet || (recommendations[0]?.recommendation || "Ingen spesifikke kostholdsanbefalinger tilgjengelig.")}</p>
-          </CardContent>
-        </Card>
-        
-        <Card className="mb-4">
-          <CardContent className="pt-6">
-            <h3 className="font-medium mb-2">Livsstil</h3>
-            <p>{issue.specific_advice?.lifestyle || (recommendations[1]?.recommendation || "Ingen spesifikke livsstilsanbefalinger tilgjengelig.")}</p>
-          </CardContent>
-        </Card>
-        
-        <Card className="mb-4">
-          <CardContent className="pt-6">
-            <h3 className="font-medium mb-2">Tilskudd</h3>
-            <p>{issue.specific_advice?.supplements || (recommendations[2]?.recommendation || "Ingen spesifikke tilskuddsanbefalinger tilgjengelig.")}</p>
-          </CardContent>
-        </Card>
-      </div>
+        <TabsContent value="rawData">
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Activity size={20} className="text-primary" />
+                <h2 className="text-lg font-medium">Rådata fra scanner</h2>
+              </div>
+              <p className="text-gray-700 mb-4">
+                Disse dataene viser de detekterte komponentene i din skanneøkt med deres respektive nivåer. 
+                Høyere prosentverdier indikerer sterkere deteksjoner.
+              </p>
+              
+              {scannerComponents.length > 0 ? (
+                <ScannerComponentTable components={scannerComponents} />
+              ) : (
+                <p className="text-gray-500 italic">Ingen rådata tilgjengelig for denne helseproblematikken.</p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
       
       <div className="text-center py-4">
         <p className="text-sm text-gray-500 italic">

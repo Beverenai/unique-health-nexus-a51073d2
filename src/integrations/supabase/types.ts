@@ -194,6 +194,41 @@ export type Database = {
         }
         Relationships: []
       }
+      scanner_components: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          issue_id: string
+          level: number
+          name: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          issue_id: string
+          level: number
+          name: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          issue_id?: string
+          level?: number
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scanner_components_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "health_issues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scans: {
         Row: {
           created_at: string

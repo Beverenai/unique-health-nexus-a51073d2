@@ -1,4 +1,3 @@
-
 export type Profile = {
   id: string;
   first_name: string | null;
@@ -38,6 +37,15 @@ export type HealthIssue = {
     lifestyle: string;
     supplements: string;
   };
+};
+
+export type ScannerComponent = {
+  id: string;
+  issue_id: string;
+  category: string;
+  name: string;
+  level: number;
+  created_at: string;
 };
 
 export type IssueRecommendation = {
