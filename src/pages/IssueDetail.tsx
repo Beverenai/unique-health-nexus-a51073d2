@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Bacteria, Virus, Mushroom } from 'lucide-react';
+import { ArrowLeft, Bug, Zap, Skull } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +10,7 @@ import { getIssueDetails } from '@/services/supabaseService';
 import { HealthIssue, IssueDetail, IssueRecommendation } from '@/types/supabase';
 import ChatButton from '@/components/ChatButton';
 import NavigationBar from '@/components/NavigationBar';
+import { cn } from '@/lib/utils';
 
 const IssueDetailPage: React.FC = () => {
   const { issueId } = useParams<{ issueId: string }>();
@@ -41,9 +42,9 @@ const IssueDetailPage: React.FC = () => {
 
   const getIssueIcon = (name: string) => {
     const lowerName = name.toLowerCase();
-    if (lowerName.includes('bakter')) return <Bacteria className="text-danger" />;
-    if (lowerName.includes('sopp')) return <Mushroom className="text-warning" />;
-    return <Virus className="text-warning" />;
+    if (lowerName.includes('bakter')) return <Bug className="text-danger" />;
+    if (lowerName.includes('sopp')) return <Skull className="text-warning" />;
+    return <Zap className="text-warning" />;
   };
 
   if (loading) {
