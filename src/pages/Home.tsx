@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import CoherenceRing from '@/components/CoherenceRing';
 import IssueCard from '@/components/IssueCard';
 import ChatButton from '@/components/ChatButton';
+import NavigationBar from '@/components/NavigationBar';
 import { supabase } from '@/integrations/supabase/client';
 import { getLatestCoherenceData, getHealthIssues, seedDemoData } from '@/services/supabaseService';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
@@ -130,18 +131,12 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-10">
+    <div className="min-h-screen bg-gray-50 px-6 pb-20 pt-10">
       <header className="mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-semibold">Unique</h1>
           <p className="text-gray-500">Din personlige helseassistent</p>
         </div>
-        <Button variant="ghost" onClick={async () => {
-          await supabase.auth.signOut();
-          window.location.reload();
-        }}>
-          Logg ut
-        </Button>
       </header>
 
       <div className="flex flex-col items-center justify-center mb-12">
@@ -166,6 +161,7 @@ const Home: React.FC = () => {
       )}
 
       <ChatButton />
+      <NavigationBar />
     </div>
   );
 };

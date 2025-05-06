@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { sendChatMessage, getChatMessages } from '@/services/supabaseService';
 import { toast } from 'sonner';
 import { ChatMessage } from '@/types/supabase';
+import { useLocation } from 'react-router-dom';
 
 interface ChatButtonProps {
   className?: string;
@@ -18,6 +19,7 @@ const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
 
   useEffect(() => {
     if (isOpen) {
@@ -48,6 +50,21 @@ const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
+  };
+
+  const getContextBasedIntro = () => {
+    // Get context-aware greeting based on current route
+    const path = location.pathname;
+    
+    if (path === '/history') {
+      return 'Dette er din historikk-side. Jeg kan hjelpe deg å forstå utviklingen i dine helsedata over tid.';
+    } else if (path === '/profile') {
+      return 'Dette er din profilside. Jeg kan hjelpe deg med innstillinger eller svare på spørsmål om ditt medlemskap.';
+    } else if (path.includes('/issue/')) {
+      return 'Jeg ser at du utforsker en helseinsikt. Jeg kan hjelpe deg med å forstå hva dette betyr for deg.';
+    } else {
+      return 'Hei! Jeg er din personlige helseassistent. Hvordan kan jeg hjelpe deg i dag?';
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -83,7 +100,7 @@ const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
   return (
     <>
       <div className={cn(
-        "fixed bottom-6 right-6 z-50 transition-all duration-300",
+        "fixed bottom-20 right-6 z-50 transition-all duration-300",
         className
       )}>
         <Button 
@@ -102,7 +119,7 @@ const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
       </div>
 
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-80 bg-white rounded-2xl shadow-xl border border-gray-200 z-40 p-4 animate-fade-in">
+        <div className="fixed bottom-24 right-6 w-80 bg-white rounded-2xl shadow-xl border border-gray-200 z-40 p-4 animate-fade-in overflow-hidden">
           <div className="mb-3">
             <h3 className="text-lg font-medium">AI Assistent</h3>
             <p className="text-sm text-gray-500">Spør meg om dine helsedata</p>
@@ -110,18 +127,18 @@ const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
           
           <div className="h-64 bg-gray-50 rounded-lg p-3 mb-3 overflow-y-auto">
             {messages.length === 0 ? (
-              <div className="bg-gray-200 rounded-lg p-2 mb-2 text-sm inline-block">
-                Hei! Jeg er din personlige helseassistent. Hvordan kan jeg hjelpe deg i dag?
+              <div className="bg-gray-200 rounded-lg p-3 mb-2 text-sm max-w-[85%]">
+                {getContextBasedIntro()}
               </div>
             ) : (
               messages.map((msg) => (
                 <div 
                   key={msg.id} 
                   className={cn(
-                    "p-2 mb-2 text-sm max-w-[85%] rounded-lg",
+                    "p-3 mb-2 text-sm max-w-[85%] rounded-xl animate-fade-in",
                     msg.is_user 
-                      ? "bg-primary text-white ml-auto" 
-                      : "bg-gray-200 text-gray-800"
+                      ? "bg-primary text-white ml-auto rounded-tr-none" 
+                      : "bg-gray-200 text-gray-800 rounded-tl-none"
                   )}
                 >
                   {msg.message}
@@ -135,14 +152,14 @@ const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
             <Input 
               type="text" 
               placeholder="Skriv en melding..." 
-              className="flex-grow rounded-l-lg border focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+              className="flex-grow rounded-full border focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
               value={inputValue}
               onChange={handleInputChange}
               disabled={loading}
             />
             <Button 
               type="submit" 
-              className="rounded-l-none"
+              className="ml-2 rounded-full w-10 h-10 p-0 flex items-center justify-center"
               disabled={loading || !inputValue.trim()}
             >
               {loading ? (

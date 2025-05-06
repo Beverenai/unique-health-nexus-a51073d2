@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { HealthIssue, CoherenceData, IssueDetail, IssueRecommendation } from "@/types/supabase";
 
@@ -202,7 +201,7 @@ export const seedDemoData = async (): Promise<void> => {
     {
       scan_id: scanId,
       name: 'Søvnkvalitet',
-      description: 'Din søvnkvalitet er under optimalt nivå. Dette kan påvirke din kognitive funksjon, metabolisme og generelle helse.',
+      description: 'Din søvnkvalitet er under optimalt nivå. Dette kan påvirke din kognitive funksjon, metabolisme og generell velvære.',
       load: 65
     },
     {
@@ -275,4 +274,138 @@ export const seedDemoData = async (): Promise<void> => {
 
   await Promise.all(issuePromises);
   console.log('Demo data seeded successfully');
+};
+
+// New functions for historical data
+export const getHistoricalCoherenceData = async (): Promise<any[]> => {
+  try {
+    // Get all scans for the current user
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      console.error('No authenticated user found');
+      return [];
+    }
+
+    // First get all scans
+    const { data: scans, error: scanError } = await supabase
+      .from('scans')
+      .select('id, created_at, status')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (scanError || !scans) {
+      console.error('Error fetching scans:', scanError);
+      return [];
+    }
+
+    // Now get coherence data for all scans
+    const historicalData = await Promise.all(
+      scans.map(async (scan) => {
+        const { data: coherenceData, error: coherenceError } = await supabase
+          .from('coherence_data')
+          .select('score')
+          .eq('scan_id', scan.id)
+          .single();
+
+        if (coherenceError || !coherenceData) {
+          return {
+            id: scan.id,
+            date: scan.created_at,
+            score: 0,
+            status: scan.status
+          };
+        }
+
+        return {
+          id: scan.id,
+          date: scan.created_at,
+          score: coherenceData.score,
+          status: scan.status
+        };
+      })
+    );
+
+    return historicalData.filter(data => data.score > 0);
+  } catch (error) {
+    console.error('Error fetching historical coherence data:', error);
+    return [];
+  }
+};
+
+// For demo purposes, seed historical data if none exists
+export const seedHistoricalData = async (): Promise<void> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    console.error('No authenticated user found');
+    return;
+  }
+
+  // Check if user already has multiple scans
+  const { data: existingScans, error: scanError } = await supabase
+    .from('scans')
+    .select('id')
+    .eq('user_id', user.id);
+
+  if (scanError) {
+    console.error('Error checking existing scans:', scanError);
+    return;
+  }
+
+  if (existingScans && existingScans.length > 1) {
+    console.log('User already has multiple scans, skipping historical seed');
+    return;
+  }
+
+  // Create historical scans (past 4 weeks)
+  const today = new Date();
+  const pastDates = [
+    new Date(today.getTime() - (28 * 24 * 60 * 60 * 1000)), // 4 weeks ago
+    new Date(today.getTime() - (21 * 24 * 60 * 60 * 1000)), // 3 weeks ago
+    new Date(today.getTime() - (14 * 24 * 60 * 60 * 1000)), // 2 weeks ago
+    new Date(today.getTime() - (7 * 24 * 60 * 60 * 1000)),  // 1 week ago
+  ];
+
+  // Start with scores in the 50s, gradually improving
+  const scores = [52, 58, 65, 70];
+
+  for (let i = 0; i < pastDates.length; i++) {
+    // Create a scan
+    const { data: scan, error: scanError } = await supabase
+      .from('scans')
+      .insert({ 
+        user_id: user.id, 
+        status: 'completed',
+        created_at: pastDates[i].toISOString()
+      })
+      .select();
+
+    if (scanError || !scan || scan.length === 0) {
+      console.error(`Error creating historical scan ${i}:`, scanError);
+      continue;
+    }
+
+    const scanId = scan[0].id;
+
+    // Add coherence data
+    await supabase
+      .from('coherence_data')
+      .insert({
+        scan_id: scanId,
+        score: scores[i]
+      });
+
+    // Add one health issue for this historical scan
+    await supabase
+      .from('health_issues')
+      .insert({
+        scan_id: scanId,
+        name: 'Stress',
+        description: 'Høye stressnivåer påvirker flere kroppssystemer negativt.',
+        load: 80 - (i * 5) // Gradually decreasing stress levels
+      });
+  }
+
+  console.log('Historical data seeded successfully');
 };
