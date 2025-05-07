@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -10,12 +9,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { getLatestCoherenceData, getHealthIssues, seedDemoData } from '@/services/supabaseService';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
 
-const Home: React.FC = () => {
+const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [coherenceData, setCoherenceData] = useState<CoherenceData | null>(null);
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    // This will ensure we have some demo data to work with
+    seedDemoData();
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -99,4 +103,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default HomePage;

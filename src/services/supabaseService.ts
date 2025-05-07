@@ -282,6 +282,14 @@ export const seedDemoData = async (): Promise<void> => {
           { issue_id: issueId, title: 'HRV (Hjerterytmevariabilitet)', description: 'Redusert HRV indikerer at kroppen er i en konstant stresstilstand', impact: 72 },
           { issue_id: issueId, title: 'Søvnkvalitet', description: 'Stress påvirker din søvn negativt, spesielt REM-søvnfasen', impact: 68 }
         ]);
+        
+        // Add scanner components for stress
+        await supabase.from('scanner_components').insert([
+          { issue_id: issueId, category: 'Hormoner', name: 'Kortisol.dsd', level: 78 },
+          { issue_id: issueId, category: 'Hormoner', name: 'Adrenalin.dsd', level: 65 },
+          { issue_id: issueId, category: 'Hjernefunksjon', name: 'Amygdala.dsd', level: 58 },
+          { issue_id: issueId, category: 'Hjernefunksjon', name: 'HPA-akse.dsd', level: 72 }
+        ]);
       }
       else if (issue.name === 'Søvnkvalitet') {
         await supabase.from('issue_recommendations').insert([
@@ -296,6 +304,14 @@ export const seedDemoData = async (): Promise<void> => {
           { issue_id: issueId, title: 'Dyp søvn', description: 'Din andel av dyp søvn er under det anbefalte nivået', impact: 65 },
           { issue_id: issueId, title: 'Søvnsykluser', description: 'Du gjennomgår færre komplette søvnsykluser enn ideelt', impact: 60 }
         ]);
+        
+        // Add scanner components for sleep quality
+        await supabase.from('scanner_components').insert([
+          { issue_id: issueId, category: 'Hjernebølger', name: 'Delta-bølger.dsd', level: 45 },
+          { issue_id: issueId, category: 'Hjernebølger', name: 'Theta-bølger.dsd', level: 52 },
+          { issue_id: issueId, category: 'Hormoner', name: 'Melatonin.dsd', level: 38 },
+          { issue_id: issueId, category: 'Nervesystem', name: 'Parasympatisk aktivitet.dsd', level: 41 }
+        ]);
       }
       else if (issue.name === 'Vitamin D Mangel') {
         await supabase.from('issue_recommendations').insert([
@@ -309,6 +325,15 @@ export const seedDemoData = async (): Promise<void> => {
           { issue_id: issueId, title: 'Serum 25(OH)D nivå', description: 'Ditt blodnivå av vitamin D er under optimal verdi', impact: 60 },
           { issue_id: issueId, title: 'Kalsiumopptak', description: 'Lavt vitamin D påvirker kroppens evne til å absorbere kalsium', impact: 50 },
           { issue_id: issueId, title: 'Immunfunksjon', description: 'Vitamin D-mangel kan påvirke immunforsvarets effektivitet', impact: 45 }
+        ]);
+        
+        // Add scanner components for vitamin D deficiency
+        await supabase.from('scanner_components').insert([
+          { issue_id: issueId, category: 'Vitaminer', name: '25(OH)D.dsd', level: 32 },
+          { issue_id: issueId, category: 'Vitaminer', name: '1,25(OH)2D.dsd', level: 40 },
+          { issue_id: issueId, category: 'Minerals', name: 'Kalsium.dsd', level: 48 },
+          { issue_id: issueId, category: 'Immunsystem', name: 'T-celle aktivitet.dsd', level: 55 },
+          { issue_id: issueId, category: 'Immunsystem', name: 'Cytokiner.dsd', level: 62 }
         ]);
       }
 
