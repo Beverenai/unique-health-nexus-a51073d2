@@ -23,6 +23,12 @@ const HealthIssuesCarousel: React.FC<HealthIssuesCarouselProps> = ({
     return 'bg-[#EA384C]';
   };
 
+  const getTextColor = (load: number): string => {
+    if (load < 40) return 'text-[#77C17E]';
+    if (load < 60) return 'text-[#F7D154]';
+    return 'text-[#EA384C]';
+  };
+
   return (
     <div className="mb-6">
       <Carousel className="w-full">
@@ -57,11 +63,9 @@ const HealthIssuesCarousel: React.FC<HealthIssuesCarouselProps> = ({
                     
                     <div className="flex justify-between items-center text-sm mb-1">
                       <span className="text-gray-600 text-xs">Belastning</span>
-                      <span className={`font-medium text-xs ${load => (
-                        load < 40 ? 'text-[#77C17E]' : 
-                        load < 60 ? 'text-[#F7D154]' : 
-                        'text-[#EA384C]'
-                      )(issue.load)}`}>{issue.load}%</span>
+                      <span className={`font-medium text-xs ${getTextColor(issue.load)}`}>
+                        {issue.load}%
+                      </span>
                     </div>
                     
                     <Progress 

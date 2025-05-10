@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { ScannerComponent } from '@/types/supabase';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
-import { Motion, Variants, motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Layers, PlusCircle, Stethoscope } from 'lucide-react';
 import { calculateSystemLoads, getSystemAverages } from './utils';
 import SystemItem from './SystemItem';

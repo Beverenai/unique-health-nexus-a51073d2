@@ -57,7 +57,7 @@ const SystemChart: React.FC<SystemChartProps> = ({ data }) => {
             ))}
           </Pie>
           <Tooltip 
-            formatter={(value) => [`${value}% belastning`, entry.name]}
+            formatter={(value, name, props) => [`${value}% belastning`, props.payload.name]}
             contentStyle={{
               backgroundColor: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '8px',
