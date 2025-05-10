@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { HealthIssue, CoherenceData, IssueDetail, IssueRecommendation, ScannerComponent } from "@/types/supabase";
 import { mockHealthIssues } from "@/data/mockData";
@@ -103,15 +104,42 @@ export const getIssueDetails = async (issueId: string): Promise<{
       
       if (mockIssue) {
         console.log('Found issue in mock data:', mockIssue);
+        
+        // Convert mock data to match the expected types
+        // This fixes the Property 'details' does not exist on type 'HealthIssue' error
+        
+        // Create proper IssueDetail objects from mock data
+        const mockDetails: IssueDetail[] = mockIssue.details ? mockIssue.details.map(detail => ({
+          id: `mock-detail-${detail.id}`,
+          issue_id: mockIssue.id,
+          title: detail.title,
+          description: detail.description,
+          impact: detail.impact,
+          created_at: new Date().toISOString()
+        })) : [];
+        
+        // Create proper recommendation objects from mock data
+        const mockRecommendations: IssueRecommendation[] = mockIssue.recommendations?.map((rec, index) => ({
+          id: `mock-rec-${index}`,
+          issue_id: mockIssue.id,
+          recommendation: rec,
+          created_at: new Date().toISOString()
+        })) || [];
+        
+        // Create a database-compatible health issue from mock data
+        const dbCompatibleIssue: HealthIssue = {
+          id: mockIssue.id,
+          name: mockIssue.name,
+          description: mockIssue.description,
+          load: mockIssue.load,
+          scan_id: mockIssue.scan_id || 'mock-scan-id',
+          created_at: mockIssue.created_at || new Date().toISOString()
+        };
+        
         return {
-          issue: mockIssue,
-          details: mockIssue.details || [],
-          recommendations: mockIssue.recommendations?.map((rec, index) => ({
-            id: `mock-rec-${index}`,
-            issue_id: mockIssue.id,
-            recommendation: rec,
-            created_at: new Date().toISOString()
-          })) || [],
+          issue: dbCompatibleIssue,
+          details: mockDetails,
+          recommendations: mockRecommendations,
           scannerComponents: []
         };
       }
