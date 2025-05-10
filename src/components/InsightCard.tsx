@@ -8,77 +8,85 @@ interface InsightCardProps {
   healthIssues: HealthIssue[];
 }
 
-// Helper function to determine which icon to show based on the primary health issue
-const getInsightIcon = (issues: HealthIssue[]) => {
-  if (!issues.length) return <Moon className="text-indigo-500" />;
-  
-  const primaryIssue = issues[0].name.toLowerCase();
-  
-  if (primaryIssue.includes('stress') || primaryIssue.includes('søvn')) {
-    return <Moon className="text-indigo-500" />;
-  } else if (primaryIssue.includes('tarm') || primaryIssue.includes('parasitt')) {
-    return <LeafyGreen className="text-teal-500" />;
-  } else if (primaryIssue.includes('tungmetall') || primaryIssue.includes('miljø')) {
-    return <CloudFog className="text-blue-500" />;
-  } else {
-    return <Brain className="text-indigo-500" />;
-  }
-};
-
-// Helper function to generate a summary based on health issues
-const generateInsightSummary = (issues: HealthIssue[]): string => {
-  if (!issues.length) {
-    return "Vi har ingen helseproblemer å rapportere. Fortsett med din nåværende livsstil.";
-  }
-
-  // Get the top issues (max 3)
-  const topIssues = issues.slice(0, 3);
-  const issueNames = topIssues.map(issue => issue.name.toLowerCase());
-  
-  // Create different types of summaries based on the combination of issues
-  if (issueNames.some(name => name.includes('tungmetall')) && 
-      issueNames.some(name => name.includes('tarm'))) {
-    return "Kroppen jobber aktivt med miljøgifter og tarmhelse. Fokuser på restitusjon og kosthold denne uken.";
-  }
-  
-  if (issueNames.some(name => name.includes('tungmetall')) || 
-      issueNames.some(name => name.includes('miljø'))) {
-    if (issueNames.some(name => name.includes('stress'))) {
-      return "Kroppen håndterer miljøgifter og stress samtidig. Vi anbefaler å prioritere avgiftning og avslapningsøvelser.";
-    }
-    return "Kroppen viser tegn på miljøgiftbelastning. Støtt kroppens avgiftningssystem med antioksidanter.";
-  } 
-  
-  if (issueNames.some(name => name.includes('tarm')) || 
-      issueNames.some(name => name.includes('parasitt'))) {
-    return "Tarmfloraen din trenger støtte. Fokuser på probiotika og antiinflamatorisk kosthold denne uken.";
-  }
-  
-  if (issueNames.some(name => name.includes('stress')) || 
-      issueNames.some(name => name.includes('søvn'))) {
-    return "Kroppen viser tegn på stressbelastning. Prioriter restitusjon og stresshåndteringsteknikker.";
-  }
-  
-  // Generic fallback
-  return "Kroppen jobber aktivt med å gjenopprette balanse. Vi anbefaler å prioritere restitusjon og kosthold denne uken.";
-};
-
 const InsightCard: React.FC<InsightCardProps> = ({ healthIssues }) => {
   const sortedIssues = [...healthIssues].sort((a, b) => b.load - a.load);
-  const insightSummary = generateInsightSummary(sortedIssues);
-  const icon = getInsightIcon(sortedIssues);
+  
+  // Helper function to determine status based on load
+  const getStatusText = (load: number): { text: string; color: string } => {
+    if (load < 20) return { text: "Normal", color: "text-green-500" };
+    if (load < 50) return { text: "Moderat belastning", color: "text-yellow-500" };
+    return { text: "Høy belastning", color: "text-red-500" };
+  };
+
+  // Find issues by type
+  const findIssueByType = (keyword: string) => {
+    return sortedIssues.find(issue => 
+      issue.name.toLowerCase().includes(keyword.toLowerCase())
+    );
+  };
+  
+  const nervesystemIssue = findIssueByType("nervesystem");
+  const tarmIssue = findIssueByType("tarmflora");
+  const hormonIssue = findIssueByType("hormon");
 
   return (
     <Card className="mb-8 bg-[#F7F7F7] border-none shadow-sm">
       <CardContent className="p-4">
-        <div className="flex items-start space-x-3">
-          <div className="mt-1 bg-white p-2 rounded-full">
-            {icon}
+        <h3 className="text-lg font-medium mb-2">Din kropp jobber med flere belastninger</h3>
+        
+        <p className="text-gray-700 mb-4">
+          Skanningen viser at kroppen bruker energi på å håndtere flere utfordringer. 
+          Du har lav belastning på nervesystemet, men moderate funn innen tarmhelse og hormonbalanse.
+        </p>
+        
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Brain size={18} className="text-blue-500" />
+              <span>🧠 Nervesystem:</span>
+            </div>
+            <span className="text-green-500 font-medium">
+              {nervesystemIssue ? getStatusText(nervesystemIssue.load).text : "Normal"}
+            </span>
           </div>
-          <div>
-            <h3 className="text-sm font-medium mb-2">Sammendrag fra skanningen</h3>
-            <p className="text-gray-700">{insightSummary}</p>
+          
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <LeafyGreen size={18} className="text-teal-500" />
+              <span>🦠 Tarmhelse:</span>
+            </div>
+            <span className="text-yellow-500 font-medium">
+              {tarmIssue ? getStatusText(tarmIssue.load).text : "Moderat belastning"}
+            </span>
           </div>
+          
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Moon size={18} className="text-purple-500" />
+              <span>🔁 Hormonbalanse:</span>
+            </div>
+            <span className="text-yellow-500 font-medium">
+              {hormonIssue ? getStatusText(hormonIssue.load).text : "Lett ubalanse"}
+            </span>
+          </div>
+        </div>
+        
+        <div className="pt-3 border-t border-gray-200">
+          <h4 className="text-sm font-medium mb-2">Anbefalinger:</h4>
+          <ul className="text-sm space-y-1.5">
+            <li className="flex items-start">
+              <span className="text-green-500 mr-2">•</span>
+              Fokuser på å styrke tarmfloraen med fermentert mat eller probiotika
+            </li>
+            <li className="flex items-start">
+              <span className="text-green-500 mr-2">•</span>
+              Prioriter jevn søvnrytme og stressreduksjon for hormonell balanse
+            </li>
+            <li className="flex items-start">
+              <span className="text-green-500 mr-2">•</span>
+              Oppretthold god væskebalanse
+            </li>
+          </ul>
         </div>
       </CardContent>
     </Card>

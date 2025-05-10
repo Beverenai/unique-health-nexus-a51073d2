@@ -43,37 +43,32 @@ export const useChatMessages = (isOpen: boolean) => {
   // Helper function to generate a summary based on health issues
   const generateInsightSummary = (issues: HealthIssue[]): string => {
     if (!issues.length) {
-      return "Vi har ingen helseproblemer å rapportere";
+      return "din generelle helse";
     }
 
     // Get the top issues (max 3)
     const topIssues = issues.slice(0, 3);
     const issueNames = topIssues.map(issue => issue.name.toLowerCase());
     
-    if (issueNames.some(name => name.includes('tungmetall')) && 
-        issueNames.some(name => name.includes('tarm'))) {
-      return "tungmetaller og tarmflora";
+    if (issueNames.some(name => name.includes('tarm')) && 
+        issueNames.some(name => name.includes('hormon'))) {
+      return "tarmhelse og hormonbalanse";
     }
     
-    if (issueNames.some(name => name.includes('tungmetall'))) {
-      if (issueNames.some(name => name.includes('stress'))) {
-        return "miljøgifter og stress";
-      }
-      return "miljøgiftbelastning";
+    if (issueNames.some(name => name.includes('tarm'))) {
+      return "tarmhelse og fordøyelse";
     } 
     
-    if (issueNames.some(name => name.includes('tarm')) || 
-        issueNames.some(name => name.includes('parasitt'))) {
-      return "tarmhelse og parasittbelastning";
+    if (issueNames.some(name => name.includes('hormon'))) {
+      return "hormonelle utfordringer";
     }
     
-    if (issueNames.some(name => name.includes('stress')) || 
-        issueNames.some(name => name.includes('søvn'))) {
-      return "stress og søvnproblemer";
+    if (issueNames.some(name => name.includes('nervesystem'))) {
+      return "nervesystemet og mental balanse";
     }
     
     // Generic fallback
-    return "ubalanse i kroppssystemene";
+    return "kroppslige utfordringer";
   };
 
   const getContextBasedIntro = () => {

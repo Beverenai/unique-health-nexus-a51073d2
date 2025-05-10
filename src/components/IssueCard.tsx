@@ -14,8 +14,8 @@ interface IssueCardProps {
 const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
   // Determine color based on the load
   const getProgressColor = (load: number): string => {
-    if (load < 40) return 'bg-success';
-    if (load < 70) return 'bg-warning';
+    if (load < 20) return 'bg-success';
+    if (load < 50) return 'bg-warning';
     return 'bg-danger';
   };
 
@@ -23,10 +23,12 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
   const getIssueIcon = () => {
     const name = issue.name.toLowerCase();
     
-    if (name.includes('stress') || name.includes('søvn')) {
-      return <Moon className="text-indigo-500" size={20} />;
-    } else if (name.includes('tarm') || name.includes('parasitt')) {
+    if (name.includes('nervesystem')) {
+      return <Brain className="text-blue-500" size={20} />;
+    } else if (name.includes('tarm') || name.includes('bakterie')) {
       return <LeafyGreen className="text-teal-500" size={20} />;
+    } else if (name.includes('hormon') || name.includes('stress')) {
+      return <Moon className="text-purple-500" size={20} />;
     } else if (name.includes('tungmetall') || name.includes('miljø')) {
       return <CloudFog className="text-blue-500" size={20} />;
     } else {

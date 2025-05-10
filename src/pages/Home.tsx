@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -84,9 +85,9 @@ const HomePage: React.FC = () => {
       </header>
 
       <div className="flex flex-col items-center justify-center mb-8">
-        <CoherenceRing score={coherenceData?.score || 0} />
+        <CoherenceRing score={coherenceData?.score || 64} />
         <p className="text-gray-600 mt-6 text-center max-w-xs">
-          {coherenceData?.message || "Din kroppskanning indikerer en total koherens-score på " + (coherenceData?.score || 0) + "%."}
+          {coherenceData?.message || "Din kroppskanning indikerer en total koherens-score på " + (coherenceData?.score || 64) + "%."}
         </p>
       </div>
 

@@ -224,33 +224,33 @@ export const seedDemoData = async (): Promise<void> => {
 
     const scanId = scan[0].id;
 
-    // Add coherence data
+    // Add coherence data with score of 64%
     await supabase
       .from('coherence_data')
       .insert({
         scan_id: scanId,
-        score: 63
+        score: 64
       });
 
     // Add health issues
     const healthIssues = [
       {
         scan_id: scanId,
-        name: 'Tungmetaller (Miljøgiftbelastning)',
-        description: 'Indikasjoner på bly- og thalliumfrekvenser kan påvirke nervesystemet og energinivået negativt.',
-        load: 26
+        name: 'Tarmflora i ubalanse',
+        description: 'Flere bakterielle mønstre tyder på redusert mangfold og lett inflammasjon.',
+        load: 45
       },
       {
         scan_id: scanId,
-        name: 'Tarmflora (Parasittbelastning)',
-        description: 'Tegn på parasittbelastning som påvirker immunsystemet og næringsopptaket.',
-        load: 24
+        name: 'Milde hormonelle avvik',
+        description: 'Skanningen indikerer svingninger i kortisol og østrogen-aktivitet.',
+        load: 38
       },
       {
         scan_id: scanId,
-        name: 'Stressnivå og søvnforstyrrelser (Koherensbrudd)',
-        description: 'Høy energetisk forstyrrelse som indikerer systemisk stress som påvirker både søvnkvalitet og restitusjon.',
-        load: 21
+        name: 'Godt fungerende nervesystem',
+        description: 'Ingen tegn til stresspåvirkning eller nevrologisk ubalanse.',
+        load: 15
       }
     ];
 
@@ -268,64 +268,61 @@ export const seedDemoData = async (): Promise<void> => {
       const issueId = createdIssue[0].id;
 
       // Add recommendations based on the issue
-      if (issue.name.includes('Tungmetaller')) {
+      if (issue.name.includes('Tarmflora')) {
         await supabase.from('issue_recommendations').insert([
-          { issue_id: issueId, recommendation: 'Støtt avgiftningsprosessen med antioksidanter og mineraltilskudd' },
-          { issue_id: issueId, recommendation: 'Øk inntaket av koriander, spirulina og klorofyll-rike matvarer' },
-          { issue_id: issueId, recommendation: 'Bruk sauna regelmessig for å eliminere tungmetaller gjennom svette' }
+          { issue_id: issueId, recommendation: 'Fokuser på å styrke tarmfloraen med fermentert mat eller probiotika' },
+          { issue_id: issueId, recommendation: 'Øk inntaket av fiberrike matvarer og prebiotika' },
+          { issue_id: issueId, recommendation: 'Vurder å redusere inntak av prosessert mat' }
         ]);
         
         await supabase.from('issue_details').insert([
-          { issue_id: issueId, title: 'Blyverdier', description: 'Forhøyede frekvenser av bly kan påvirke nervesystemet og kognitiv funksjon', impact: 28 },
-          { issue_id: issueId, title: 'Thallium', description: 'Spor av thallium kan forstyrre energiproduksjon i cellene', impact: 25 },
-          { issue_id: issueId, title: 'Avgiftningskapasitet', description: 'Redusert kapasitet til å eliminere tungmetaller gjennom lever og nyrer', impact: 22 }
+          { issue_id: issueId, title: 'Bakteriell mangfold', description: 'Redusert bakterielt mangfold i tarmfloraen', impact: 45 },
+          { issue_id: issueId, title: 'Inflammasjon', description: 'Lett inflammatorisk respons i tarmslimhinnen', impact: 40 },
+          { issue_id: issueId, title: 'Tarmpermeabilitet', description: 'Svakt forhøyet tarmpermeabilitet', impact: 35 }
         ]);
         
         await supabase.from('scanner_components').insert([
-          { issue_id: issueId, category: 'Tungmetaller', name: 'Bly.dsd', level: 26 },
-          { issue_id: issueId, category: 'Tungmetaller', name: 'Thallium.dsd', level: 24 },
-          { issue_id: issueId, category: 'Avgiftning', name: 'Glutathion.dsd', level: 18 },
-          { issue_id: issueId, category: 'Avgiftning', name: 'Leverenzymer.dsd', level: 22 }
+          { issue_id: issueId, category: 'Tarmflora', name: 'Bakteriell diversitet.dsd', level: 45 },
+          { issue_id: issueId, category: 'Tarmflora', name: 'Inflammasjonsmarkører.dsd', level: 40 },
+          { issue_id: issueId, category: 'Tarmhelse', name: 'Slimhinnefunksjon.dsd', level: 35 }
         ]);
       }
-      else if (issue.name.includes('Tarmflora')) {
+      else if (issue.name.includes('hormonelle')) {
         await supabase.from('issue_recommendations').insert([
-          { issue_id: issueId, recommendation: 'Styrk tarmfloraen med probiotika og prebiotiske fibre' },
-          { issue_id: issueId, recommendation: 'Følg en antiparasittisk diett i 3-4 uker' },
-          { issue_id: issueId, recommendation: 'Inkluder antiparasittiske urter som malurt og nellik i kostholdet' }
+          { issue_id: issueId, recommendation: 'Prioriter jevn søvnrytme og stressreduksjon for hormonell balanse' },
+          { issue_id: issueId, recommendation: 'Vurder adaptogene urter som støtter binyrefunksjonen' },
+          { issue_id: issueId, recommendation: 'Oppretthold god væskebalanse' }
         ]);
         
         await supabase.from('issue_details').insert([
-          { issue_id: issueId, title: 'Parasittaktivitet', description: 'Tegn på parasittbelastning i tynntarmen', impact: 25 },
-          { issue_id: issueId, title: 'Tarmpermeabilitet', description: 'Lett økt tarmpermeabilitet ("lekk tarm") påvirker immunsystemet', impact: 23 },
-          { issue_id: issueId, title: 'Næringsopptak', description: 'Redusert opptak av vitaminer og mineraler grunnet parasittbelastning', impact: 21 }
+          { issue_id: issueId, title: 'Kortisoldøgnrytme', description: 'Lett uregelmessig kortisolprofil gjennom døgnet', impact: 38 },
+          { issue_id: issueId, title: 'Østrogennivåer', description: 'Moderat variasjon i østrogenaktivitet', impact: 35 },
+          { issue_id: issueId, title: 'Hormonregulering', description: 'Svakt påvirket regulering av stress- og kjønnshormoner', impact: 30 }
         ]);
         
         await supabase.from('scanner_components').insert([
-          { issue_id: issueId, category: 'Parasitter', name: 'Blastocystis.dsd', level: 24 },
-          { issue_id: issueId, category: 'Parasitter', name: 'Giardia.dsd', level: 19 },
-          { issue_id: issueId, category: 'Tarmhelse', name: 'Zonulin.dsd', level: 23 },
-          { issue_id: issueId, category: 'Tarmhelse', name: 'Sekretorisk IgA.dsd', level: 18 }
+          { issue_id: issueId, category: 'Hormoner', name: 'Kortisol.dsd', level: 38 },
+          { issue_id: issueId, category: 'Hormoner', name: 'Østrogen.dsd', level: 35 },
+          { issue_id: issueId, category: 'Regulering', name: 'Hypothalamus-hypofyse.dsd', level: 30 }
         ]);
       }
-      else if (issue.name.includes('Stressnivå')) {
+      else if (issue.name.includes('nervesystem')) {
         await supabase.from('issue_recommendations').insert([
-          { issue_id: issueId, recommendation: 'Fokuser på restitusjon og stresshåndtering med daglige pusteøvelser' },
-          { issue_id: issueId, recommendation: 'Etabler en fast døgnrytme med leggetid senest kl. 23:00' },
-          { issue_id: issueId, recommendation: 'Reduser eksponering for blått lys minst 2 timer før leggetid' }
+          { issue_id: issueId, recommendation: 'Fortsett med nåværende aktivitetsnivå og balansert livsstil' },
+          { issue_id: issueId, recommendation: 'Vedlikehold god søvnhygiene' },
+          { issue_id: issueId, recommendation: 'Oppretthold regelmessig bevegelse og fysisk aktivitet' }
         ]);
         
         await supabase.from('issue_details').insert([
-          { issue_id: issueId, title: 'HRV', description: 'Redusert hjerterytmevariabilitet indikerer kronisk stressbelastning', impact: 22 },
-          { issue_id: issueId, title: 'Søvnkvalitet', description: 'Forstyrret søvnarkitektur med redusert dyp søvn', impact: 20 },
-          { issue_id: issueId, title: 'Kortisoldøgnrytme', description: 'Ubalansert kortisolproduksjon gjennom døgnet påvirker energinivået', impact: 19 }
+          { issue_id: issueId, title: 'Nevrotransmittere', description: 'Balanserte nivåer av nevrotransmittere', impact: 15 },
+          { issue_id: issueId, title: 'Stressrespons', description: 'God regulering av stressrespons', impact: 10 },
+          { issue_id: issueId, title: 'HRV', description: 'Normal hjerterytmevariabilitet', impact: 12 }
         ]);
         
         await supabase.from('scanner_components').insert([
-          { issue_id: issueId, category: 'Stresshormoner', name: 'Kortisol.dsd', level: 21 },
-          { issue_id: issueId, category: 'Stresshormoner', name: 'Adrenalin.dsd', level: 19 },
-          { issue_id: issueId, category: 'Nervesystem', name: 'HRV.dsd', level: 22 },
-          { issue_id: issueId, category: 'Søvn', name: 'Melatonin.dsd', level: 17 }
+          { issue_id: issueId, category: 'Nervesystem', name: 'Serotonin-dopamin.dsd', level: 15 },
+          { issue_id: issueId, category: 'Nervesystem', name: 'HRV.dsd', level: 12 },
+          { issue_id: issueId, category: 'Stressaktivering', name: 'Sympatisk aktivering.dsd', level: 10 }
         ]);
       }
 
