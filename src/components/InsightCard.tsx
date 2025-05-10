@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { HealthIssue } from '@/types/supabase';
-import { Brain, DropletIcon, LeafyGreen } from 'lucide-react';
+import { CloudFog, Bacteria, Moon } from 'lucide-react';
 
 interface InsightCardProps {
   healthIssues: HealthIssue[];
@@ -10,18 +10,18 @@ interface InsightCardProps {
 
 // Helper function to determine which icon to show based on the primary health issue
 const getInsightIcon = (issues: HealthIssue[]) => {
-  if (!issues.length) return <LeafyGreen className="text-green-500" />;
+  if (!issues.length) return <Moon className="text-indigo-500" />;
   
   const primaryIssue = issues[0].name.toLowerCase();
   
-  if (primaryIssue.includes('stress') || primaryIssue.includes('mental')) {
-    return <Brain className="text-blue-500" />;
-  } else if (primaryIssue.includes('søvn') || primaryIssue.includes('sleep')) {
-    return <LeafyGreen className="text-green-500" />;
-  } else if (primaryIssue.includes('vitamin') || primaryIssue.includes('mineral')) {
-    return <DropletIcon className="text-cyan-500" />;
+  if (primaryIssue.includes('stress') || primaryIssue.includes('søvn')) {
+    return <Moon className="text-indigo-500" />;
+  } else if (primaryIssue.includes('tarm') || primaryIssue.includes('parasitt')) {
+    return <Bacteria className="text-teal-500" />;
+  } else if (primaryIssue.includes('tungmetall') || primaryIssue.includes('miljø')) {
+    return <CloudFog className="text-blue-500" />;
   } else {
-    return <LeafyGreen className="text-green-500" />;
+    return <Moon className="text-indigo-500" />;
   }
 };
 
@@ -36,25 +36,31 @@ const generateInsightSummary = (issues: HealthIssue[]): string => {
   const issueNames = topIssues.map(issue => issue.name.toLowerCase());
   
   // Create different types of summaries based on the combination of issues
-  if (issueNames.some(name => name.includes('stress'))) {
-    if (issueNames.some(name => name.includes('søvn') || name.includes('sleep'))) {
-      return "Kroppen din viser tegn på stress og søvnproblemer. Vi anbefaler å prioritere avspenningsøvelser og god søvnhygiene denne uken.";
-    } else if (issueNames.some(name => name.includes('vitamin'))) {
-      return "Kroppen din håndterer stress samtidig som den viser tegn på vitaminmangel. Fokuser på restitusjon og et næringsrikt kosthold.";
-    }
-    return "Kroppen jobber med å håndtere stress. Vi anbefaler å prioritere enkle avspenningsøvelser og nok hvile denne uken.";
-  } 
-  
-  if (issueNames.some(name => name.includes('søvn') || name.includes('sleep'))) {
-    return "Søvnkvaliteten din er under optimalt nivå. Prioriter god søvnhygiene og konsistente leggetider denne uken.";
+  if (issueNames.some(name => name.includes('tungmetall')) && 
+      issueNames.some(name => name.includes('tarm'))) {
+    return "Kroppen jobber aktivt med miljøgifter og tarmhelse. Fokuser på restitusjon og kosthold denne uken.";
   }
   
-  if (issueNames.some(name => name.includes('vitamin d'))) {
-    return "Vitamin D-nivåene dine er lavere enn anbefalt. Øk eksponeringen for sol og vurder kosttilskudd etter anbefaling fra helsepersonell.";
+  if (issueNames.some(name => name.includes('tungmetall')) || 
+      issueNames.some(name => name.includes('miljø'))) {
+    if (issueNames.some(name => name.includes('stress'))) {
+      return "Kroppen håndterer miljøgifter og stress samtidig. Vi anbefaler å prioritere avgiftning og avslapningsøvelser.";
+    }
+    return "Kroppen viser tegn på miljøgiftbelastning. Støtt kroppens avgiftningssystem med antioksidanter.";
+  } 
+  
+  if (issueNames.some(name => name.includes('tarm')) || 
+      issueNames.some(name => name.includes('parasitt'))) {
+    return "Tarmfloraen din trenger støtte. Fokuser på probiotika og antiinflamatorisk kosthold denne uken.";
+  }
+  
+  if (issueNames.some(name => name.includes('stress')) || 
+      issueNames.some(name => name.includes('søvn'))) {
+    return "Kroppen viser tegn på stressbelastning. Prioriter restitusjon og stresshåndteringsteknikker.";
   }
   
   // Generic fallback
-  return "Kroppen din jobber aktivt med å gjenopprette balanse. Vi anbefaler å prioritere restitusjon og holde et sunt kosthold denne uken.";
+  return "Kroppen jobber aktivt med å gjenopprette balanse. Vi anbefaler å prioritere restitusjon og kosthold denne uken.";
 };
 
 const InsightCard: React.FC<InsightCardProps> = ({ healthIssues }) => {

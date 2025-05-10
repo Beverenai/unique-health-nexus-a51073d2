@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -68,22 +67,26 @@ const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
     const topIssues = issues.slice(0, 3);
     const issueNames = topIssues.map(issue => issue.name.toLowerCase());
     
-    // Create different types of summaries based on the combination of issues
-    if (issueNames.some(name => name.includes('stress'))) {
-      if (issueNames.some(name => name.includes('søvn') || name.includes('sleep'))) {
-        return "stress og søvnproblemer";
-      } else if (issueNames.some(name => name.includes('vitamin'))) {
-        return "stress og vitaminmangel";
-      }
-      return "stress";
-    } 
-    
-    if (issueNames.some(name => name.includes('søvn') || name.includes('sleep'))) {
-      return "redusert søvnkvalitet";
+    if (issueNames.some(name => name.includes('tungmetall')) && 
+        issueNames.some(name => name.includes('tarm'))) {
+      return "tungmetaller og tarmflora";
     }
     
-    if (issueNames.some(name => name.includes('vitamin d'))) {
-      return "lave vitamin D-nivåer";
+    if (issueNames.some(name => name.includes('tungmetall'))) {
+      if (issueNames.some(name => name.includes('stress'))) {
+        return "miljøgifter og stress";
+      }
+      return "miljøgiftbelastning";
+    } 
+    
+    if (issueNames.some(name => name.includes('tarm')) || 
+        issueNames.some(name => name.includes('parasitt'))) {
+      return "tarmhelse og parasittbelastning";
+    }
+    
+    if (issueNames.some(name => name.includes('stress')) || 
+        issueNames.some(name => name.includes('søvn'))) {
+      return "stress og søvnproblemer";
     }
     
     // Generic fallback
@@ -111,7 +114,7 @@ const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
     } else {
       // Home page with health summary
       if (healthSummary) {
-        return `Hei! Basert på din nylige skanning ser jeg at kroppen din jobber med ${healthSummary}. Hva lurer du på om dette?`;
+        return `Hei! Jeg ser at kroppen din jobber med å balansere ${healthSummary}. Skal vi se nærmere på tiltak du kan gjøre i dag?`;
       } else {
         return 'Hei! Jeg er din personlige helseassistent. Hvordan kan jeg hjelpe deg i dag?';
       }

@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { HealthIssue, CoherenceData, IssueDetail, IssueRecommendation, ScannerComponent } from "@/types/supabase";
 
@@ -230,28 +229,28 @@ export const seedDemoData = async (): Promise<void> => {
       .from('coherence_data')
       .insert({
         scan_id: scanId,
-        score: 75
+        score: 63
       });
 
     // Add health issues
     const healthIssues = [
       {
         scan_id: scanId,
-        name: 'Stress',
-        description: 'Høye stressnivåer påvirker flere kroppssystemer negativt. Langvarig stress kan føre til nedsatt immunforsvar, fordøyelsesproblemer og økt risiko for hjerte- og karsykdommer.',
-        load: 78
+        name: 'Tungmetaller (Miljøgiftbelastning)',
+        description: 'Indikasjoner på bly- og thalliumfrekvenser kan påvirke nervesystemet og energinivået negativt.',
+        load: 26
       },
       {
         scan_id: scanId,
-        name: 'Søvnkvalitet',
-        description: 'Din søvnkvalitet er under optimalt nivå. Dette kan påvirke din kognitive funksjon, metabolisme og generell velvære.',
-        load: 65
+        name: 'Tarmflora (Parasittbelastning)',
+        description: 'Tegn på parasittbelastning som påvirker immunsystemet og næringsopptaket.',
+        load: 24
       },
       {
         scan_id: scanId,
-        name: 'Vitamin D Mangel',
-        description: 'Dine vitamin D-nivåer er lavere enn anbefalt. Vitamin D er viktig for immunforsvar, benhelse og generell velvære.',
-        load: 52
+        name: 'Stressnivå og søvnforstyrrelser (Koherensbrudd)',
+        description: 'Høy energetisk forstyrrelse som indikerer systemisk stress som påvirker både søvnkvalitet og restitusjon.',
+        load: 21
       }
     ];
 
@@ -268,72 +267,65 @@ export const seedDemoData = async (): Promise<void> => {
 
       const issueId = createdIssue[0].id;
 
-      // Add recommendations for this issue
-      if (issue.name === 'Stress') {
+      // Add recommendations based on the issue
+      if (issue.name.includes('Tungmetaller')) {
         await supabase.from('issue_recommendations').insert([
-          { issue_id: issueId, recommendation: 'Praktiser daglig meditasjon eller pusteøvelser i 10-15 minutter' },
-          { issue_id: issueId, recommendation: 'Reduser koffeininntak, spesielt etter kl 14:00' },
-          { issue_id: issueId, recommendation: 'Sett av tid til regelmessig fysisk aktivitet, minst 30 minutter daglig' }
+          { issue_id: issueId, recommendation: 'Støtt avgiftningsprosessen med antioksidanter og mineraltilskudd' },
+          { issue_id: issueId, recommendation: 'Øk inntaket av koriander, spirulina og klorofyll-rike matvarer' },
+          { issue_id: issueId, recommendation: 'Bruk sauna regelmessig for å eliminere tungmetaller gjennom svette' }
         ]);
         
-        // Add details for stress
         await supabase.from('issue_details').insert([
-          { issue_id: issueId, title: 'Kortisolnivå', description: 'Ditt kortisolnivå er forhøyet, noe som indikerer kronisk stress', impact: 85 },
-          { issue_id: issueId, title: 'HRV (Hjerterytmevariabilitet)', description: 'Redusert HRV indikerer at kroppen er i en konstant stresstilstand', impact: 72 },
-          { issue_id: issueId, title: 'Søvnkvalitet', description: 'Stress påvirker din søvn negativt, spesielt REM-søvnfasen', impact: 68 }
+          { issue_id: issueId, title: 'Blyverdier', description: 'Forhøyede frekvenser av bly kan påvirke nervesystemet og kognitiv funksjon', impact: 28 },
+          { issue_id: issueId, title: 'Thallium', description: 'Spor av thallium kan forstyrre energiproduksjon i cellene', impact: 25 },
+          { issue_id: issueId, title: 'Avgiftningskapasitet', description: 'Redusert kapasitet til å eliminere tungmetaller gjennom lever og nyrer', impact: 22 }
         ]);
         
-        // Add scanner components for stress
         await supabase.from('scanner_components').insert([
-          { issue_id: issueId, category: 'Hormoner', name: 'Kortisol.dsd', level: 78 },
-          { issue_id: issueId, category: 'Hormoner', name: 'Adrenalin.dsd', level: 65 },
-          { issue_id: issueId, category: 'Hjernefunksjon', name: 'Amygdala.dsd', level: 58 },
-          { issue_id: issueId, category: 'Hjernefunksjon', name: 'HPA-akse.dsd', level: 72 }
+          { issue_id: issueId, category: 'Tungmetaller', name: 'Bly.dsd', level: 26 },
+          { issue_id: issueId, category: 'Tungmetaller', name: 'Thallium.dsd', level: 24 },
+          { issue_id: issueId, category: 'Avgiftning', name: 'Glutathion.dsd', level: 18 },
+          { issue_id: issueId, category: 'Avgiftning', name: 'Leverenzymer.dsd', level: 22 }
         ]);
       }
-      else if (issue.name === 'Søvnkvalitet') {
+      else if (issue.name.includes('Tarmflora')) {
         await supabase.from('issue_recommendations').insert([
-          { issue_id: issueId, recommendation: 'Etabler en fast rutine for leggetid og oppvåkning' },
-          { issue_id: issueId, recommendation: 'Unngå skjermbruk minst 1 time før leggetid' },
-          { issue_id: issueId, recommendation: 'Hold soverommet mørkt, svalt og stille' }
+          { issue_id: issueId, recommendation: 'Styrk tarmfloraen med probiotika og prebiotiske fibre' },
+          { issue_id: issueId, recommendation: 'Følg en antiparasittisk diett i 3-4 uker' },
+          { issue_id: issueId, recommendation: 'Inkluder antiparasittiske urter som malurt og nellik i kostholdet' }
         ]);
         
-        // Add details for sleep
         await supabase.from('issue_details').insert([
-          { issue_id: issueId, title: 'Søvneffektivitet', description: 'Tiden du tilbringer i sengen vs. faktisk søvntid er ikke optimal', impact: 70 },
-          { issue_id: issueId, title: 'Dyp søvn', description: 'Din andel av dyp søvn er under det anbefalte nivået', impact: 65 },
-          { issue_id: issueId, title: 'Søvnsykluser', description: 'Du gjennomgår færre komplette søvnsykluser enn ideelt', impact: 60 }
+          { issue_id: issueId, title: 'Parasittaktivitet', description: 'Tegn på parasittbelastning i tynntarmen', impact: 25 },
+          { issue_id: issueId, title: 'Tarmpermeabilitet', description: 'Lett økt tarmpermeabilitet ("lekk tarm") påvirker immunsystemet', impact: 23 },
+          { issue_id: issueId, title: 'Næringsopptak', description: 'Redusert opptak av vitaminer og mineraler grunnet parasittbelastning', impact: 21 }
         ]);
         
-        // Add scanner components for sleep quality
         await supabase.from('scanner_components').insert([
-          { issue_id: issueId, category: 'Hjernebølger', name: 'Delta-bølger.dsd', level: 45 },
-          { issue_id: issueId, category: 'Hjernebølger', name: 'Theta-bølger.dsd', level: 52 },
-          { issue_id: issueId, category: 'Hormoner', name: 'Melatonin.dsd', level: 38 },
-          { issue_id: issueId, category: 'Nervesystem', name: 'Parasympatisk aktivitet.dsd', level: 41 }
+          { issue_id: issueId, category: 'Parasitter', name: 'Blastocystis.dsd', level: 24 },
+          { issue_id: issueId, category: 'Parasitter', name: 'Giardia.dsd', level: 19 },
+          { issue_id: issueId, category: 'Tarmhelse', name: 'Zonulin.dsd', level: 23 },
+          { issue_id: issueId, category: 'Tarmhelse', name: 'Sekretorisk IgA.dsd', level: 18 }
         ]);
       }
-      else if (issue.name === 'Vitamin D Mangel') {
+      else if (issue.name.includes('Stressnivå')) {
         await supabase.from('issue_recommendations').insert([
-          { issue_id: issueId, recommendation: 'Ta et vitamin D-tilskudd på 1000-2000 IE daglig' },
-          { issue_id: issueId, recommendation: 'Få 15-30 minutter med sollys daglig når mulig' },
-          { issue_id: issueId, recommendation: 'Inkluder vitamin D-rike matvarer som fet fisk og egg i kostholdet' }
+          { issue_id: issueId, recommendation: 'Fokuser på restitusjon og stresshåndtering med daglige pusteøvelser' },
+          { issue_id: issueId, recommendation: 'Etabler en fast døgnrytme med leggetid senest kl. 23:00' },
+          { issue_id: issueId, recommendation: 'Reduser eksponering for blått lys minst 2 timer før leggetid' }
         ]);
         
-        // Add details for vitamin D
         await supabase.from('issue_details').insert([
-          { issue_id: issueId, title: 'Serum 25(OH)D nivå', description: 'Ditt blodnivå av vitamin D er under optimal verdi', impact: 60 },
-          { issue_id: issueId, title: 'Kalsiumopptak', description: 'Lavt vitamin D påvirker kroppens evne til å absorbere kalsium', impact: 50 },
-          { issue_id: issueId, title: 'Immunfunksjon', description: 'Vitamin D-mangel kan påvirke immunforsvarets effektivitet', impact: 45 }
+          { issue_id: issueId, title: 'HRV', description: 'Redusert hjerterytmevariabilitet indikerer kronisk stressbelastning', impact: 22 },
+          { issue_id: issueId, title: 'Søvnkvalitet', description: 'Forstyrret søvnarkitektur med redusert dyp søvn', impact: 20 },
+          { issue_id: issueId, title: 'Kortisoldøgnrytme', description: 'Ubalansert kortisolproduksjon gjennom døgnet påvirker energinivået', impact: 19 }
         ]);
         
-        // Add scanner components for vitamin D deficiency
         await supabase.from('scanner_components').insert([
-          { issue_id: issueId, category: 'Vitaminer', name: '25(OH)D.dsd', level: 32 },
-          { issue_id: issueId, category: 'Vitaminer', name: '1,25(OH)2D.dsd', level: 40 },
-          { issue_id: issueId, category: 'Minerals', name: 'Kalsium.dsd', level: 48 },
-          { issue_id: issueId, category: 'Immunsystem', name: 'T-celle aktivitet.dsd', level: 55 },
-          { issue_id: issueId, category: 'Immunsystem', name: 'Cytokiner.dsd', level: 62 }
+          { issue_id: issueId, category: 'Stresshormoner', name: 'Kortisol.dsd', level: 21 },
+          { issue_id: issueId, category: 'Stresshormoner', name: 'Adrenalin.dsd', level: 19 },
+          { issue_id: issueId, category: 'Nervesystem', name: 'HRV.dsd', level: 22 },
+          { issue_id: issueId, category: 'Søvn', name: 'Melatonin.dsd', level: 17 }
         ]);
       }
 
@@ -368,7 +360,7 @@ export const seedHistoricalData = async (): Promise<void> => {
       return;
     }
 
-    // Create historical scans (past 4 weeks)
+    // Create historical scans (past 4 weeks) with the specified scores
     const today = new Date();
     const pastDates = [
       new Date(today.getTime() - (28 * 24 * 60 * 60 * 1000)), // 4 weeks ago
@@ -377,8 +369,8 @@ export const seedHistoricalData = async (): Promise<void> => {
       new Date(today.getTime() - (7 * 24 * 60 * 60 * 1000)),  // 1 week ago
     ];
 
-    // Start with scores in the 50s, gradually improving
-    const scores = [52, 58, 65, 70];
+    // Specified scores for historical data
+    const scores = [49, 55, 61, 63];
 
     for (let i = 0; i < pastDates.length; i++) {
       // Create a scan
@@ -407,14 +399,37 @@ export const seedHistoricalData = async (): Promise<void> => {
         });
 
       // Add one health issue for this historical scan
-      await supabase
-        .from('health_issues')
-        .insert({
-          scan_id: scanId,
-          name: 'Stress',
-          description: 'Høye stressnivåer påvirker flere kroppssystemer negativt.',
-          load: 80 - (i * 5) // Gradually decreasing stress levels
-        });
+      if (i === 0) {
+        // 4 weeks ago - mainly stress and severe toxin issues
+        await supabase
+          .from('health_issues')
+          .insert({
+            scan_id: scanId,
+            name: 'Tungmetaller (Miljøgiftbelastning)',
+            description: 'Betydelig tungmetallbelastning i vev og organer.',
+            load: 38
+          });
+      } else if (i === 1) {
+        // 3 weeks ago - improving but still significant issues
+        await supabase
+          .from('health_issues')
+          .insert({
+            scan_id: scanId,
+            name: 'Tungmetaller (Miljøgiftbelastning)',
+            description: 'Moderat tungmetallbelastning under gradvis bedring.',
+            load: 32
+          });
+      } else if (i === 2) {
+        // 2 weeks ago - continued improvement
+        await supabase
+          .from('health_issues')
+          .insert({
+            scan_id: scanId,
+            name: 'Tarmflora (Parasittbelastning)',
+            description: 'Tegn på lett parasittbelastning og tarmflora i ubalanse.',
+            load: 28
+          });
+      }
     }
 
     console.log('Historical data seeded successfully');

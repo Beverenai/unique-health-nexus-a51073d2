@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -8,7 +7,7 @@ import ChatButton from '@/components/ChatButton';
 import NavigationBar from '@/components/NavigationBar';
 import InsightCard from '@/components/InsightCard';
 import { supabase } from '@/integrations/supabase/client';
-import { getLatestCoherenceData, getHealthIssues, seedDemoData } from '@/services/supabaseService';
+import { getLatestCoherenceData, getHealthIssues, seedDemoData, seedHistoricalData } from '@/services/supabaseService';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
 
 const HomePage: React.FC = () => {
@@ -20,7 +19,12 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     // This will ensure we have some demo data to work with
-    seedDemoData();
+    const initializeData = async () => {
+      await seedDemoData();
+      await seedHistoricalData();
+    };
+    
+    initializeData();
   }, []);
 
   useEffect(() => {

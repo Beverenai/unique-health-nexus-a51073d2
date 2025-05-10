@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ChevronRight, ArrowRight } from 'lucide-react';
+import { ChevronRight, ArrowRight, CloudFog, Bacteria, Moon } from 'lucide-react';
 import { HealthIssue } from '@/types/supabase';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
@@ -19,10 +19,30 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
     return 'bg-danger';
   };
 
+  // Get icon based on issue name
+  const getIssueIcon = () => {
+    const name = issue.name.toLowerCase();
+    
+    if (name.includes('stress') || name.includes('søvn')) {
+      return <Moon className="text-indigo-500" size={20} />;
+    } else if (name.includes('tarm') || name.includes('parasitt')) {
+      return <Bacteria className="text-teal-500" size={20} />;
+    } else if (name.includes('tungmetall') || name.includes('miljø')) {
+      return <CloudFog className="text-blue-500" size={20} />;
+    } else {
+      return <Moon className="text-indigo-500" size={20} />;
+    }
+  };
+
   return (
     <div className="health-card mb-5 transition-all hover:shadow-md border border-gray-100 rounded-xl bg-white p-4 shadow-sm">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-lg font-medium">{issue.name}</h3>
+        <div className="flex items-center space-x-2">
+          <div className="bg-gray-50 p-1.5 rounded-full">
+            {getIssueIcon()}
+          </div>
+          <h3 className="text-lg font-medium">{issue.name}</h3>
+        </div>
       </div>
       
       <div className="mt-2 flex items-center space-x-2">
