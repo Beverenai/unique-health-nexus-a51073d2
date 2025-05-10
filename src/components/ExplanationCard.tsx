@@ -1,11 +1,12 @@
 
 import React from 'react';
 import { Info } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 const ExplanationCard: React.FC = () => {
   return (
-    <div className="mb-8 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl overflow-hidden">
-      <div className="p-4">
+    <Card className="mb-8 bg-white shadow-sm">
+      <CardContent className="p-4">
         <div className="flex items-start space-x-3">
           <div className="mt-0.5 bg-[#9b87f5]/10 p-2 rounded-full flex-shrink-0">
             <Info className="text-[#9b87f5]" size={16} />
@@ -15,8 +16,8 @@ const ExplanationCard: React.FC = () => {
             Trykk på et område for å se mer detaljer og anbefalinger.
           </p>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

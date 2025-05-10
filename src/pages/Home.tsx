@@ -5,7 +5,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { getLatestCoherenceData, getHealthIssues, seedDemoData } from '@/services/supabaseService';
 
 // Import components
-import NavigationHeader from '@/components/navigation/NavigationHeader';
 import ChatButton from '@/components/ChatButton';
 import ScanDateCard from '@/components/ScanDateCard';
 import CoherenceDisplay from '@/components/CoherenceDisplay';
@@ -13,7 +12,6 @@ import HealthIssuesCarousel from '@/components/HealthIssuesCarousel';
 import NewScanButton from '@/components/NewScanButton';
 import ExplanationCard from '@/components/ExplanationCard';
 import InsightCard from '@/components/InsightCard';
-import NavigationBar from '@/components/NavigationBar';
 
 // Hardcoded mock data to ensure it always displays
 const mockCoherenceData: CoherenceData = {
@@ -86,10 +84,10 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC]">
-      <NavigationHeader />
-      
-      <main className="container max-w-md mx-auto px-4 pt-16 pb-24">
+    <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] pt-4 pb-24">
+      <main className="container max-w-md mx-auto px-4">
+        <h1 className="text-2xl font-semibold mb-6 text-center">Oversikt</h1>
+        
         <ScanDateCard scanDate={new Date(coherenceData?.created_at || scanDate)} />
         
         <ExplanationCard />
@@ -105,7 +103,6 @@ const Home = () => {
       
       <NewScanButton />
       <ChatButton />
-      <NavigationBar />
     </div>
   );
 };

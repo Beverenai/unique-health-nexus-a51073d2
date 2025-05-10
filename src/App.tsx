@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { seedHistoricalData } from '@/services/supabaseService';
+import { AppNavigation } from "./components/navigation/AppSidebar";
 import Index from "./pages/Index";
 import History from "./pages/History";
 import Profile from "./pages/Profile";
@@ -60,13 +61,15 @@ const App = () => {
             {showOnboarding && (
               <Onboarding onComplete={() => setShowOnboarding(false)} />
             )}
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/history" element={<History />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/issue/:issueId" element={<IssueDetail />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AppNavigation>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/history" element={<History />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/issue/:issueId" element={<IssueDetail />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AppNavigation>
           </BrowserRouter>
         </div>
       </TooltipProvider>

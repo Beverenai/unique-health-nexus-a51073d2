@@ -15,7 +15,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { getHistoricalCoherenceData } from '@/services/supabaseService';
-import NavigationBar from '@/components/NavigationBar';
 import ChatButton from '@/components/ChatButton';
 
 interface HistoricalScan {
@@ -67,7 +66,7 @@ const History: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p>Laster historikk...</p>
@@ -77,9 +76,9 @@ const History: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 pb-20 pt-10">
+    <div className="min-h-screen px-6 pb-20 pt-10">
       <header className="mb-8">
-        <h1 className="text-3xl font-semibold">Historikk</h1>
+        <h1 className="text-2xl font-semibold">Historikk</h1>
         <p className="text-gray-500">Din koherens-score over tid</p>
       </header>
 
@@ -148,7 +147,6 @@ const History: React.FC = () => {
       </div>
 
       <ChatButton />
-      <NavigationBar />
     </div>
   );
 };

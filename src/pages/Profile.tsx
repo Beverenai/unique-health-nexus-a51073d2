@@ -4,7 +4,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import NavigationBar from '@/components/NavigationBar';
 import ChatButton from '@/components/ChatButton';
 import { Profile as ProfileType } from '@/types/supabase';
 
@@ -89,7 +88,7 @@ const Profile: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p>Laster profil...</p>
@@ -99,9 +98,9 @@ const Profile: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 pb-20 pt-10">
+    <div className="min-h-screen px-6 pb-20 pt-10">
       <header className="mb-8">
-        <h1 className="text-3xl font-semibold">Min Profil</h1>
+        <h1 className="text-2xl font-semibold">Min Profil</h1>
         <p className="text-gray-500">
           {isDemo ? 'Demo-modus' : 'Administrer din konto og innstillinger'}
         </p>
@@ -209,7 +208,6 @@ const Profile: React.FC = () => {
       </div>
 
       <ChatButton />
-      <NavigationBar />
     </div>
   );
 };
