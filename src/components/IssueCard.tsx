@@ -59,12 +59,14 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
         {issue.description}
       </p>
 
-      <div className="mt-3">
-        <p className="text-sm font-medium mb-1">Anbefaling:</p>
-        <p className="text-sm text-gray-600 mb-3">
-          {issue.recommendations && issue.recommendations[0]}
-        </p>
-      </div>
+      {issue.recommendations && issue.recommendations.length > 0 && (
+        <div className="mt-3">
+          <p className="text-sm font-medium mb-1">Anbefaling:</p>
+          <p className="text-sm text-gray-600 mb-3">
+            {issue.recommendations[0]}
+          </p>
+        </div>
+      )}
       
       <Button 
         onClick={onClick} 
