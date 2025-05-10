@@ -44,7 +44,7 @@ const CoherenceDisplay: React.FC<CoherenceDisplayProps> = ({ coherenceData }) =>
   
   return (
     <motion.div 
-      className="flex flex-col items-center justify-center mb-12"
+      className="flex flex-col items-center justify-center mb-16"
       variants={containerVariants}
       initial="hidden"
       animate="show"
@@ -100,8 +100,9 @@ const CoherenceDisplay: React.FC<CoherenceDisplayProps> = ({ coherenceData }) =>
         </motion.div>
       </Card>
       
+      {/* Changed from negative margin to positive margin and adjusted spacing */}
       <motion.div 
-        className="bg-white/40 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow w-11/12 -mt-4 z-10"
+        className="bg-white/40 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow w-11/12 mt-4 z-10"
         variants={itemVariants}
         transition={{ delay: 0.6 }}
       >

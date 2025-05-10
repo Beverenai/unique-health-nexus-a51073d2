@@ -30,7 +30,7 @@ const HealthDataDisplay: React.FC<HealthDataDisplayProps> = ({ coherenceData, sc
   
   return (
     <motion.div
-      className="relative mb-16 z-10"
+      className="relative mb-20 z-10" /* Increased margin-bottom to 20 */
       variants={containerAnimation}
       initial="hidden"
       animate="visible"
@@ -49,7 +49,7 @@ const HealthDataDisplay: React.FC<HealthDataDisplayProps> = ({ coherenceData, sc
       
       {/* Health summary */}
       <motion.div 
-        className="mt-6 bg-gradient-to-br from-white/70 to-white/40 backdrop-blur-sm rounded-xl border border-white/40 shadow-sm p-4"
+        className="mt-8 bg-gradient-to-br from-white/70 to-white/40 backdrop-blur-sm rounded-xl border border-white/40 shadow-sm p-4"
         variants={childAnimation}
         transition={{ duration: 0.4, delay: 0.3 }}
       >

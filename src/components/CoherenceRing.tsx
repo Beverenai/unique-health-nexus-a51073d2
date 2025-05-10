@@ -43,16 +43,17 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
   const textColorClass = getModernTextColor(score);
   const statusLabel = getStatusLabel(score);
   
+  // Adjusted sizes to be smaller
   const sizeClasses = {
-    sm: 'w-24 h-24',
-    md: 'w-40 h-40',
-    lg: 'w-56 h-56'
+    sm: 'w-20 h-20',
+    md: 'w-36 h-36',
+    lg: 'w-48 h-48' // Reduced from w-56 h-56
   };
   
   const textSizeClasses = {
     sm: 'text-xl',
-    md: 'text-3xl',
-    lg: 'text-5xl'
+    md: 'text-2xl',
+    lg: 'text-4xl' // Reduced from text-5xl
   };
 
   useEffect(() => {
@@ -207,7 +208,7 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
                 {score}%
               </motion.div>
               <motion.div 
-                className="text-gray-500 mt-1 text-sm"
+                className="text-gray-500 mt-1 text-xs" /* Reduced from text-sm */
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.7 }}
@@ -225,7 +226,7 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
       
       {/* Status label below ring */}
       <motion.div 
-        className={cn("mt-4 px-4 py-2 rounded-full bg-white shadow-sm text-sm font-medium", textColorClass)}
+        className={cn("mt-2 px-3 py-1 rounded-full bg-white shadow-sm text-xs font-medium", textColorClass)} /* Reduced size and spacing */
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8 }}
@@ -235,7 +236,7 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
       
       {message && (
         <motion.p 
-          className="text-gray-600 text-center max-w-sm mt-4 text-sm"
+          className="text-gray-600 text-center max-w-sm mt-2 text-xs" /* Reduced from text-sm and mt-4 */
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9 }}

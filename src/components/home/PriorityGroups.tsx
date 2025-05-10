@@ -62,7 +62,7 @@ const PriorityGroups: React.FC<PriorityGroupsProps> = ({ healthIssues }) => {
 
   return (
     <motion.div 
-      className="mt-14 pt-4 space-y-4"
+      className="mt-20 pt-6 space-y-4" /* Increased top margin and padding */
       variants={containerVariants}
       initial="hidden"
       animate="visible"
