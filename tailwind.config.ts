@@ -19,6 +19,9 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -74,12 +77,20 @@ export default {
 				danger: {
 					DEFAULT: '#EA384C',
 					dark: '#D02D40'
-				}
+				},
+				unique: {
+					primary: '#9b87f5',
+					secondary: '#7E69AB',
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				'3xl': '1.5rem',
+			},
+			boxShadow: {
+				'glass': '0 8px 32px rgba(0, 0, 0, 0.05)',
 			},
 			keyframes: {
 				'accordion-down': {
@@ -106,14 +117,22 @@ export default {
 				'breathe': {
 					'0%, 100%': { transform: 'scale(1)' },
 					'50%': { transform: 'scale(1.05)' }
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'pulse-ring': 'pulse-ring 3s infinite',
-				'breathe': 'breathe 4s infinite ease-in-out'
-			}
+				'breathe': 'breathe 4s infinite ease-in-out',
+				'float': 'float 6s infinite ease-in-out'
+			},
+			backdropBlur: {
+				xs: '2px',
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

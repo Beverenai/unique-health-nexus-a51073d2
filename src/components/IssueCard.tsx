@@ -25,20 +25,20 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
     return 'text-[#EA384C]';  // Red for high load
   };
 
-  // Get background color - flatter design
+  // Get background color - flatter design with frosted glass effect
   const getBackgroundColor = (name: string): string => {
     const lowerName = name.toLowerCase();
     
     if (lowerName.includes('nervesystem') || lowerName.includes('nakkevirvler')) {
-      return 'bg-blue-50';
+      return 'bg-blue-50/80';
     } else if (lowerName.includes('tarm') || lowerName.includes('bakterie') || lowerName.includes('flora')) {
-      return 'bg-green-50';
+      return 'bg-green-50/80';
     } else if (lowerName.includes('hormon') || lowerName.includes('melatonin')) {
-      return 'bg-purple-50';
+      return 'bg-purple-50/80';
     } else if (lowerName.includes('hjerte') || lowerName.includes('kardio')) {
-      return 'bg-red-50';
+      return 'bg-red-50/80';
     } else {
-      return 'bg-slate-50';
+      return 'bg-slate-50/80';
     }
   };
 
@@ -84,8 +84,10 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
 
   return (
     <div 
-      className={`health-card mb-5 border border-gray-100 rounded-xl p-5 shadow-sm ${getBackgroundColor(issue.name)}`}
-      style={{ borderRadius: "20px" }}
+      className={cn(
+        "mb-5 border border-gray-100/20 backdrop-blur-sm rounded-3xl p-5 shadow-sm transition-all hover:shadow-md",
+        getBackgroundColor(issue.name)
+      )}
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-3">
@@ -115,7 +117,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
           {relatedSystems.map(system => (
             <span 
               key={system}
-              className="text-xs px-2.5 py-1.5 bg-white shadow-sm rounded-full text-gray-600"
+              className="text-xs px-2.5 py-1.5 bg-white/70 shadow-sm rounded-full text-gray-600"
             >
               {system}
             </span>
@@ -135,7 +137,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
       <Button 
         onClick={onClick} 
         variant="outline" 
-        className="w-full mt-2 justify-between bg-white text-gray-800 border border-gray-200 hover:bg-gray-50 rounded-xl"
+        className="w-full mt-2 justify-between bg-white text-gray-800 border border-gray-100/40 hover:bg-gray-50 rounded-xl"
       >
         <span>Se detaljer</span>
         <ArrowRight size={16} />

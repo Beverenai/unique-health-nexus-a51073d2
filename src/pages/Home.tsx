@@ -1,20 +1,19 @@
-
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
 import { supabase } from '@/integrations/supabase/client';
-import { getLatestCoherenceData, getHealthIssues, seedDemoData, seedHistoricalData } from '@/services/supabaseService';
+import { getLatestCoherenceData, getHealthIssues, seedDemoData } from '@/services/supabaseService';
 
 // Import components
+import NavigationHeader from '@/components/navigation/NavigationHeader';
 import ChatButton from '@/components/ChatButton';
-import NavigationBar from '@/components/NavigationBar';
-import InsightCard from '@/components/InsightCard';
 import IssueDetailDialog from '@/components/IssueDetailDialog';
 import ScanDateCard from '@/components/ScanDateCard';
 import CoherenceDisplay from '@/components/CoherenceDisplay';
 import HealthIssuesCarousel from '@/components/HealthIssuesCarousel';
 import NewScanButton from '@/components/NewScanButton';
 import ExplanationCard from '@/components/ExplanationCard';
+import InsightCard from '@/components/InsightCard';
 
 // Hardcoded mock data to ensure it always displays
 const mockCoherenceData: CoherenceData = {
@@ -94,10 +93,10 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <NavigationBar />
+    <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC]">
+      <NavigationHeader />
       
-      <main className="container max-w-md mx-auto px-4 pt-4 pb-24">
+      <main className="container max-w-md mx-auto px-4 pt-16 pb-24">
         <ScanDateCard scanDate={new Date(coherenceData?.created_at || scanDate)} />
         
         <ExplanationCard />

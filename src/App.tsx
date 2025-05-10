@@ -53,20 +53,22 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          {showOnboarding && (
-            <Onboarding onComplete={() => setShowOnboarding(false)} />
-          )}
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/issue/:issueId" element={<IssueDetail />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <div className="font-sans bg-gradient-to-b from-white to-[#F8F8FC]">
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            {showOnboarding && (
+              <Onboarding onComplete={() => setShowOnboarding(false)} />
+            )}
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/issue/:issueId" element={<IssueDetail />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </div>
       </TooltipProvider>
     </QueryClientProvider>
   );
