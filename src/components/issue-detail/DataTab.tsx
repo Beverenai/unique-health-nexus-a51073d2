@@ -6,7 +6,7 @@ import { ScannerComponent } from '@/types/supabase';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import ScannerComponentTable from '@/components/ScannerComponentTable';
-import SystemAnalysisSection from '@/components/SystemAnalysisSection';
+import { SystemAnalysisSection } from '@/components/system-analysis';
 
 interface DataTabProps {
   scannerComponents: ScannerComponent[];
