@@ -3,12 +3,14 @@ import React from 'react';
 import { IssueDetail } from '@/types/supabase';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 interface DetailCardProps {
   detail: IssueDetail;
+  index?: number;
 }
 
-const DetailCard: React.FC<DetailCardProps> = ({ detail }) => {
+const DetailCard: React.FC<DetailCardProps> = ({ detail, index = 0 }) => {
   // Determine color based on the impact
   const getProgressColor = (impact: number): string => {
     if (impact < 30) return 'bg-[#77C17E]';
@@ -23,7 +25,12 @@ const DetailCard: React.FC<DetailCardProps> = ({ detail }) => {
   };
 
   return (
-    <div className="bg-white/80 rounded-xl p-4 shadow-sm border border-gray-100/20">
+    <motion.div 
+      className="bg-white/80 rounded-xl p-4 shadow-sm border border-gray-100/20"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.1 }}
+    >
       <div className="flex items-center justify-between mb-2">
         <h4 className="font-medium text-base">{detail.title}</h4>
         <span className={cn("font-medium text-sm", getTextColor(detail.impact))}>
@@ -39,7 +46,7 @@ const DetailCard: React.FC<DetailCardProps> = ({ detail }) => {
       <p className="text-sm text-gray-600">
         {detail.description}
       </p>
-    </div>
+    </motion.div>
   );
 };
 
