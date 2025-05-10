@@ -62,6 +62,32 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, getContextBasedIn
     return format(new Date(timestamp), 'HH:mm');
   };
 
+  // Helper to highlight any references to health data in the AI response
+  const renderMessageWithHighlights = (message: string) => {
+    // This is a simple version - in a real app, you might want to use regex or a more sophisticated approach
+    const scorePattern = /(\d{1,3})%/g;
+    const healthTerms = ['koherens', 'tarm', 'fordøyelse', 'stress', 'avgiftning', 'immunforsvar'];
+    
+    let highlightedMessage = message;
+    
+    // Highlight percentage scores
+    highlightedMessage = highlightedMessage.replace(
+      scorePattern, 
+      '<span class="font-medium text-primary">$1%</span>'
+    );
+    
+    // Highlight health terms
+    healthTerms.forEach(term => {
+      const termPattern = new RegExp(`(${term})`, 'gi');
+      highlightedMessage = highlightedMessage.replace(
+        termPattern,
+        '<span class="font-medium text-primary">$1</span>'
+      );
+    });
+    
+    return <p className="text-sm" dangerouslySetInnerHTML={{ __html: highlightedMessage }} />;
+  };
+
   return (
     <div className="flex-1 overflow-y-auto p-4 bg-white/50">
       {messages.length === 0 ? (
@@ -92,7 +118,11 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, getContextBasedIn
                     : 'bg-gray-100 rounded-tl-none'
                 }`}
               >
-                <p className="text-sm">{message.message}</p>
+                {message.is_user ? (
+                  <p className="text-sm">{message.message}</p>
+                ) : (
+                  renderMessageWithHighlights(message.message)
+                )}
                 <p className="text-xs text-gray-400 mt-1 text-right">
                   {formatTimestamp(message.created_at)}
                 </p>

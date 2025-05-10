@@ -10,7 +10,7 @@ const getUserId = async (): Promise<string> => {
   return data.user?.id || DEMO_USER_ID;
 };
 
-export const sendChatMessage = async (message: string, isUser = true): Promise<{success: boolean, data?: any}> => {
+export const sendChatMessage = async (message: string, context: any = null, isUser = true): Promise<{success: boolean, data?: any}> => {
   try {
     const userId = await getUserId();
     
@@ -20,7 +20,7 @@ export const sendChatMessage = async (message: string, isUser = true): Promise<{
         user_id: userId,
         message,
         is_user: isUser,
-        context: null
+        context: context
       })
       .select();
 
@@ -55,5 +55,38 @@ export const getChatMessages = async (): Promise<any[]> => {
   } catch (error) {
     console.error('Error in getChatMessages:', error);
     return [];
+  }
+};
+
+export const sendMessageToAI = async (message: string, context: any = null): Promise<string> => {
+  try {
+    const userId = await getUserId();
+
+    // First save the user message
+    await sendChatMessage(message, context, true);
+
+    // Send the message to the AI via our edge function
+    const response = await fetch('https://jondlbgouhsdedhdnwpx.functions.supabase.co/chat-with-context', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`
+      },
+      body: JSON.stringify({
+        message,
+        context,
+        userId
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error from API: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.message;
+  } catch (error) {
+    console.error('Error sending message to AI:', error);
+    return "Beklager, det oppsto en feil ved kommunikasjon med AI-assistenten.";
   }
 };

@@ -1,10 +1,10 @@
-
 import { useState, useEffect } from 'react';
-import { getChatMessages, sendChatMessage } from '@/services/chatService';
+import { getChatMessages, sendChatMessage, sendMessageToAI } from '@/services/chatService';
 import { getHealthIssues } from '@/services/healthIssueService';
+import { getHistoricalCoherenceData } from '@/services/cohereceService';
 import { toast } from 'sonner';
 import { ChatMessage, HealthIssue } from '@/types/supabase';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 export const useChatMessages = (isOpen: boolean) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -12,14 +12,17 @@ export const useChatMessages = (isOpen: boolean) => {
   const [loading, setLoading] = useState(false);
   const [healthSummary, setHealthSummary] = useState<string>('');
   const [healthTopics, setHealthTopics] = useState<string[]>([]);
+  const [contextData, setContextData] = useState<any>(null);
   const location = useLocation();
+  const params = useParams();
 
   useEffect(() => {
     if (isOpen) {
       fetchMessages();
       fetchHealthSummary();
+      fetchContextData();
     }
-  }, [isOpen]);
+  }, [isOpen, location.pathname]);
 
   const fetchMessages = async () => {
     try {
@@ -42,6 +45,44 @@ export const useChatMessages = (isOpen: boolean) => {
       }
     } catch (error) {
       console.error('Error fetching health summary:', error);
+    }
+  };
+
+  const fetchContextData = async () => {
+    const path = location.pathname;
+    let context: any = {
+      route: path
+    };
+    
+    try {
+      // Get route-specific data for context
+      if (path === '/history') {
+        const coherenceData = await getHistoricalCoherenceData();
+        context.coherenceData = coherenceData;
+      } else if (path.includes('/issue/')) {
+        const issueId = params.issueId;
+        if (issueId) {
+          const { data } = await supabase
+            .from('health_issues')
+            .select('*')
+            .eq('id', issueId)
+            .single();
+          
+          context.issueDetails = data;
+        }
+      } else if (path.includes('/health-system/')) {
+        const systemId = params.systemId;
+        // For demo, we're using the mock data from HealthSystemGrid
+        // In a real app, this would fetch from the database
+        context.systemDetails = {
+          area: "Health System " + systemId,
+          symptoms: "Various symptoms related to this system"
+        };
+      }
+
+      setContextData(context);
+    } catch (error) {
+      console.error('Error fetching context data:', error);
     }
   };
   
@@ -189,24 +230,23 @@ export const useChatMessages = (isOpen: boolean) => {
     setLoading(true);
     
     try {
-      // Send user message
-      await sendChatMessage(inputValue, true);
+      // Send user message with context data
+      const userMessage = inputValue;
       setInputValue('');
       
-      // Fetch all messages again to update UI
+      // Fetch all messages again to update UI with user's message
       await fetchMessages();
       
-      // In a real app, you'd have an AI response here
-      // For demo purposes, we'll just add a simple response after a delay
-      setTimeout(async () => {
-        await sendChatMessage('Takk for din melding. Dette er en automatisk respons siden dette er en demo.', false);
-        await fetchMessages();
-        setLoading(false);
-      }, 1500);
+      // Get AI response
+      const aiResponse = await sendMessageToAI(userMessage, contextData);
+      
+      // Fetch all messages again to update UI with AI's response
+      await fetchMessages();
       
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Det oppsto en feil ved sending av meldingen');
+    } finally {
       setLoading(false);
     }
   };
