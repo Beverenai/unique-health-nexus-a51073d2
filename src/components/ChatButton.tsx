@@ -34,8 +34,8 @@ const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
         <Button 
           onClick={toggleChat} 
           className={cn(
-            "w-14 h-14 rounded-full shadow-lg flex items-center justify-center",
-            isOpen ? "bg-gray-700" : "bg-primary"
+            "w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all",
+            isOpen ? "bg-gray-700 hover:bg-gray-800" : "bg-primary hover:bg-primary/90 animate-pulse"
           )}
         >
           {isOpen ? (
@@ -44,6 +44,11 @@ const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
             <MessageSquare size={24} />
           )}
         </Button>
+        {!isOpen && (
+          <div className="absolute -top-12 right-0 bg-primary text-white text-xs py-1 px-3 rounded-full whitespace-nowrap shadow-md">
+            Spør om helsedata
+          </div>
+        )}
       </div>
 
       {isOpen && (

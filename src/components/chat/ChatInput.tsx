@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Send } from 'lucide-react';
 
 interface ChatInputProps {
@@ -11,33 +11,35 @@ interface ChatInputProps {
   onSubmit: (e: React.FormEvent) => void;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ 
-  inputValue, 
-  loading, 
-  onInputChange, 
-  onSubmit 
+const ChatInput: React.FC<ChatInputProps> = ({
+  inputValue,
+  loading,
+  onInputChange,
+  onSubmit
 }) => {
   return (
-    <form onSubmit={onSubmit} className="flex">
-      <Input 
-        type="text" 
-        placeholder="Skriv en melding..." 
-        className="flex-grow rounded-full border focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
-        value={inputValue}
-        onChange={onInputChange}
-        disabled={loading}
-      />
-      <Button 
-        type="submit" 
-        className="ml-2 rounded-full w-10 h-10 p-0 flex items-center justify-center"
-        disabled={loading || !inputValue.trim()}
-      >
-        {loading ? (
-          <div className="w-5 h-5 border-t-2 border-r-2 border-white rounded-full animate-spin" />
-        ) : (
-          <Send size={18} />
-        )}
-      </Button>
+    <form 
+      onSubmit={onSubmit} 
+      className="p-3 border-t bg-white"
+    >
+      <div className="relative">
+        <Input
+          placeholder="Skriv din melding..."
+          value={inputValue}
+          onChange={onInputChange}
+          disabled={loading}
+          className="pr-10 bg-gray-50 border-gray-200 focus-visible:ring-primary"
+        />
+        <Button
+          type="submit"
+          size="icon"
+          variant="ghost"
+          disabled={loading || !inputValue.trim()}
+          className="absolute right-0 top-0 h-full rounded-l-none text-primary hover:text-primary hover:bg-transparent"
+        >
+          <Send size={18} className={loading ? 'opacity-50' : 'opacity-100'} />
+        </Button>
+      </div>
     </form>
   );
 };

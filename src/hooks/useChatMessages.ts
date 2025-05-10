@@ -10,6 +10,7 @@ export const useChatMessages = (isOpen: boolean) => {
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [healthSummary, setHealthSummary] = useState<string>('');
+  const [healthTopics, setHealthTopics] = useState<string[]>([]);
   const location = useLocation();
 
   useEffect(() => {
@@ -34,6 +35,9 @@ export const useChatMessages = (isOpen: boolean) => {
       if (issues.length > 0) {
         const sortedIssues = [...issues].sort((a, b) => b.load - a.load);
         setHealthSummary(generateInsightSummary(sortedIssues));
+        
+        // Get top health topics for suggesting questions
+        setHealthTopics(getTopHealthTopics(sortedIssues));
       }
     } catch (error) {
       console.error('Error fetching health summary:', error);
@@ -51,24 +55,54 @@ export const useChatMessages = (isOpen: boolean) => {
     const issueNames = topIssues.map(issue => issue.name.toLowerCase());
     
     if (issueNames.some(name => name.includes('tarm')) && 
-        issueNames.some(name => name.includes('hormon'))) {
-      return "tarmhelse og hormonbalanse";
+        issueNames.some(name => name.includes('avgiftning'))) {
+      return "tarmhelse og avgiftningssystem";
     }
     
     if (issueNames.some(name => name.includes('tarm'))) {
       return "tarmhelse og fordøyelse";
     } 
     
-    if (issueNames.some(name => name.includes('hormon'))) {
-      return "hormonelle utfordringer";
+    if (issueNames.some(name => name.includes('avgiftning')) || 
+        issueNames.some(name => name.includes('kjemikalie'))) {
+      return "avgiftning og miljøbelastning";
     }
     
-    if (issueNames.some(name => name.includes('nervesystem'))) {
-      return "nervesystemet og mental balanse";
+    if (issueNames.some(name => name.includes('stress'))) {
+      return "stresshåndtering og mental balanse";
+    }
+
+    if (issueNames.some(name => name.includes('nakke')) || 
+        issueNames.some(name => name.includes('rygg'))) {
+      return "muskel- og skjelettsystemet";
     }
     
     // Generic fallback
     return "kroppslige utfordringer";
+  };
+
+  const getTopHealthTopics = (issues: HealthIssue[]): string[] => {
+    // Extract main topics from health issues
+    const topics = issues.slice(0, 5).map(issue => {
+      const name = issue.name.toLowerCase();
+      
+      if (name.includes('tarm') || name.includes('fordøyelse')) {
+        return 'fordøyelse';
+      } else if (name.includes('avgiftning') || name.includes('kjemikalie')) {
+        return 'avgiftning';
+      } else if (name.includes('stress') || name.includes('nervesystem')) {
+        return 'stress';
+      } else if (name.includes('nakke') || name.includes('rygg') || name.includes('kjeve')) {
+        return 'muskel-skjelett';
+      } else if (name.includes('sopp') || name.includes('mugg') || name.includes('parasitt')) {
+        return 'mikrobiell balanse';
+      } else {
+        return name.split(' ')[0];
+      }
+    });
+    
+    // Remove duplicates
+    return [...new Set(topics)];
   };
 
   const getContextBasedIntro = () => {
@@ -80,7 +114,9 @@ export const useChatMessages = (isOpen: boolean) => {
     } else if (path === '/profile') {
       return 'Dette er din profilside. Jeg kan hjelpe deg med innstillinger eller svare på spørsmål om ditt medlemskap.';
     } else if (path.includes('/issue/')) {
-      return 'Jeg ser at du utforsker en helseinsikt. Jeg kan hjelpe deg med å forstå hva dette betyr for deg.';
+      return 'Jeg ser at du utforsker en helseinsikt. Jeg kan hjelpe deg med å forstå hva dette betyr for deg og hvilke tiltak som kan være nyttige.';
+    } else if (path.includes('/priority/')) {
+      return 'Jeg kan hjelpe deg med å forstå disse helseprioriteringene og gi råd om hvordan du kan håndtere dem.';
     } else {
       // Home page with health summary
       if (healthSummary) {
@@ -89,6 +125,55 @@ export const useChatMessages = (isOpen: boolean) => {
         return 'Hei! Jeg er din personlige helseassistent. Hvordan kan jeg hjelpe deg i dag?';
       }
     }
+  };
+
+  const getSuggestedQuestions = (): string[] => {
+    const path = location.pathname;
+    
+    // Default questions
+    const defaultQuestions = [
+      "Hvordan kan jeg forbedre min generelle helse?",
+      "Hva betyr koherens-score?",
+      "Hvordan bruker jeg denne appen?"
+    ];
+    
+    // If we have health topics, suggest relevant questions
+    if (healthTopics.length > 0) {
+      const topicQuestions = healthTopics.map(topic => {
+        switch (topic) {
+          case 'fordøyelse':
+            return "Hvilke matvarer kan støtte tarmhelsen min?";
+          case 'avgiftning':
+            return "Hvordan kan jeg redusere kjemikaliebelastningen min?";
+          case 'stress':
+            return "Hvilke øvelser kan hjelpe med stresshåndtering?";
+          case 'muskel-skjelett':
+            return "Hvilke øvelser kan hjelpe med nakke- og ryggspenninger?";
+          case 'mikrobiell balanse':
+            return "Hvordan kan jeg støtte kroppens naturlige forsvar mot parasitter og sopp?";
+          default:
+            return `Hva kan jeg gjøre for å bedre ${topic}?`;
+        }
+      });
+      
+      return topicQuestions.slice(0, 3);
+    }
+    
+    if (path === '/history') {
+      return [
+        "Hva betyr trenden i min koherens-score?",
+        "Er forbedringene mine på rett spor?",
+        "Hvordan kan jeg forstå dataene mine over tid?"
+      ];
+    } else if (path.includes('/issue/') || path.includes('/priority/')) {
+      return [
+        "Hva er de beste tiltakene for denne tilstanden?",
+        "Hvordan lang tid tar det å se forbedringer?",
+        "Hvilke kosttilskudd kan hjelpe med dette?"
+      ];
+    }
+    
+    return defaultQuestions;
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,6 +216,7 @@ export const useChatMessages = (isOpen: boolean) => {
     loading,
     handleInputChange,
     handleSubmit,
-    getContextBasedIntro
+    getContextBasedIntro,
+    getSuggestedQuestions
   };
 };
