@@ -5,6 +5,7 @@ import { getHistoricalCoherenceData } from '@/services/cohereceService';
 import { toast } from 'sonner';
 import { ChatMessage, HealthIssue } from '@/types/supabase';
 import { useLocation, useParams } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useChatMessages = (isOpen: boolean) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);

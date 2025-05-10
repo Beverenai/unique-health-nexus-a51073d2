@@ -84,6 +84,10 @@ export const sendMessageToAI = async (message: string, context: any = null): Pro
     }
 
     const data = await response.json();
+    
+    // Save the AI response to the database
+    await sendChatMessage(data.message, context, false);
+    
     return data.message;
   } catch (error) {
     console.error('Error sending message to AI:', error);

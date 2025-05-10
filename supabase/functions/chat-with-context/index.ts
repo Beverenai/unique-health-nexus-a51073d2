@@ -63,22 +63,6 @@ serve(async (req) => {
 
     const aiResponse = response.data.choices[0]?.message?.content || "Beklager, jeg kunne ikke generere et svar.";
 
-    // Save the AI response to the database
-    if (userId) {
-      const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
-      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      
-      await supabase
-        .from('chat_messages')
-        .insert({ 
-          user_id: userId,
-          message: aiResponse,
-          is_user: false,
-          context: context
-        });
-    }
-
     return new Response(
       JSON.stringify({
         message: aiResponse
