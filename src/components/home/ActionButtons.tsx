@@ -1,15 +1,11 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, ChevronDown, ChevronUp, InfoIcon, Layers, Settings } from 'lucide-react';
+import { ArrowRight, InfoIcon, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-interface ActionButtonsProps {
-  showHealthTable: boolean;
-  toggleHealthTable: () => void;
-}
-
-const ActionButtons: React.FC<ActionButtonsProps> = ({ showHealthTable, toggleHealthTable }) => {
+const ActionButtons: React.FC = () => {
   const navigate = useNavigate();
   
   const containerVariants = {
@@ -62,33 +58,9 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ showHealthTable, toggleHe
             <div className="bg-[#9b87f5]/10 p-1.5 rounded-full">
               <InfoIcon size={16} className="text-[#9b87f5]" />
             </div>
-            <span>Se alle innsikter</span>
+            <span>Se detaljert systemanalyse</span>
           </div>
           <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-        </Button>
-      </motion.div>
-      
-      <motion.div 
-        variants={itemVariants}
-        whileHover={buttonHoverStyle}
-        whileTap={{ scale: 0.98 }}
-      >
-        <Button 
-          variant="outline" 
-          className="w-full flex justify-between items-center bg-white/70 hover:bg-white/90 backdrop-blur-sm border-white/40 shadow-sm hover:shadow"
-          onClick={toggleHealthTable}
-        >
-          <div className="flex items-center gap-2">
-            <div className="bg-[#9b87f5]/10 p-1.5 rounded-full">
-              <Settings size={16} className="text-[#9b87f5]" />
-            </div>
-            <span>{showHealthTable ? "Skjul helseinformasjon" : "Vis detaljert helseinformasjon"}</span>
-          </div>
-          {showHealthTable ? (
-            <ChevronUp size={16} className="text-gray-500" />
-          ) : (
-            <ChevronDown size={16} className="text-gray-500" />
-          )}
         </Button>
       </motion.div>
       

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import HealthSystemCards from '@/components/health/HealthSystemCards';
@@ -73,6 +74,8 @@ interface ExpandableHealthTableProps {
   isVisible: boolean;
 }
 
+// NOTE: This component is deprecated and no longer used in the application.
+// Health information has been moved to the Insights page.
 const ExpandableHealthTable: React.FC<ExpandableHealthTableProps> = ({ isVisible }) => {
   if (!isVisible) return null;
   
