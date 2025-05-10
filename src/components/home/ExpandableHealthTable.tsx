@@ -1,7 +1,9 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import HealthSystemCards from '@/components/health/HealthSystemCards';
+
+// Note: This component is no longer actively used as the health information 
+// has been moved to the Insights page. Keeping for reference.
 
 // Sample health information data - using the same structure as the original table
 const healthInfoData = [

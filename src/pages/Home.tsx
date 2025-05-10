@@ -7,7 +7,6 @@ import HomeHeader from '@/components/home/HomeHeader';
 import HealthDataDisplay from '@/components/home/HealthDataDisplay';
 import PriorityGroups from '@/components/home/PriorityGroups';
 import ActionButtons from '@/components/home/ActionButtons';
-import ExpandableHealthTable from '@/components/home/ExpandableHealthTable';
 import RecentFindings from '@/components/home/RecentFindings';
 
 // Hardcoded mock data to ensure it always displays
@@ -72,7 +71,6 @@ const Home = () => {
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
   const [scanDate, setScanDate] = useState<Date>(new Date());
   const [userName, setUserName] = useState<string>("Demo");
-  const [showHealthTable, setShowHealthTable] = useState<boolean>(false);
   
   // Fetch real data from Supabase when available
   useEffect(() => {
@@ -114,18 +112,13 @@ const Home = () => {
     fetchData();
   }, []);
 
-  const toggleHealthTable = () => {
-    setShowHealthTable(!showHealthTable);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] pt-4 pb-24 subtle-pattern">
       <main className="container max-w-md mx-auto px-4">
         <HomeHeader userName={userName} />
         <HealthDataDisplay coherenceData={coherenceData} scanDate={scanDate} />
         <PriorityGroups healthIssues={healthIssues} />
-        <ActionButtons showHealthTable={showHealthTable} toggleHealthTable={toggleHealthTable} />
-        <ExpandableHealthTable isVisible={showHealthTable} />
+        <ActionButtons />
         <RecentFindings healthIssues={healthIssues} />
       </main>
     </div>
