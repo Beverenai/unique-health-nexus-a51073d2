@@ -30,7 +30,7 @@ const HealthDataDisplay: React.FC<HealthDataDisplayProps> = ({ coherenceData, sc
   
   return (
     <motion.div
-      className="relative mb-10 z-10"
+      className="relative mb-16 z-10"
       variants={containerAnimation}
       initial="hidden"
       animate="visible"

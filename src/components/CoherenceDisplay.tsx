@@ -44,12 +44,12 @@ const CoherenceDisplay: React.FC<CoherenceDisplayProps> = ({ coherenceData }) =>
   
   return (
     <motion.div 
-      className="flex flex-col items-center justify-center mb-8"
+      className="flex flex-col items-center justify-center mb-12"
       variants={containerVariants}
       initial="hidden"
       animate="show"
     >
-      <Card className="w-full overflow-visible bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-lg border-white/40 shadow-lg rounded-3xl relative z-10">
+      <Card className="w-full overflow-visible bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-lg border-white/40 shadow-lg rounded-3xl relative z-20">
         <motion.div className="p-6 flex flex-col items-center" variants={itemVariants}>
           <div className="flex items-center justify-between w-full mb-2">
             <h2 className="text-lg font-semibold text-gray-800">Koherensnivå</h2>
@@ -101,7 +101,7 @@ const CoherenceDisplay: React.FC<CoherenceDisplayProps> = ({ coherenceData }) =>
       </Card>
       
       <motion.div 
-        className="bg-white/40 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow w-11/12 -mt-6 z-0"
+        className="bg-white/40 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow w-11/12 -mt-4 z-10"
         variants={itemVariants}
         transition={{ delay: 0.6 }}
       >
