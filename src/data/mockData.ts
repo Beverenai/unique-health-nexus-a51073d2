@@ -1,6 +1,43 @@
 
 import { CoherenceData, HealthIssue } from '../types/health';
 
+// Mock health issues for development
+export const mockHealthIssues: HealthIssue[] = [
+  {
+    id: "bacterial",
+    name: "Bakteriell ubalanse",
+    description: "Høy bakterieaktivitet i tarmen påvirker fordøyelsen og energinivået.",
+    load: 75, // 0-100% (high - red)
+    recommendations: [
+      "Øk inntaket av probiotika og prebiotiske fibre",
+      "Ta probiotiske tilskudd daglig i 6–8 uker",
+      "Reduser stressnivået ved hjelp av meditasjon eller yoga"
+    ],
+  },
+  {
+    id: "toxins",
+    name: "Miljøgiftbelastning",
+    description: "Forhøyede tungmetallnivåer påvirker nervesystem og generell energi.",
+    load: 55, // 0-100% (medium - yellow)
+    recommendations: [
+      "Støtt avgiftningssystemet med antioksidanter og mineraler",
+      "Øk inntaket av klorofyllrike matvarer",
+      "Vurder regelmessig detoksifikasjonsprotokoller"
+    ],
+  },
+  {
+    id: "fungal",
+    name: "Soppbelastning",
+    description: "Mulig soppvekst påvirker luftveiene og kan forårsake tretthet.",
+    load: 45, // 0-100% (medium - yellow)
+    recommendations: [
+      "Reduser sukkerinntaket og vurder anti-fungal kosthold",
+      "Unngå fuktige miljøer som kan fremme soppvekst",
+      "Støtt immunsystemet med spesifikke urter og næringsstoffer"
+    ],
+  }
+];
+
 export const mockCoherenceData: CoherenceData = {
   score: 72, // 0-100%
   message: "Din kropp viser god totalbalanse, men det er rom for forbedring.",
