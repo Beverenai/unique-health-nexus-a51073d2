@@ -27,7 +27,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
       return <Brain className="text-blue-500" size={20} />;
     } else if (name.includes('tarm') || name.includes('bakterie')) {
       return <LeafyGreen className="text-teal-500" size={20} />;
-    } else if (name.includes('hormon') || name.includes('stress')) {
+    } else if (name.includes('hormon')) {
       return <Moon className="text-purple-500" size={20} />;
     } else if (name.includes('tungmetall') || name.includes('miljø')) {
       return <CloudFog className="text-blue-500" size={20} />;

@@ -237,13 +237,13 @@ export const seedDemoData = async (): Promise<void> => {
       {
         scan_id: scanId,
         name: 'Tarmflora i ubalanse',
-        description: 'Flere bakterielle mønstre tyder på redusert mangfold og lett inflammasjon.',
+        description: 'Bakterielle mønstre viser redusert mangfold og lett inflammasjon.',
         load: 45
       },
       {
         scan_id: scanId,
-        name: 'Milde hormonelle avvik',
-        description: 'Skanningen indikerer svingninger i kortisol og østrogen-aktivitet.',
+        name: 'Hormonelle svingninger',
+        description: 'Skanningen indikerer ubalanser i kortisol og østrogen.',
         load: 38
       },
       {
@@ -270,13 +270,13 @@ export const seedDemoData = async (): Promise<void> => {
       // Add recommendations based on the issue
       if (issue.name.includes('Tarmflora')) {
         await supabase.from('issue_recommendations').insert([
-          { issue_id: issueId, recommendation: 'Fokuser på å styrke tarmfloraen med fermentert mat eller probiotika' },
-          { issue_id: issueId, recommendation: 'Øk inntaket av fiberrike matvarer og prebiotika' },
+          { issue_id: issueId, recommendation: 'Spis mer fermentert mat og probiotika' },
+          { issue_id: issueId, recommendation: 'Øk inntaket av fiberrike matvarer' },
           { issue_id: issueId, recommendation: 'Vurder å redusere inntak av prosessert mat' }
         ]);
         
         await supabase.from('issue_details').insert([
-          { issue_id: issueId, title: 'Bakteriell mangfold', description: 'Redusert bakterielt mangfold i tarmfloraen', impact: 45 },
+          { issue_id: issueId, title: 'Bakterielt mangfold', description: 'Redusert bakteriell diversitet i tarmfloraen', impact: 45 },
           { issue_id: issueId, title: 'Inflammasjon', description: 'Lett inflammatorisk respons i tarmslimhinnen', impact: 40 },
           { issue_id: issueId, title: 'Tarmpermeabilitet', description: 'Svakt forhøyet tarmpermeabilitet', impact: 35 }
         ]);
@@ -287,17 +287,17 @@ export const seedDemoData = async (): Promise<void> => {
           { issue_id: issueId, category: 'Tarmhelse', name: 'Slimhinnefunksjon.dsd', level: 35 }
         ]);
       }
-      else if (issue.name.includes('hormonelle')) {
+      else if (issue.name.includes('Hormonelle')) {
         await supabase.from('issue_recommendations').insert([
-          { issue_id: issueId, recommendation: 'Prioriter jevn søvnrytme og stressreduksjon for hormonell balanse' },
+          { issue_id: issueId, recommendation: 'Prioriter jevn søvnrytme og stressreduksjon' },
           { issue_id: issueId, recommendation: 'Vurder adaptogene urter som støtter binyrefunksjonen' },
-          { issue_id: issueId, recommendation: 'Oppretthold god væskebalanse' }
+          { issue_id: issueId, recommendation: 'Drikk nok vann og vurder adaptogener' }
         ]);
         
         await supabase.from('issue_details').insert([
-          { issue_id: issueId, title: 'Kortisoldøgnrytme', description: 'Lett uregelmessig kortisolprofil gjennom døgnet', impact: 38 },
+          { issue_id: issueId, title: 'Kortisoldøgnrytme', description: 'Uregelmessig kortisolprofil gjennom døgnet', impact: 38 },
           { issue_id: issueId, title: 'Østrogennivåer', description: 'Moderat variasjon i østrogenaktivitet', impact: 35 },
-          { issue_id: issueId, title: 'Hormonregulering', description: 'Svakt påvirket regulering av stress- og kjønnshormoner', impact: 30 }
+          { issue_id: issueId, title: 'Hormonregulering', description: 'Påvirket regulering av stress- og kjønnshormoner', impact: 30 }
         ]);
         
         await supabase.from('scanner_components').insert([

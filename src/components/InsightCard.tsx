@@ -13,7 +13,7 @@ const InsightCard: React.FC<InsightCardProps> = ({ healthIssues }) => {
   
   // Helper function to determine status based on load
   const getStatusText = (load: number): { text: string; color: string } => {
-    if (load < 20) return { text: "Normal", color: "text-green-500" };
+    if (load < 20) return { text: "Lav belastning", color: "text-green-500" };
     if (load < 50) return { text: "Moderat belastning", color: "text-yellow-500" };
     return { text: "Høy belastning", color: "text-red-500" };
   };
@@ -26,7 +26,7 @@ const InsightCard: React.FC<InsightCardProps> = ({ healthIssues }) => {
   };
   
   const nervesystemIssue = findIssueByType("nervesystem");
-  const tarmIssue = findIssueByType("tarmflora");
+  const tarmIssue = findIssueByType("tarmflora") || findIssueByType("tarm");
   const hormonIssue = findIssueByType("hormon");
 
   return (
@@ -46,7 +46,7 @@ const InsightCard: React.FC<InsightCardProps> = ({ healthIssues }) => {
               <span>🧠 Nervesystem:</span>
             </div>
             <span className="text-green-500 font-medium">
-              {nervesystemIssue ? getStatusText(nervesystemIssue.load).text : "Normal"}
+              {nervesystemIssue ? getStatusText(nervesystemIssue.load).text : "Lav belastning"}
             </span>
           </div>
           
@@ -76,15 +76,15 @@ const InsightCard: React.FC<InsightCardProps> = ({ healthIssues }) => {
           <ul className="text-sm space-y-1.5">
             <li className="flex items-start">
               <span className="text-green-500 mr-2">•</span>
-              Fokuser på å styrke tarmfloraen med fermentert mat eller probiotika
+              Spis mer fermentert mat og probiotika
             </li>
             <li className="flex items-start">
               <span className="text-green-500 mr-2">•</span>
-              Prioriter jevn søvnrytme og stressreduksjon for hormonell balanse
+              Prioriter jevn søvnrytme og stressreduksjon
             </li>
             <li className="flex items-start">
               <span className="text-green-500 mr-2">•</span>
-              Oppretthold god væskebalanse
+              Drikk nok vann og vurder adaptogener
             </li>
           </ul>
         </div>
