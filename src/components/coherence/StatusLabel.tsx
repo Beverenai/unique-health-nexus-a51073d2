@@ -16,6 +16,8 @@ export const StatusLabel: React.FC<StatusLabelProps> = ({ score, statusLabel, te
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.8 }}
+      role="status"
+      aria-label={`Coherence status: ${statusLabel}`}
     >
       {statusLabel}
     </motion.div>

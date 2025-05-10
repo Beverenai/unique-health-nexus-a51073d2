@@ -20,6 +20,6 @@ export const getModernTextColor = (score: number): string => {
 // Get status label based on score
 export const getStatusLabel = (score: number): string => {
   if (score < 40) return 'Krever oppmerksomhet';
-  if (score < 60) return 'Moderat';
-  return 'Balansert';
+  if (score < 60) return 'Moderat balanse';
+  return 'God balanse';
 };
