@@ -5,7 +5,8 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { HealthIssue } from '@/types/supabase';
 import IssueCard from '@/components/IssueCard';
-import { getHealthIssues, seedDemoData } from '@/services/supabaseService';
+import { getHealthIssues } from '@/services/healthIssueService';
+import { seedDemoData } from '@/services/demoDataService';
 import { mockHealthIssues } from '@/data/mockData';
 
 const PriorityDetail: React.FC = () => {

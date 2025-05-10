@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
-import { getChatMessages, sendChatMessage, getHealthIssues } from '@/services/supabaseService';
+import { getChatMessages, sendChatMessage } from '@/services/chatService';
+import { getHealthIssues } from '@/services/healthIssueService';
 import { toast } from 'sonner';
 import { ChatMessage, HealthIssue } from '@/types/supabase';
 import { useLocation } from 'react-router-dom';

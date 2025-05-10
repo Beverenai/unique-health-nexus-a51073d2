@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
 import { supabase } from '@/integrations/supabase/client';
-import { getLatestCoherenceData, getHealthIssues, seedDemoData } from '@/services/supabaseService';
+import { getLatestCoherenceData, getHealthIssues } from '@/services';
+import { seedDemoData } from '@/services/demoDataService';
 import CoherenceDisplay from '@/components/CoherenceDisplay';
 import ScanDateCard from '@/components/ScanDateCard';
 import HealthIssuesCarousel from '@/components/HealthIssuesCarousel';

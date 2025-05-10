@@ -14,7 +14,7 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
-import { getHistoricalCoherenceData } from '@/services/supabaseService';
+import { getHistoricalCoherenceData } from '@/services/cohereceService';
 import ChatButton from '@/components/ChatButton';
 
 interface HistoricalScan {

@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, BookOpen, PanelLeft, Database, MessageSquare, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { getIssueDetails } from '@/services/supabaseService';
+import { getIssueDetails } from '@/services/healthIssueService';
 import { HealthIssue, IssueDetail, IssueRecommendation, ScannerComponent } from '@/types/supabase';
 import ChatButton from '@/components/ChatButton';
 import { toast } from 'sonner';
