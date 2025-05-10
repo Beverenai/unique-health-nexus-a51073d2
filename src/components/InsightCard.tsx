@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { HealthIssue } from '@/types/supabase';
-import { Brain, Stomach, Moon, Bone, Heart, Lungs, Eye } from 'lucide-react';
+import { Brain, Salad, Moon, Bone, Heart, Activity, Eye } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 interface InsightCardProps {
@@ -50,7 +50,7 @@ const InsightCard: React.FC<InsightCardProps> = ({ healthIssues }) => {
         icon = <Brain size={20} className={issue ? getStatusText(issue.load).color : "text-gray-400"} />;
         break;
       case "fordøyelsessystem":
-        icon = <Stomach size={20} className={issue ? getStatusText(issue.load).color : "text-gray-400"} />;
+        icon = <Salad size={20} className={issue ? getStatusText(issue.load).color : "text-gray-400"} />;
         break;
       case "hormonsystem":
         icon = <Moon size={20} className={issue ? getStatusText(issue.load).color : "text-gray-400"} />;
@@ -62,7 +62,7 @@ const InsightCard: React.FC<InsightCardProps> = ({ healthIssues }) => {
         icon = <Heart size={20} className={issue ? getStatusText(issue.load).color : "text-gray-400"} />;
         break;
       case "respirasjonssystem":
-        icon = <Lungs size={20} className={issue ? getStatusText(issue.load).color : "text-gray-400"} />;
+        icon = <Activity size={20} className={issue ? getStatusText(issue.load).color : "text-gray-400"} />;
         break;
       default:
         icon = <Eye size={20} className={issue ? getStatusText(issue.load).color : "text-gray-400"} />;

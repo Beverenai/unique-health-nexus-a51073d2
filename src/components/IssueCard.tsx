@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowRight, Brain, LeafyGreen, Moon, CloudFog, Bone, Heart, Lungs, Stomach, Eye } from 'lucide-react';
+import { ArrowRight, Brain, LeafyGreen, Moon, CloudFog, Bone, Heart, Activity, Salad, Eye } from 'lucide-react';
 import { HealthIssue } from '@/types/supabase';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
@@ -47,13 +47,13 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
     if (name.includes('nervesystem') || name.includes('nakkevirvler') || name.includes('kompresjon')) {
       return <Brain className="text-[#1E1E1E]" size={22} />;
     } else if (name.includes('tarm') || name.includes('bakterie') || name.includes('flora')) {
-      return <Stomach className="text-[#1E1E1E]" size={22} />;
+      return <Salad className="text-[#1E1E1E]" size={22} />;
     } else if (name.includes('hormon') || name.includes('melatonin') || name.includes('kortisol')) {
       return <Moon className="text-[#1E1E1E]" size={22} />;
     } else if (name.includes('hjerte') || name.includes('kardio')) {
       return <Heart className="text-[#1E1E1E]" size={22} />;
     } else if (name.includes('lunge') || name.includes('puste')) {
-      return <Lungs className="text-[#1E1E1E]" size={22} />;
+      return <Activity className="text-[#1E1E1E]" size={22} />;
     } else if (name.includes('muskel')) {
       return <Bone className="text-[#1E1E1E]" size={22} />;
     } else if (name.includes('øye') || name.includes('syn')) {
