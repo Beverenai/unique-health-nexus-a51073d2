@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
 import { supabase } from '@/integrations/supabase/client';
 import { getLatestCoherenceData, getHealthIssues, seedDemoData } from '@/services/supabaseService';
-
-// Import components
-import ScanDateCard from '@/components/ScanDateCard';
 import CoherenceDisplay from '@/components/CoherenceDisplay';
-import ExplanationCard from '@/components/ExplanationCard';
-import InsightCard from '@/components/InsightCard';
-import IssuesByPriorityGroup from '@/components/IssuesByPriorityGroup';
+import ScanDateCard from '@/components/ScanDateCard';
+import HealthIssuesCarousel from '@/components/HealthIssuesCarousel';
+import { useNavigate } from 'react-router-dom';
+import { PriorityGroup } from '@/components/PriorityGroup';
+import { ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 // Hardcoded mock data to ensure it always displays
 const mockCoherenceData: CoherenceData = {
@@ -69,6 +69,7 @@ const mockHealthIssues: HealthIssue[] = [
 ];
 
 const Home = () => {
+  const navigate = useNavigate();
   const [coherenceData, setCoherenceData] = useState<CoherenceData | null>(mockCoherenceData);
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
   const [scanDate, setScanDate] = useState<Date>(new Date());
@@ -119,45 +120,70 @@ const Home = () => {
   const moderatePriorityIssues = healthIssues.filter(issue => issue.load >= 30 && issue.load < 60);
   const lowPriorityIssues = healthIssues.filter(issue => issue.load < 30);
 
+  const priorityGroups = [
+    { 
+      title: "Høy prioritet", 
+      issues: highPriorityIssues, 
+      color: "bg-red-50 border-red-200",
+      textColor: "text-red-600",
+      badge: "bg-[#EA384C]/10 text-[#EA384C] border-[#EA384C]/20" 
+    },
+    { 
+      title: "Moderat prioritet", 
+      issues: moderatePriorityIssues, 
+      color: "bg-amber-50 border-amber-200",
+      textColor: "text-amber-600",
+      badge: "bg-[#F7D154]/10 text-amber-700 border-[#F7D154]/20" 
+    },
+    { 
+      title: "Lav prioritet", 
+      issues: lowPriorityIssues, 
+      color: "bg-green-50 border-green-200",
+      textColor: "text-green-600",
+      badge: "bg-[#77C17E]/10 text-[#77C17E] border-[#77C17E]/20" 
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] pt-4 pb-24">
       <main className="container max-w-md mx-auto px-4">
         <h1 className="text-2xl font-semibold mb-2 text-center">Hei, {userName}</h1>
-        <p className="text-gray-500 text-center text-sm mb-4">Slik ser helsen din ut i dag</p>
+        <p className="text-gray-500 text-center text-sm mb-6">Slik ser helsen din ut i dag</p>
         
         <ScanDateCard scanDate={new Date(coherenceData?.created_at || scanDate)} />
         
-        <ExplanationCard />
-        
         <CoherenceDisplay coherenceData={coherenceData} />
         
-        <div className="mt-8 space-y-8">
-          {highPriorityIssues.length > 0 && (
-            <IssuesByPriorityGroup 
-              title="Høy prioritet" 
-              issues={highPriorityIssues}
-              priorityType="high"
-            />
-          )}
+        <div className="mt-8 space-y-4">
+          {priorityGroups.map((group) => (
+            group.issues.length > 0 && (
+              <PriorityGroup 
+                key={group.title}
+                title={group.title}
+                count={group.issues.length}
+                color={group.color}
+                textColor={group.textColor}
+                badgeColor={group.badge}
+                onClick={() => navigate(`/priority/${group.title.toLowerCase().replace(' ', '-')}`)}
+              />
+            )
+          ))}
           
-          {moderatePriorityIssues.length > 0 && (
-            <IssuesByPriorityGroup 
-              title="Moderat prioritet" 
-              issues={moderatePriorityIssues}
-              priorityType="medium"
-            />
-          )}
-          
-          {lowPriorityIssues.length > 0 && (
-            <IssuesByPriorityGroup 
-              title="Lav prioritet" 
-              issues={lowPriorityIssues}
-              priorityType="low"
-            />
-          )}
+          <div className="mt-6">
+            <Button 
+              variant="outline" 
+              className="w-full flex justify-between items-center"
+              onClick={() => navigate('/insights')}
+            >
+              <span>Se alle innsikter</span>
+              <ArrowRight size={16} />
+            </Button>
+          </div>
         </div>
         
-        <InsightCard healthIssues={healthIssues} />
+        <div className="mt-8">
+          <HealthIssuesCarousel healthIssues={healthIssues.sort((a, b) => b.load - a.load).slice(0, 5)} />
+        </div>
       </main>
     </div>
   );

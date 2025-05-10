@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +13,7 @@ import History from "./pages/History";
 import Profile from "./pages/Profile";
 import Insights from "./pages/Insights";
 import IssueDetail from "./pages/IssueDetail";
+import PriorityDetail from "./pages/PriorityDetail";
 import NotFound from "./pages/NotFound";
 import Onboarding from "./components/Onboarding";
 
@@ -63,6 +63,7 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/issue/:issueId" element={<IssueDetail />} />
+          <Route path="/priority/:priorityId" element={<PriorityDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
