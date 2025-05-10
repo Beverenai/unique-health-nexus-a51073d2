@@ -6,6 +6,7 @@ import { HealthIssue } from '@/types/supabase';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
 
 interface IssueCardProps {
   issue: HealthIssue;
@@ -33,19 +34,19 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
     const lowerName = name.toLowerCase();
     
     if (lowerName.includes('nervesystem') || lowerName.includes('nakkevirvler')) {
-      return 'bg-blue-50/80';
+      return 'from-blue-50/90 to-blue-100/50';
     } else if (lowerName.includes('tarm') || lowerName.includes('bakterie') || lowerName.includes('flora')) {
-      return 'bg-green-50/80';
+      return 'from-green-50/90 to-green-100/50';
     } else if (lowerName.includes('hormon') || lowerName.includes('melatonin')) {
-      return 'bg-purple-50/80';
+      return 'from-purple-50/90 to-purple-100/50';
     } else if (lowerName.includes('hjerte') || lowerName.includes('kardio')) {
-      return 'bg-red-50/80';
+      return 'from-red-50/90 to-red-100/50';
     } else if (lowerName.includes('vitamin') || lowerName.includes('mineral')) {
-      return 'bg-yellow-50/80';
+      return 'from-yellow-50/90 to-yellow-100/50';
     } else if (lowerName.includes('dehydrer') || lowerName.includes('væske')) {
-      return 'bg-cyan-50/80';
+      return 'from-cyan-50/90 to-cyan-100/50';
     } else {
-      return 'bg-slate-50/80';
+      return 'from-slate-50/90 to-slate-100/50';
     }
   };
 
@@ -80,28 +81,41 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
   };
 
   return (
-    <div 
+    <motion.div 
       className={cn(
-        "border border-gray-100/20 backdrop-blur-sm rounded-xl p-4 shadow-sm transition-all hover:shadow-md flex flex-col",
-        getBackgroundColor(issue.name)
+        "border border-white/40 bg-gradient-to-br rounded-xl p-4 shadow-sm hover:shadow-card transition-all",
+        getBackgroundColor(issue.name),
+        "backdrop-blur-sm"
       )}
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-3">
           <div className="bg-white p-2 rounded-full shadow-sm">
             {getIssueIcon()}
           </div>
-          <h3 className="text-base font-medium text-gray-800">{issue.name}</h3>
+          <h3 className="text-base font-playfair font-medium text-gray-800">{issue.name}</h3>
         </div>
-        <span className={cn("text-sm font-medium px-2 py-1 rounded-full", getTextColor(issue.load))}>
+        <div className={cn(
+          "px-2.5 py-1 rounded-full text-sm font-medium", 
+          getTextColor(issue.load),
+          "bg-white/50 border border-white/60 shadow-sm"
+        )}>
           {issue.load}%
-        </span>
+        </div>
       </div>
       
       <div className="mt-2 mb-3">
         <Progress 
           value={issue.load} 
-          className={cn("h-1.5 rounded-full", getProgressColor(issue.load))} 
+          className={cn(
+            "h-1.5 rounded-full", 
+            getProgressColor(issue.load),
+            "shadow-sm overflow-hidden"
+          )} 
         />
       </div>
       
@@ -113,13 +127,13 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
         <Button 
           onClick={handleViewDetail}
           variant="ghost" 
-          className="w-full justify-between text-gray-700 hover:bg-white/50 hover:text-gray-900 p-2 h-auto"
+          className="w-full justify-between text-gray-700 hover:bg-white/70 hover:text-gray-900 p-2 h-auto group"
         >
           <span className="text-sm">Se detaljer</span>
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

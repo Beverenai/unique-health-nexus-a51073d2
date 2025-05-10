@@ -1,6 +1,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 interface CoherenceRingProps {
   score: number;
@@ -75,12 +76,34 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    // Create subtle gradient for background ring
+    const bgGradient = ctx.createLinearGradient(0, 0, 0, rect.height);
+    bgGradient.addColorStop(0, 'rgba(228, 228, 231, 0.4)');
+    bgGradient.addColorStop(1, 'rgba(228, 228, 231, 0.2)');
+    
     // Draw background ring
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
     ctx.lineWidth = 15;
-    ctx.strokeStyle = 'rgba(228, 228, 231, 0.3)';
+    ctx.strokeStyle = bgGradient;
     ctx.stroke();
+    
+    // Create subtle gradient for progress ring
+    const progressGradient = ctx.createLinearGradient(0, 0, rect.width, rect.height);
+    
+    if (score < 40) {
+      // Red gradient
+      progressGradient.addColorStop(0, '#EA384C');
+      progressGradient.addColorStop(1, '#FF6B81');
+    } else if (score < 60) {
+      // Yellow gradient
+      progressGradient.addColorStop(0, '#F7D154');
+      progressGradient.addColorStop(1, '#FFE082');
+    } else {
+      // Green gradient
+      progressGradient.addColorStop(0, '#77C17E');
+      progressGradient.addColorStop(1, '#A5D6A7');
+    }
     
     // Draw progress ring
     const progressAngle = (score / 100) * Math.PI * 2;
@@ -88,8 +111,18 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
     ctx.arc(centerX, centerY, radius, -Math.PI / 2, progressAngle - Math.PI / 2);
     ctx.lineWidth = 15;
     ctx.lineCap = 'round';
-    ctx.strokeStyle = color;
+    ctx.strokeStyle = progressGradient;
     ctx.stroke();
+    
+    // Draw glow effect
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, -Math.PI / 2, progressAngle - Math.PI / 2);
+    ctx.lineWidth = 20;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.filter = `blur(8px)`;
+    ctx.stroke();
+    ctx.restore();
     
     // Draw small circles along the progress ring
     const totalDots = 40;
@@ -101,20 +134,50 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
       const dotY = centerY + (radius) * Math.sin(angle);
       
       ctx.beginPath();
-      ctx.arc(dotX, dotY, 1.5, 0, Math.PI * 2);
-      ctx.fillStyle = i < visibleDots ? color : 'rgba(228, 228, 231, 0.3)';
+      
+      // Make dots bigger and with varied sizes for more dynamic look
+      const dotSize = i % 3 === 0 ? 2.2 : 1.8;
+      
+      ctx.arc(dotX, dotY, dotSize, 0, Math.PI * 2);
+      
+      if (i < visibleDots) {
+        // Add slight glow to active dots
+        ctx.fillStyle = color;
+        
+        // Add subtle shadow/glow to active dots
+        if (i % 4 === 0) {
+          ctx.shadowColor = color;
+          ctx.shadowBlur = 4;
+        } else {
+          ctx.shadowBlur = 0;
+        }
+      } else {
+        ctx.fillStyle = 'rgba(228, 228, 231, 0.3)';
+        ctx.shadowBlur = 0;
+      }
+      
       ctx.fill();
+      ctx.shadowBlur = 0;
     }
 
   }, [score, color]);
 
   return (
     <div className="flex flex-col items-center">
-      <div className={cn(
-        "relative flex items-center justify-center",
-        sizeClasses[size],
-        className
-      )}>
+      <motion.div 
+        className={cn(
+          "relative flex items-center justify-center",
+          sizeClasses[size],
+          className
+        )}
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 100,
+          delay: 0.2 
+        }}
+      >
         <canvas 
           ref={canvasRef} 
           className="absolute inset-0 w-full h-full"
@@ -122,30 +185,63 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
         />
         
         {/* Inner white circle with text */}
-        <div className="bg-white rounded-full flex items-center justify-center shadow-sm relative z-10" 
-             style={{width: '75%', height: '75%', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)'}}>
+        <motion.div 
+          className="bg-white rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.08)] relative z-10" 
+          style={{width: '75%', height: '75%'}}
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          transition={{
+            delay: 0.4,
+            type: "spring",
+            stiffness: 100
+          }}
+        >
           {showText && (
             <div className="text-center">
-              <div className={cn("font-bold", textSizeClasses[size], textColorClass)}>
+              <motion.div 
+                className={cn("font-bold", textSizeClasses[size], textColorClass)}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+              >
                 {score}%
-              </div>
-              <div className="text-gray-500 mt-1 text-sm">
+              </motion.div>
+              <motion.div 
+                className="text-gray-500 mt-1 text-sm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+              >
                 Koherens
-              </div>
+              </motion.div>
             </div>
           )}
-        </div>
-      </div>
+        </motion.div>
+        
+        {/* Animated pulse ring */}
+        <div className="absolute inset-0 rounded-full animate-pulse-ring opacity-40" 
+             style={{ border: `1px solid ${color}` }} />
+      </motion.div>
       
       {/* Status label below ring */}
-      <div className={cn("mt-4 px-4 py-2 rounded-full bg-white shadow-sm text-sm font-medium", textColorClass)}>
+      <motion.div 
+        className={cn("mt-4 px-4 py-2 rounded-full bg-white shadow-sm text-sm font-medium", textColorClass)}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8 }}
+      >
         {statusLabel}
-      </div>
+      </motion.div>
       
       {message && (
-        <p className="text-gray-600 text-center max-w-sm mt-4 text-sm">
+        <motion.p 
+          className="text-gray-600 text-center max-w-sm mt-4 text-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.9 }}
+        >
           {message}
-        </p>
+        </motion.p>
       )}
     </div>
   );

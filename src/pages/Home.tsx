@@ -11,6 +11,7 @@ import { PriorityGroup } from '@/components/PriorityGroup';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import HealthInfoTable from '@/components/HealthInfoTable';
+import { motion } from 'framer-motion';
 
 // Hardcoded mock data to ensure it always displays
 const mockCoherenceData: CoherenceData = {
@@ -153,44 +154,87 @@ const Home = () => {
     setShowHealthTable(!showHealthTable);
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        staggerChildren: 0.2,
+        delayChildren: 0.1
+      } 
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] pt-4 pb-24">
+    <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] pt-4 pb-24 subtle-pattern">
       <main className="container max-w-md mx-auto px-4">
-        <h1 className="text-2xl font-semibold mb-2 text-center">Hei, {userName}</h1>
-        <p className="text-gray-500 text-center text-sm mb-6">Slik ser helsen din ut i dag</p>
+        <motion.div
+          className="text-center mb-6"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-3xl font-playfair font-semibold mb-2 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+            Hei, {userName}
+          </h1>
+          <p className="text-gray-500 text-sm">Slik ser helsen din ut i dag</p>
+        </motion.div>
         
-        <ScanDateCard scanDate={new Date(coherenceData?.created_at || scanDate)} />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <ScanDateCard scanDate={new Date(coherenceData?.created_at || scanDate)} />
+        </motion.div>
         
-        <CoherenceDisplay coherenceData={coherenceData} />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
+        >
+          <CoherenceDisplay coherenceData={coherenceData} />
+        </motion.div>
         
-        <div className="mt-8 space-y-4">
+        <motion.div 
+          className="mt-10 space-y-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {priorityGroups.map((group) => (
             group.issues.length > 0 && (
-              <PriorityGroup 
-                key={group.title}
-                title={group.title}
-                count={group.issues.length}
-                color={group.color}
-                textColor={group.textColor}
-                badgeColor={group.badge}
-                onClick={() => navigate(`/priority/${group.urlSlug}`)}
-              />
+              <motion.div key={group.title} variants={itemVariants}>
+                <PriorityGroup 
+                  title={group.title}
+                  count={group.issues.length}
+                  color={group.color}
+                  textColor={group.textColor}
+                  badgeColor={group.badge}
+                  onClick={() => navigate(`/priority/${group.urlSlug}`)}
+                />
+              </motion.div>
             )
           ))}
           
-          <div className="mt-6 space-y-2">
+          <motion.div className="mt-6 space-y-3" variants={itemVariants}>
             <Button 
               variant="outline" 
-              className="w-full flex justify-between items-center"
+              className="w-full flex justify-between items-center bg-white/50 hover:bg-white/80 backdrop-blur-sm border-white/40 shadow-sm hover:shadow"
               onClick={() => navigate('/insights')}
             >
               <span>Se alle innsikter</span>
-              <ArrowRight size={16} />
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Button>
             
             <Button 
               variant="outline" 
-              className="w-full flex justify-between items-center"
+              className="w-full flex justify-between items-center bg-white/50 hover:bg-white/80 backdrop-blur-sm border-white/40 shadow-sm hover:shadow"
               onClick={toggleHealthTable}
             >
               <span>{showHealthTable ? "Skjul helseinformasjon" : "Vis detaljert helseinformasjon"}</span>
@@ -200,21 +244,32 @@ const Home = () => {
                 <ArrowRight size={16} className="transform rotate-0" />
               )}
             </Button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
         
         {showHealthTable && (
-          <div className="mt-6">
+          <motion.div 
+            className="mt-6"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+          >
             <HealthInfoTable 
               title="Helseinformasjon" 
               description="Detaljert oversikt over helsetilstanden din"
             />
-          </div>
+          </motion.div>
         )}
         
-        <div className="mt-8">
+        <motion.div 
+          className="mt-8"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+        >
+          <h2 className="text-xl font-playfair font-medium mb-4 text-gray-800">Nylige funn</h2>
           <HealthIssuesCarousel healthIssues={healthIssues.sort((a, b) => b.load - a.load).slice(0, 5)} />
-        </div>
+        </motion.div>
       </main>
     </div>
   );
