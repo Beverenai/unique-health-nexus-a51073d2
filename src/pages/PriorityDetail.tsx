@@ -52,20 +52,17 @@ const PriorityDetail: React.FC = () => {
           healthIssues = mockHealthIssues;
         }
         
-        // Filter issues based on priority
+        // Filter issues based on priority - fixing the logic here
         let filteredIssues: HealthIssue[] = [];
-        switch (priorityId) {
-          case 'høy-prioritet':
-            filteredIssues = healthIssues.filter(issue => issue.load >= 60);
-            break;
-          case 'moderat-prioritet':
-            filteredIssues = healthIssues.filter(issue => issue.load >= 30 && issue.load < 60);
-            break;
-          case 'lav-prioritet':
-            filteredIssues = healthIssues.filter(issue => issue.load < 30);
-            break;
-          default:
-            filteredIssues = healthIssues;
+        
+        if (priorityId === 'høy-prioritet') {
+          filteredIssues = healthIssues.filter(issue => issue.load >= 60);
+        } else if (priorityId === 'moderat-prioritet') {
+          filteredIssues = healthIssues.filter(issue => issue.load >= 30 && issue.load < 60);
+        } else if (priorityId === 'lav-prioritet') {
+          filteredIssues = healthIssues.filter(issue => issue.load < 30);
+        } else {
+          filteredIssues = healthIssues;
         }
         
         setIssues(filteredIssues);

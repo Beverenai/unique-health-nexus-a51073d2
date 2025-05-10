@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import DetailCard from '@/components/DetailCard';
 import { IssueDetail } from '@/types/supabase';
+import HealthInfoTable from '@/components/HealthInfoTable';
 
 interface OverviewTabProps {
   details: IssueDetail[];
@@ -52,6 +53,12 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ details, detailedInfo }) => {
           </div>
         </CardContent>
       </Card>
+      
+      {/* Health info table section */}
+      <HealthInfoTable 
+        title="Relatert helseinformasjon" 
+        description="Oversikt over helsesystemer og anbefalte tiltak"
+      />
     </>
   );
 };

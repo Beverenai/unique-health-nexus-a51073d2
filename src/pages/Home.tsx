@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { PriorityGroup } from '@/components/PriorityGroup';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import HealthInfoTable from '@/components/HealthInfoTable';
 
 // Hardcoded mock data to ensure it always displays
 const mockCoherenceData: CoherenceData = {
@@ -74,6 +75,7 @@ const Home = () => {
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
   const [scanDate, setScanDate] = useState<Date>(new Date());
   const [userName, setUserName] = useState<string>("Demo");
+  const [showHealthTable, setShowHealthTable] = useState<boolean>(false);
   
   // Fetch real data from Supabase when available
   useEffect(() => {
@@ -126,23 +128,30 @@ const Home = () => {
       issues: highPriorityIssues, 
       color: "bg-red-50 border-red-200",
       textColor: "text-red-600",
-      badge: "bg-[#EA384C]/10 text-[#EA384C] border-[#EA384C]/20" 
+      badge: "bg-[#EA384C]/10 text-[#EA384C] border-[#EA384C]/20",
+      urlSlug: "høy-prioritet"
     },
     { 
       title: "Moderat prioritet", 
       issues: moderatePriorityIssues, 
       color: "bg-amber-50 border-amber-200",
       textColor: "text-amber-600",
-      badge: "bg-[#F7D154]/10 text-amber-700 border-[#F7D154]/20" 
+      badge: "bg-[#F7D154]/10 text-amber-700 border-[#F7D154]/20",
+      urlSlug: "moderat-prioritet"
     },
     { 
       title: "Lav prioritet", 
       issues: lowPriorityIssues, 
       color: "bg-green-50 border-green-200",
       textColor: "text-green-600",
-      badge: "bg-[#77C17E]/10 text-[#77C17E] border-[#77C17E]/20" 
+      badge: "bg-[#77C17E]/10 text-[#77C17E] border-[#77C17E]/20",
+      urlSlug: "lav-prioritet"
     }
   ];
+
+  const toggleHealthTable = () => {
+    setShowHealthTable(!showHealthTable);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] pt-4 pb-24">
@@ -164,12 +173,12 @@ const Home = () => {
                 color={group.color}
                 textColor={group.textColor}
                 badgeColor={group.badge}
-                onClick={() => navigate(`/priority/${group.title.toLowerCase().replace(' ', '-')}`)}
+                onClick={() => navigate(`/priority/${group.urlSlug}`)}
               />
             )
           ))}
           
-          <div className="mt-6">
+          <div className="mt-6 space-y-2">
             <Button 
               variant="outline" 
               className="w-full flex justify-between items-center"
@@ -178,8 +187,30 @@ const Home = () => {
               <span>Se alle innsikter</span>
               <ArrowRight size={16} />
             </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full flex justify-between items-center"
+              onClick={toggleHealthTable}
+            >
+              <span>{showHealthTable ? "Skjul helseinformasjon" : "Vis detaljert helseinformasjon"}</span>
+              {showHealthTable ? (
+                <ArrowRight size={16} className="transform rotate-90" />
+              ) : (
+                <ArrowRight size={16} className="transform rotate-0" />
+              )}
+            </Button>
           </div>
         </div>
+        
+        {showHealthTable && (
+          <div className="mt-6">
+            <HealthInfoTable 
+              title="Helseinformasjon" 
+              description="Detaljert oversikt over helsetilstanden din"
+            />
+          </div>
+        )}
         
         <div className="mt-8">
           <HealthIssuesCarousel healthIssues={healthIssues.sort((a, b) => b.load - a.load).slice(0, 5)} />
