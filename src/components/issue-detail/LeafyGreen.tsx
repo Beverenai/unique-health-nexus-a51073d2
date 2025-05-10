@@ -1,11 +1,15 @@
 
 import React from 'react';
 
-const LeafyGreen = (props: React.SVGProps<SVGSVGElement>) => (
+interface LeafyGreenProps extends React.SVGProps<SVGSVGElement> {
+  size?: number;
+}
+
+const LeafyGreen: React.FC<LeafyGreenProps> = ({ size = 24, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
+    width={size}
+    height={size}
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
