@@ -41,7 +41,11 @@ const HealthIssuesCarousel: React.FC<HealthIssuesCarouselProps> = ({
                 <div className="p-1">
                   <Card 
                     className={`p-4 ${bgColor} cursor-pointer hover:shadow-md transition-all`}
-                    onClick={() => navigate(`/issue/${issue.id}`)}
+                    onClick={() => {
+                      // Use consistent navigation path
+                      navigate(`/issue/${issue.id}`);
+                      console.log("Navigating from carousel to issue:", issue.id);
+                    }}
                   >
                     <div className="flex items-center mb-2">
                       <div className="bg-white p-1.5 rounded-full shadow-sm">

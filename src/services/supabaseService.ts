@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { HealthIssue, CoherenceData, IssueDetail, IssueRecommendation, ScannerComponent } from "@/types/supabase";
+import { mockHealthIssues } from "@/data/mockData";
 
 // Demo user ID to use when not authenticated
 const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
@@ -55,7 +56,7 @@ export const getHealthIssues = async (scanId?: string): Promise<HealthIssue[]> =
 
       if (scanError || !scans || scans.length === 0) {
         console.error('Error fetching latest scan:', scanError);
-        return [];
+        return mockHealthIssues; // Fallback to mock data
       }
 
       scanId = scans[0].id;
@@ -68,13 +69,13 @@ export const getHealthIssues = async (scanId?: string): Promise<HealthIssue[]> =
 
     if (error) {
       console.error('Error fetching health issues:', error);
-      return [];
+      return mockHealthIssues; // Fallback to mock data
     }
 
-    return data as HealthIssue[];
+    return data.length > 0 ? data as HealthIssue[] : mockHealthIssues;
   } catch (error) {
     console.error('Error in getHealthIssues:', error);
-    return [];
+    return mockHealthIssues; // Fallback to mock data
   }
 };
 
@@ -84,67 +85,81 @@ export const getIssueDetails = async (issueId: string): Promise<{
   recommendations: IssueRecommendation[];
   scannerComponents: ScannerComponent[];
 }> => {
-  // Get the issue
-  const { data: issue, error: issueError } = await supabase
-    .from('health_issues')
-    .select('*')
-    .eq('id', issueId)
-    .single();
+  try {
+    // Get the issue from database
+    const { data: issue, error: issueError } = await supabase
+      .from('health_issues')
+      .select('*')
+      .eq('id', issueId)
+      .single();
 
-  if (issueError) {
-    console.error('Error fetching issue:', issueError);
-    return { issue: null, details: [], recommendations: [], scannerComponents: [] };
-  }
+    // If database query fails, try to find the issue in mock data
+    if (issueError) {
+      console.error('Error fetching issue from database:', issueError);
+      console.log('Trying to find issue in mock data with ID:', issueId);
+      
+      // Find matching issue in mock data
+      const mockIssue = mockHealthIssues.find(i => i.id === issueId);
+      
+      if (mockIssue) {
+        console.log('Found issue in mock data:', mockIssue);
+        return {
+          issue: mockIssue,
+          details: mockIssue.details || [],
+          recommendations: mockIssue.recommendations?.map((rec, index) => ({
+            id: `mock-rec-${index}`,
+            issue_id: mockIssue.id,
+            recommendation: rec,
+            created_at: new Date().toISOString()
+          })) || [],
+          scannerComponents: []
+        };
+      }
+      
+      console.error('Issue not found in mock data either');
+      return { issue: null, details: [], recommendations: [], scannerComponents: [] };
+    }
 
-  // Get the details
-  const { data: details, error: detailsError } = await supabase
-    .from('issue_details')
-    .select('*')
-    .eq('issue_id', issueId);
+    // Get the details
+    const { data: details, error: detailsError } = await supabase
+      .from('issue_details')
+      .select('*')
+      .eq('issue_id', issueId);
 
-  if (detailsError) {
-    console.error('Error fetching issue details:', detailsError);
-    return { issue: issue as HealthIssue, details: [], recommendations: [], scannerComponents: [] };
-  }
+    if (detailsError) {
+      console.error('Error fetching issue details:', detailsError);
+    }
 
-  // Get the recommendations
-  const { data: recommendations, error: recommendationsError } = await supabase
-    .from('issue_recommendations')
-    .select('*')
-    .eq('issue_id', issueId);
+    // Get the recommendations
+    const { data: recommendations, error: recommendationsError } = await supabase
+      .from('issue_recommendations')
+      .select('*')
+      .eq('issue_id', issueId);
 
-  if (recommendationsError) {
-    console.error('Error fetching issue recommendations:', recommendationsError);
-    return { 
-      issue: issue as HealthIssue, 
-      details: details as IssueDetail[] || [], 
-      recommendations: [],
-      scannerComponents: []
-    };
-  }
+    if (recommendationsError) {
+      console.error('Error fetching issue recommendations:', recommendationsError);
+    }
 
-  // Get the scanner components
-  const { data: scannerComponents, error: componentsError } = await supabase
-    .from('scanner_components')
-    .select('*')
-    .eq('issue_id', issueId);
+    // Get the scanner components
+    const { data: scannerComponents, error: componentsError } = await supabase
+      .from('scanner_components')
+      .select('*')
+      .eq('issue_id', issueId);
 
-  if (componentsError) {
-    console.error('Error fetching scanner components:', componentsError);
+    if (componentsError) {
+      console.error('Error fetching scanner components:', componentsError);
+    }
+
     return {
       issue: issue as HealthIssue,
       details: details as IssueDetail[] || [],
       recommendations: recommendations as IssueRecommendation[] || [],
-      scannerComponents: []
+      scannerComponents: scannerComponents as ScannerComponent[] || []
     };
+  } catch (error) {
+    console.error('Error in getIssueDetails:', error);
+    return { issue: null, details: [], recommendations: [], scannerComponents: [] };
   }
-
-  return {
-    issue: issue as HealthIssue,
-    details: details as IssueDetail[] || [],
-    recommendations: recommendations as IssueRecommendation[] || [],
-    scannerComponents: scannerComponents as ScannerComponent[] || []
-  };
 };
 
 export const sendChatMessage = async (message: string, isUser = true): Promise<{success: boolean, data?: any}> => {
@@ -232,27 +247,13 @@ export const seedDemoData = async (): Promise<void> => {
         score: 64
       });
 
-    // Add health issues
-    const healthIssues = [
-      {
-        scan_id: scanId,
-        name: 'Tarmflora i ubalanse',
-        description: 'Bakterielle mønstre viser redusert mangfold og lett inflammasjon.',
-        load: 45
-      },
-      {
-        scan_id: scanId,
-        name: 'Hormonelle svingninger',
-        description: 'Skanningen indikerer ubalanser i kortisol og østrogen.',
-        load: 38
-      },
-      {
-        scan_id: scanId,
-        name: 'Godt fungerende nervesystem',
-        description: 'Ingen tegn til stresspåvirkning eller nevrologisk ubalanse.',
-        load: 15
-      }
-    ];
+    // Add health issues based on mock data to ensure consistency
+    const healthIssues = mockHealthIssues.map(mockIssue => ({
+      scan_id: scanId,
+      name: mockIssue.name,
+      description: mockIssue.description,
+      load: mockIssue.load
+    }));
 
     const issuePromises = healthIssues.map(async (issue) => {
       const { data: createdIssue, error } = await supabase
@@ -267,8 +268,8 @@ export const seedDemoData = async (): Promise<void> => {
 
       const issueId = createdIssue[0].id;
 
-      // Add recommendations based on the issue
-      if (issue.name.includes('Tarmflora')) {
+      // Add recommendations and details based on the issue type
+      if (issue.name.includes('Tarmflora') || issue.name.includes('Bakteriell')) {
         await supabase.from('issue_recommendations').insert([
           { issue_id: issueId, recommendation: 'Spis mer fermentert mat og probiotika' },
           { issue_id: issueId, recommendation: 'Øk inntaket av fiberrike matvarer' },
@@ -287,7 +288,7 @@ export const seedDemoData = async (): Promise<void> => {
           { issue_id: issueId, category: 'Tarmhelse', name: 'Slimhinnefunksjon.dsd', level: 35 }
         ]);
       }
-      else if (issue.name.includes('Hormonelle')) {
+      else if (issue.name.includes('Hormonelle') || issue.name.includes('miljøgift')) {
         await supabase.from('issue_recommendations').insert([
           { issue_id: issueId, recommendation: 'Prioriter jevn søvnrytme og stressreduksjon' },
           { issue_id: issueId, recommendation: 'Vurder adaptogene urter som støtter binyrefunksjonen' },
@@ -306,7 +307,7 @@ export const seedDemoData = async (): Promise<void> => {
           { issue_id: issueId, category: 'Regulering', name: 'Hypothalamus-hypofyse.dsd', level: 30 }
         ]);
       }
-      else if (issue.name.includes('nervesystem')) {
+      else if (issue.name.includes('nervesystem') || issue.name.includes('sopp')) {
         await supabase.from('issue_recommendations').insert([
           { issue_id: issueId, recommendation: 'Fortsett med nåværende aktivitetsnivå og balansert livsstil' },
           { issue_id: issueId, recommendation: 'Vedlikehold god søvnhygiene' },

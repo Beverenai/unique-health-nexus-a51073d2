@@ -48,11 +48,7 @@ const PriorityDetail: React.FC = () => {
         await seedDemoData();
         let healthIssues = await getHealthIssues();
         
-        if (!healthIssues || healthIssues.length === 0) {
-          healthIssues = mockHealthIssues;
-        }
-        
-        // Filter issues based on priority - fixing the logic here
+        // Filter issues based on priority - using the SAME thresholds as Home.tsx
         let filteredIssues: HealthIssue[] = [];
         
         if (priorityId === 'høy-prioritet') {
@@ -68,6 +64,20 @@ const PriorityDetail: React.FC = () => {
         setIssues(filteredIssues);
       } catch (error) {
         console.error('Error fetching health issues:', error);
+        
+        // Fallback to mock data
+        let mockIssues = mockHealthIssues;
+        
+        // Filter mock issues the same way
+        if (priorityId === 'høy-prioritet') {
+          mockIssues = mockHealthIssues.filter(issue => issue.load >= 60);
+        } else if (priorityId === 'moderat-prioritet') {
+          mockIssues = mockHealthIssues.filter(issue => issue.load >= 30 && issue.load < 60);
+        } else if (priorityId === 'lav-prioritet') {
+          mockIssues = mockHealthIssues.filter(issue => issue.load < 30);
+        }
+        
+        setIssues(mockIssues);
       } finally {
         setLoading(false);
       }

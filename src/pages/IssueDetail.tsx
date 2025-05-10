@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, BookOpen, PanelLeft, Database, MessageSquare } from 'lucide-react';
+import { ArrowLeft, BookOpen, PanelLeft, Database, MessageSquare, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getIssueDetails } from '@/services/supabaseService';
 import { HealthIssue, IssueDetail, IssueRecommendation, ScannerComponent } from '@/types/supabase';
 import ChatButton from '@/components/ChatButton';
+import { toast } from 'sonner';
 
 // Import refactored components
 import IssueHeader from '@/components/issue-detail/IssueHeader';
@@ -23,20 +24,43 @@ const IssueDetailPage: React.FC = () => {
   const [recommendations, setRecommendations] = useState<IssueRecommendation[]>([]);
   const [scannerComponents, setScannerComponents] = useState<ScannerComponent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("overview");
 
   useEffect(() => {
     const loadIssueData = async () => {
-      if (!issueId) return;
+      if (!issueId) {
+        setError("Manglende henvisnings-ID");
+        setLoading(false);
+        return;
+      }
 
       try {
+        console.log("Loading issue with ID:", issueId);
         const data = await getIssueDetails(issueId);
+        
+        if (!data.issue) {
+          console.error('No issue found with ID:', issueId);
+          setError("Kunne ikke finne helseproblemet med ID: " + issueId);
+          toast.error("Kunne ikke finne helseproblemet", {
+            description: "Vennligst gå tilbake og prøv igjen"
+          });
+          setLoading(false);
+          return;
+        }
+        
+        console.log("Issue data loaded successfully:", data.issue);
         setIssue(data.issue);
         setDetails(data.details);
         setRecommendations(data.recommendations);
         setScannerComponents(data.scannerComponents);
+        setError(null);
       } catch (error) {
         console.error('Error loading issue data:', error);
+        setError("Feil ved lasting av helseproblemet");
+        toast.error("Feil ved lasting av data", {
+          description: "Vennligst prøv igjen senere"
+        });
       } finally {
         setLoading(false);
       }
@@ -56,11 +80,15 @@ const IssueDetailPage: React.FC = () => {
     );
   }
 
-  if (!issue) {
+  if (error || !issue) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <div className="bg-red-50 rounded-full p-3 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+            <AlertTriangle className="text-red-500 h-8 w-8" />
+          </div>
           <h2 className="text-xl font-medium mb-4">Fant ikke helseproblemet</h2>
+          <p className="mb-6 text-gray-600">{error || "Helseproblemet kunne ikke lastes. Det kan være slettet eller utilgjengelig."}</p>
           <Button onClick={() => navigate('/')}>Tilbake til forsiden</Button>
         </div>
       </div>

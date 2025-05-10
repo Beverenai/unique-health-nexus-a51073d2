@@ -75,9 +75,17 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
     }
   };
   
-  // Navigate to issue detail page
+  // Navigate to issue detail page - using consistent path format
   const handleViewDetail = () => {
+    // Check if onClick handler is provided (for custom behavior)
+    if (onClick) {
+      onClick();
+      return;
+    }
+    
+    // Use consistent navigation path - always use /issue/[id]
     navigate(`/issue/${issue.id}`);
+    console.log("Navigating to issue:", issue.id);
   };
 
   return (
