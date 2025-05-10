@@ -88,7 +88,6 @@ const HealthSystemCard: React.FC<HealthSystemCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.1 }}
       variants={cardVariants}
-      initial="collapsed"
       animate={isExpanded ? "expanded" : "collapsed"}
       layout
     >
@@ -150,3 +149,4 @@ const HealthSystemCard: React.FC<HealthSystemCardProps> = ({
 };
 
 export default HealthSystemCard;
+
