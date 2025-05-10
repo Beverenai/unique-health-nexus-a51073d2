@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { ChatMessage } from '@/types/supabase';
 import { Avatar } from '@/components/ui/avatar';
