@@ -49,4 +49,75 @@ const mockHealthIssues: HealthIssue[] = [
     description: "Signalene indikerer redusert sirkulasjon og stress i nakke/skulderområdet.",
     load: 65,
     created_at: new Date().toISOString(),
-    recommendations: ["Vurder kiropraktikk,etSocketAddress
+    recommendations: ["Vurder kiropraktikk, massasje og spesifikke øvelser for nakkeområdet."]
+  }
+];
+
+const Home = () => {
+  const [coherenceData, setCoherenceData] = useState<CoherenceData | null>(mockCoherenceData);
+  const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
+  const [selectedIssue, setSelectedIssue] = useState<HealthIssue | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [scanDate, setScanDate] = useState<Date>(new Date());
+  
+  // Fetch real data from Supabase when available
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Try seeding demo data first
+        await seedDemoData();
+        
+        // Then try to load it
+        const coherenceResult = await getLatestCoherenceData();
+        if (coherenceResult) {
+          setCoherenceData(coherenceResult);
+        }
+        
+        const issuesResult = await getHealthIssues();
+        if (issuesResult && issuesResult.length > 0) {
+          setHealthIssues(issuesResult);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        // Keep using mock data (already set as default state)
+      }
+    };
+    
+    fetchData();
+  }, []);
+
+  const handleIssueClick = (issue: HealthIssue) => {
+    setSelectedIssue(issue);
+    setIsDialogOpen(true);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <NavigationBar />
+      
+      <main className="container max-w-md mx-auto px-4 pt-4 pb-24">
+        <ScanDateCard scanDate={new Date(coherenceData?.created_at || scanDate)} />
+        
+        <CoherenceDisplay coherenceData={coherenceData} />
+        
+        <HealthIssuesCarousel 
+          healthIssues={healthIssues}
+          onIssueClick={handleIssueClick}
+        />
+        
+        <InsightCard healthIssues={healthIssues} />
+        
+        <IssueDetailDialog
+          issue={selectedIssue}
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+        />
+      </main>
+      
+      <NewScanButton />
+      <ChatButton />
+    </div>
+  );
+};
+
+export default Home;
