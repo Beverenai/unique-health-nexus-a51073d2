@@ -6,4 +6,7 @@ export { default as SystemIcon } from './SystemIcon';
 export { default as SystemItem } from './SystemItem';
 export { default as SystemProgressBar } from './SystemProgressBar';
 export { default as SystemRelations } from './SystemRelations';
+export { SystemRelationsSection } from './SystemRelationsSection';
+export { SystemSummary } from './SystemSummary';
+export * from './animation';
 export * from './utils';
