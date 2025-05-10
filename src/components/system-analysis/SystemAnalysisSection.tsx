@@ -59,8 +59,8 @@ const SystemAnalysisSection: React.FC<SystemAnalysisSectionProps> = ({ component
         
         {systemAverages.length > 0 && (
           <SystemRelations 
-            topSystem={topSystems[0]?.name} 
-            secondSystem={topSystems.length > 1 ? topSystems[1]?.name.toLowerCase() : 'andre systemer'} 
+            topSystem={topSystems[0]?.name || 'Nervesystem'} 
+            secondSystem={topSystems.length > 1 ? topSystems[1]?.name : 'fordøyelsessystem'} 
           />
         )}
       </CardContent>
