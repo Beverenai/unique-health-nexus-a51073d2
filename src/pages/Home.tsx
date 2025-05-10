@@ -8,7 +8,6 @@ import { getLatestCoherenceData, getHealthIssues, seedDemoData } from '@/service
 import ChatButton from '@/components/ChatButton';
 import ScanDateCard from '@/components/ScanDateCard';
 import CoherenceDisplay from '@/components/CoherenceDisplay';
-import NewScanButton from '@/components/NewScanButton';
 import ExplanationCard from '@/components/ExplanationCard';
 import InsightCard from '@/components/InsightCard';
 import IssuesByPriorityGroup from '@/components/IssuesByPriorityGroup';
@@ -146,7 +145,6 @@ const Home = () => {
         <InsightCard healthIssues={healthIssues} />
       </main>
       
-      <NewScanButton />
       <ChatButton />
     </div>
   );

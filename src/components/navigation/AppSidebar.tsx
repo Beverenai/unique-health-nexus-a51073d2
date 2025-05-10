@@ -1,11 +1,12 @@
 
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, History, User, Menu } from 'lucide-react';
+import { Home, History, User, Menu, Scan } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { toast } from 'sonner';
 import {
   Sidebar,
   SidebarContent,
@@ -39,6 +40,12 @@ const menuItems = [
     icon: User,
   },
 ];
+
+const handleNewScan = () => {
+  toast.success('Starter ny skanning...', {
+    description: 'Dette ville starte en ny skanning i en reell applikasjon.'
+  });
+};
 
 // Mobile navigation component
 const MobileNavigation = () => {
@@ -83,6 +90,16 @@ const MobileNavigation = () => {
                   </Button>
                 </li>
               ))}
+              <li>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start"
+                  onClick={handleNewScan}
+                >
+                  <Scan className="mr-2 h-4 w-4" />
+                  Ny skanning
+                </Button>
+              </li>
             </ul>
           </nav>
         </div>
@@ -112,6 +129,15 @@ const SidebarMenuContent = () => {
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}
+      <SidebarMenuItem>
+        <SidebarMenuButton
+          tooltip="Ny skanning"
+          onClick={handleNewScan}
+        >
+          <Scan />
+          <span>Ny skanning</span>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
     </SidebarMenu>
   );
 };

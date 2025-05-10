@@ -4,7 +4,19 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Scan } from 'lucide-react';
 
-const NewScanButton: React.FC = () => {
+interface NewScanButtonProps {
+  variant?: "default" | "outline" | "ghost";
+  size?: "default" | "sm" | "lg";
+  className?: string;
+  fullWidth?: boolean;
+}
+
+const NewScanButton: React.FC<NewScanButtonProps> = ({ 
+  variant = "default", 
+  size = "default",
+  className = "",
+  fullWidth = false
+}) => {
   const handleNewScan = () => {
     toast.success('Starter ny skanning...', {
       description: 'Dette ville starte en ny skanning i en reell applikasjon.'
@@ -12,15 +24,15 @@ const NewScanButton: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-8 right-8 z-30">
-      <Button 
-        className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white font-medium px-6 py-6 rounded-full shadow-lg transition-all hover:shadow-xl"
-        onClick={handleNewScan}
-      >
-        <Scan size={20} />
-        <span className="ml-2">Ny skanning</span>
-      </Button>
-    </div>
+    <Button 
+      className={`${className} ${fullWidth ? 'w-full' : ''} ${variant === "default" ? "bg-[#9b87f5] hover:bg-[#7E69AB] text-white" : ""}`}
+      variant={variant}
+      size={size}
+      onClick={handleNewScan}
+    >
+      <Scan size={size === "sm" ? 16 : 20} className={size === "sm" ? "mr-1" : "mr-2"} />
+      <span>Ny skanning</span>
+    </Button>
   );
 };
 

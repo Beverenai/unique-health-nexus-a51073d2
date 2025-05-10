@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import ChatButton from '@/components/ChatButton';
 import { Profile as ProfileType } from '@/types/supabase';
+import { Scan } from 'lucide-react';
 
 const Profile: React.FC = () => {
   const [profile, setProfile] = useState<ProfileType | null>(null);
@@ -54,6 +55,12 @@ const Profile: React.FC = () => {
 
     fetchProfile();
   }, []);
+
+  const handleNewScan = () => {
+    toast.success('Starter ny skanning...', {
+      description: 'Dette ville starte en ny skanning i en reell applikasjon.'
+    });
+  };
 
   const handleLogout = async () => {
     try {
@@ -138,6 +145,34 @@ const Profile: React.FC = () => {
             <div>
               <p className="text-sm text-gray-500">Medlem siden</p>
               <p className="font-medium">Mars 2023</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* New Card for Scan Management */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Helseanalyse</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <div>
+              <p className="font-medium">Sist gjennomført skanning</p>
+              <p className="text-sm text-gray-500">25. april 2025</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">
+                {isPremium ? 'Du kan gjennomføre en ny skanning når du ønsker det.' : 
+                'Du har 1 gjenstående skanning denne måneden.'}
+              </p>
+              <Button 
+                onClick={handleNewScan} 
+                className="mt-2 bg-[#9b87f5] hover:bg-[#7E69AB] w-full"
+              >
+                <Scan size={16} className="mr-2" />
+                Ny skanning
+              </Button>
             </div>
           </div>
         </CardContent>
