@@ -1,5 +1,6 @@
 
-import { CoherenceData, HealthIssue } from '../types/health';
+import { CoherenceData } from '../types/health';
+import { HealthIssue } from '../types/supabase';
 
 // Mock health issues for development
 export const mockHealthIssues: HealthIssue[] = [
@@ -7,7 +8,9 @@ export const mockHealthIssues: HealthIssue[] = [
     id: "bacterial",
     name: "Bakteriell ubalanse",
     description: "Høy bakterieaktivitet i tarmen påvirker fordøyelsen og energinivået.",
-    load: 75, // 0-100% (high - red)
+    load: 75,
+    scan_id: "mock-scan-id-1",
+    created_at: new Date().toISOString(),
     recommendations: [
       "Øk inntaket av probiotika og prebiotiske fibre",
       "Ta probiotiske tilskudd daglig i 6–8 uker",
@@ -18,7 +21,9 @@ export const mockHealthIssues: HealthIssue[] = [
     id: "toxins",
     name: "Miljøgiftbelastning",
     description: "Forhøyede tungmetallnivåer påvirker nervesystem og generell energi.",
-    load: 55, // 0-100% (medium - yellow)
+    load: 55,
+    scan_id: "mock-scan-id-1",
+    created_at: new Date().toISOString(),
     recommendations: [
       "Støtt avgiftningssystemet med antioksidanter og mineraler",
       "Øk inntaket av klorofyllrike matvarer",
@@ -29,7 +34,9 @@ export const mockHealthIssues: HealthIssue[] = [
     id: "fungal",
     name: "Soppbelastning",
     description: "Mulig soppvekst påvirker luftveiene og kan forårsake tretthet.",
-    load: 45, // 0-100% (medium - yellow)
+    load: 45,
+    scan_id: "mock-scan-id-1",
+    created_at: new Date().toISOString(),
     recommendations: [
       "Reduser sukkerinntaket og vurder anti-fungal kosthold",
       "Unngå fuktige miljøer som kan fremme soppvekst",

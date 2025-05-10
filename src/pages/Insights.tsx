@@ -11,6 +11,7 @@ import RecommendationList from '@/components/insight/RecommendationList';
 import { getSystemConnections } from '@/utils/systemUtils';
 
 const Insights: React.FC = () => {
+  // Initialize with the correct mock data that now matches the expected type
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
   const [recommendations, setRecommendations] = useState<{color: string, text: string}[]>([
     { color: "bg-blue-50", text: "Støtt nervesystemet med magnesium og B-vitaminer for å redusere overbelastning." },
