@@ -2,14 +2,11 @@
 import React from 'react';
 
 interface SystemRelationsProps {
-  topSystem?: string;
-  secondSystem?: string;
+  topSystem: string;
+  secondSystem: string;
 }
 
-const SystemRelations: React.FC<SystemRelationsProps> = ({ 
-  topSystem = 'nervesystem',
-  secondSystem = 'fordøyelsen'
-}) => {
+const SystemRelations: React.FC<SystemRelationsProps> = ({ topSystem, secondSystem }) => {
   return (
     <div className="bg-[#9b87f5]/5 rounded-lg p-4 border border-[#9b87f5]/10">
       <h4 className="font-medium text-sm mb-2">Sammenhenger mellom systemene</h4>

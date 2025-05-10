@@ -2,7 +2,7 @@
 import { ScannerComponent } from '@/types/supabase';
 
 // Map category names to body systems
-export const CATEGORY_TO_SYSTEM = {
+export const CATEGORY_TO_SYSTEM: Record<string, string> = {
   'Nervesystem': 'nervesystem',
   'Hormoner': 'hormonsystem',
   'Fordøyelse': 'fordøyelsessystem',
@@ -12,30 +12,15 @@ export const CATEGORY_TO_SYSTEM = {
   'Immunforsvar': 'immunsystem',
 };
 
-export function getSystemDisplayName(systemKey: string): string {
-  const displayNames: Record<string, string> = {
-    'nervesystem': 'Nervesystem',
-    'hormonsystem': 'Hormonsystem',
-    'fordøyelsessystem': 'Fordøyelsessystem',
-    'sirkulasjonssystem': 'Hjerte-kar',
-    'respirasjonssystem': 'Respirasjonssystem',
-    'muskelsystem': 'Muskelsystem',
-    'immunsystem': 'Immunsystem',
-    'annet': 'Andre systemer'
-  };
-  
-  return displayNames[systemKey] || systemKey;
+export interface SystemLoad {
+  name: string;
+  value: number;
+  color: string;
 }
 
-export function getSystemColor(level: number): string {
-  if (level < 30) return '#77C17E';
-  if (level < 70) return '#F7D154';
-  return '#EA384C';
-}
-
-export function calculateSystemLoads(components: ScannerComponent[]) {
-  // Calculate average load for each system based on categories
-  const systemLoads = components.reduce((acc, component) => {
+// Calculate system loads from components
+export const calculateSystemLoads = (components: ScannerComponent[]): Record<string, { totalLoad: number, count: number }> => {
+  return components.reduce((acc, component) => {
     let systemKey = 'annet';
     
     // Check if this category belongs to a specific system
@@ -55,12 +40,33 @@ export function calculateSystemLoads(components: ScannerComponent[]) {
     
     return acc;
   }, {} as Record<string, { totalLoad: number, count: number }>);
-  
-  return systemLoads;
-}
+};
 
-export function getSystemAverages(systemLoads: Record<string, { totalLoad: number, count: number }>) {
-  // Calculate average load for each system
+// Get system display name
+export const getSystemDisplayName = (systemKey: string): string => {
+  const displayNames: Record<string, string> = {
+    'nervesystem': 'Nervesystem',
+    'hormonsystem': 'Hormonsystem',
+    'fordøyelsessystem': 'Fordøyelsessystem',
+    'sirkulasjonssystem': 'Hjerte-kar',
+    'respirasjonssystem': 'Respirasjonssystem',
+    'muskelsystem': 'Muskelsystem',
+    'immunsystem': 'Immunsystem',
+    'annet': 'Andre systemer'
+  };
+  
+  return displayNames[systemKey] || systemKey;
+};
+
+// Get color based on system load
+export const getSystemColor = (level: number): string => {
+  if (level < 30) return '#77C17E';
+  if (level < 70) return '#F7D154';
+  return '#EA384C';
+};
+
+// Calculate average load for each system
+export const getSystemAverages = (systemLoads: Record<string, { totalLoad: number, count: number }>): SystemLoad[] => {
   return Object.entries(systemLoads).map(([system, data]) => {
     return {
       name: getSystemDisplayName(system),
@@ -68,4 +74,4 @@ export function getSystemAverages(systemLoads: Record<string, { totalLoad: numbe
       color: getSystemColor(Math.round(data.totalLoad / data.count))
     };
   }).sort((a, b) => b.value - a.value);
-}
+};

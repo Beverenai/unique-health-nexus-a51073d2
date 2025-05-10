@@ -2,12 +2,14 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
+interface ChartData {
+  name: string;
+  value: number;
+  color: string;
+}
+
 interface SystemChartProps {
-  data: Array<{
-    name: string;
-    value: number;
-    color: string;
-  }>;
+  data: ChartData[];
 }
 
 const SystemChart: React.FC<SystemChartProps> = ({ data }) => {

@@ -2,15 +2,16 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import SystemIcon from './SystemIcon';
-import SystemProgressBar from './SystemProgressBar';
 import SystemBadge from './SystemBadge';
+import SystemProgressBar from './SystemProgressBar';
 
 interface SystemItemProps {
   name: string;
   value: number;
+  expanded?: boolean;
 }
 
-const SystemItem: React.FC<SystemItemProps> = ({ name, value }) => {
+const SystemItem: React.FC<SystemItemProps> = ({ name, value, expanded = false }) => {
   const getStatusText = (level: number): string => {
     if (level < 30) return `${name} fungerer innenfor normale parametere.`;
     if (level < 70) return `${name} viser moderat belastning. Tiltak anbefales.`;
@@ -36,9 +37,11 @@ const SystemItem: React.FC<SystemItemProps> = ({ name, value }) => {
       
       <SystemProgressBar value={value} />
       
-      <p className="text-xs text-gray-600 mt-2">
-        {getStatusText(value)}
-      </p>
+      {expanded && (
+        <p className="text-xs text-gray-600 mt-2">
+          {getStatusText(value)}
+        </p>
+      )}
     </div>
   );
 };
