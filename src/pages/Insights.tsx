@@ -11,7 +11,7 @@ import ConnectionList from '@/components/insight/ConnectionList';
 import RecommendationList from '@/components/insight/RecommendationList';
 import { getSystemConnections } from '@/utils/systemUtils';
 import ConnectionChart from '@/components/insight/ConnectionChart';
-import HealthSystemCards from '@/components/health/HealthSystemCards';
+import HealthSystemGrid from '@/components/health/HealthSystemGrid';
 
 // Sample health information data - using the same structure as the original table
 const healthInfoData = [
@@ -112,9 +112,7 @@ const Insights: React.FC = () => {
           <p className="text-gray-500 text-center text-sm">Sammenhengen mellom dine helseutfordringer</p>
         </div>
         
-        <HealthSystemCards 
-          title="Kroppssystemer og balanse" 
-          description="Detaljert oversikt over kroppens systemer og status"
+        <HealthSystemGrid 
           healthData={healthInfoData}
         />
         
