@@ -106,7 +106,7 @@ const Insights: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-24 pt-4">
-      <main className="container max-w-md mx-auto px-4">
+      <main className="container max-w-lg mx-auto px-4">
         <div className="mb-6">
           <h1 className="text-2xl font-semibold mb-2 text-center">Innsikter</h1>
           <p className="text-gray-500 text-center text-sm">Sammenhengen mellom dine helseutfordringer</p>

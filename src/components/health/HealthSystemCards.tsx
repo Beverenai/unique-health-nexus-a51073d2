@@ -63,9 +63,9 @@ const HealthSystemCards: React.FC<HealthSystemCardsProps> = ({
   };
   
   return (
-    <Card className="bg-gradient-to-br from-white/80 to-white/50 backdrop-blur-sm border-none shadow-lg mb-8 overflow-hidden">
+    <Card className="bg-gradient-to-br from-white/80 to-white/50 backdrop-blur-sm border-none shadow-lg mb-8">
       <CardHeader className="pb-2 border-b border-gray-100/40">
-        <CardTitle className="text-xl font-playfair">{title}</CardTitle>
+        <CardTitle className="text-xl font-medium">{title}</CardTitle>
         {description && (
           <p className="text-gray-600 text-sm">{description}</p>
         )}
@@ -74,12 +74,12 @@ const HealthSystemCards: React.FC<HealthSystemCardsProps> = ({
         {/* System filter tabs */}
         <div className="mb-4 overflow-x-auto pb-1 scrollbar-none">
           <Tabs defaultValue="Alle" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="bg-white/50 border border-white/60 h-9">
+            <TabsList className="bg-white/50 border border-white/60 h-9 w-full flex">
               {systemCategories.map((category) => (
                 <TabsTrigger 
                   key={category} 
                   value={category}
-                  className="data-[state=active]:bg-white data-[state=active]:text-gray-800 data-[state=active]:shadow-sm px-3 py-1.5 text-sm"
+                  className="data-[state=active]:bg-white data-[state=active]:text-gray-800 data-[state=active]:shadow-sm px-3 py-1.5 text-sm flex-1 whitespace-normal"
                 >
                   {category}
                 </TabsTrigger>

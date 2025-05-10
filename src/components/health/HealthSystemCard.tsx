@@ -80,7 +80,7 @@ const HealthSystemCard: React.FC<HealthSystemCardProps> = ({
   return (
     <motion.div 
       className={cn(
-        "bg-gradient-to-br rounded-xl overflow-hidden shadow-sm border border-white/40",
+        "bg-gradient-to-br rounded-xl border border-white/40",
         getBgGradient(area),
         "backdrop-blur-sm"
       )}
@@ -97,12 +97,12 @@ const HealthSystemCard: React.FC<HealthSystemCardProps> = ({
             <div className="bg-white p-1.5 rounded-full shadow-sm">
               <SystemIcon name={area} />
             </div>
-            <h3 className="font-medium text-gray-800">{area}</h3>
+            <h3 className="font-medium text-gray-800 break-words">{area}</h3>
           </div>
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 rounded-full"
+            className="h-8 w-8 p-0 rounded-full flex-shrink-0 ml-1"
             onClick={() => setIsExpanded(!isExpanded)}
             aria-expanded={isExpanded}
             aria-label={isExpanded ? `Skjul detaljer om ${area}` : `Vis detaljer om ${area}`}
@@ -118,12 +118,11 @@ const HealthSystemCard: React.FC<HealthSystemCardProps> = ({
         
         {/* Main content - always visible */}
         <div className="mb-2">
-          <p className="text-sm text-gray-600">{symptoms}</p>
+          <p className="text-sm text-gray-600 break-words">{symptoms}</p>
         </div>
         
         {/* Expandable content */}
         <motion.div 
-          className="overflow-hidden"
           variants={contentVariants}
           initial="collapsed"
           animate={isExpanded ? "expanded" : "collapsed"}
@@ -131,13 +130,13 @@ const HealthSystemCard: React.FC<HealthSystemCardProps> = ({
           <div className="pt-3 border-t border-gray-100/40 mt-2 space-y-3">
             <div>
               <h4 className="text-xs font-medium text-gray-700 mb-1">Mulige årsaker:</h4>
-              <p className="text-sm text-gray-600">{causes}</p>
+              <p className="text-sm text-gray-600 break-words">{causes}</p>
             </div>
             
             <div>
               <h4 className="text-xs font-medium text-gray-700 mb-1">Anbefalte tiltak:</h4>
               <div className="p-2 bg-white/50 rounded-lg border border-gray-100/40 shadow-sm">
-                <p className="text-sm text-gray-600">{recommendations}</p>
+                <p className="text-sm text-gray-600 break-words">{recommendations}</p>
               </div>
             </div>
           </div>
