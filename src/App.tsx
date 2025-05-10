@@ -55,15 +55,17 @@ const App = () => {
   }, []);
 
   const renderContent = () => (
-    <div className="min-h-screen flex flex-col pb-16">
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/history" element={<History />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/insights" element={<Insights />} />
-        <Route path="/issue/:issueId" element={<IssueDetail />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-grow pb-16">
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/history" element={<History />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/insights" element={<Insights />} />
+          <Route path="/issue/:issueId" element={<IssueDetail />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
       <BottomNavigation />
     </div>
   );
