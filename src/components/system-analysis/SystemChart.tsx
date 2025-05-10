@@ -2,29 +2,23 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { motion } from 'framer-motion';
-
-interface ChartData {
-  name: string;
-  value: number;
-  color: string;
-}
+import { ChartData } from './types';
+import { useChartAnimation } from './hooks/useChartAnimation';
+import SystemChartTooltip from './SystemChartTooltip';
 
 interface SystemChartProps {
   data: ChartData[];
 }
 
+/**
+ * A pie chart component that displays system load data
+ */
 const SystemChart: React.FC<SystemChartProps> = ({ data }) => {
-  const containerVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { 
-      opacity: 1, 
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: 200,
-        damping: 20
-      }
-    }
+  const { containerVariants } = useChartAnimation();
+
+  // Custom tooltip renderer
+  const renderTooltip = (props: any) => {
+    return <SystemChartTooltip {...props} data={data} />;
   };
 
   return (
@@ -56,15 +50,7 @@ const SystemChart: React.FC<SystemChartProps> = ({ data }) => {
               />
             ))}
           </Pie>
-          <Tooltip 
-            formatter={(value, name, props) => [`${value}% belastning`, props.payload.name]}
-            contentStyle={{
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              borderRadius: '8px',
-              border: '1px solid rgba(155, 135, 245, 0.2)',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
-            }}
-          />
+          <Tooltip content={renderTooltip} />
         </PieChart>
       </ResponsiveContainer>
     </motion.div>
