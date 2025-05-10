@@ -11,24 +11,32 @@ interface DetailCardProps {
 const DetailCard: React.FC<DetailCardProps> = ({ detail }) => {
   // Determine color based on the impact
   const getProgressColor = (impact: number): string => {
-    if (impact < 30) return 'bg-success';
-    if (impact < 60) return 'bg-warning';
-    return 'bg-danger';
+    if (impact < 30) return 'bg-[#77C17E]';
+    if (impact < 60) return 'bg-[#F7D154]';
+    return 'bg-[#EA384C]';
+  };
+  
+  const getTextColor = (impact: number): string => {
+    if (impact < 30) return 'text-[#77C17E]';
+    if (impact < 60) return 'text-[#F7D154]';
+    return 'text-[#EA384C]';
   };
 
   return (
-    <div className="health-card w-[280px] flex-shrink-0 mr-4 h-full">
-      <h4 className="font-medium text-base">{detail.title}</h4>
-      
-      <div className="mt-2 flex items-center space-x-2">
-        <Progress 
-          value={detail.impact} 
-          className={cn("h-2 flex-grow", getProgressColor(detail.impact))} 
-        />
-        <span className="text-sm font-medium">{detail.impact}%</span>
+    <div className="bg-white/80 rounded-xl p-4 shadow-sm border border-gray-100/20">
+      <div className="flex items-center justify-between mb-2">
+        <h4 className="font-medium text-base">{detail.title}</h4>
+        <span className={cn("font-medium text-sm", getTextColor(detail.impact))}>
+          {detail.impact}%
+        </span>
       </div>
       
-      <p className="text-sm text-gray-500 mt-3">
+      <Progress 
+        value={detail.impact} 
+        className={cn("h-1.5 mb-3", getProgressColor(detail.impact))} 
+      />
+      
+      <p className="text-sm text-gray-600">
         {detail.description}
       </p>
     </div>

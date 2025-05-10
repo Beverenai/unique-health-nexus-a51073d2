@@ -1,7 +1,14 @@
 
 import React from 'react';
 import { ScannerComponent } from '@/types/supabase';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 
@@ -10,67 +17,46 @@ interface ScannerComponentTableProps {
 }
 
 const ScannerComponentTable: React.FC<ScannerComponentTableProps> = ({ components }) => {
+  const getProgressColor = (level: number): string => {
+    if (level < 30) return 'bg-[#77C17E]';
+    if (level < 70) return 'bg-[#F7D154]';
+    return 'bg-[#EA384C]';
+  };
+  
+  const getTextColor = (level: number): string => {
+    if (level < 30) return 'text-[#77C17E]';
+    if (level < 70) return 'text-[#F7D154]';
+    return 'text-[#EA384C]';
+  };
+  
   // Group components by category
   const groupedComponents = components.reduce((acc, component) => {
-    if (!acc[component.category]) {
-      acc[component.category] = [];
+    const category = component.category;
+    if (!acc[category]) {
+      acc[category] = [];
     }
-    acc[component.category].push(component);
+    acc[category].push(component);
     return acc;
   }, {} as Record<string, ScannerComponent[]>);
-
-  // Sort categories by highest level component
-  const sortedCategories = Object.keys(groupedComponents).sort((a, b) => {
-    const maxLevelA = Math.max(...groupedComponents[a].map(c => c.level));
-    const maxLevelB = Math.max(...groupedComponents[b].map(c => c.level));
-    return maxLevelB - maxLevelA;
-  });
-
-  // Function to get color based on level
-  const getLevelColor = (level: number): string => {
-    if (level < 20) return 'bg-success';
-    if (level < 30) return 'bg-warning';
-    return 'bg-danger';
-  };
-
-  // Function to clean name from .dsd extension
-  const cleanComponentName = (name: string): string => {
-    return name.replace(/\.dsd$/, '');
-  };
-
+  
   return (
     <div className="space-y-6">
-      {sortedCategories.map(category => (
-        <div key={category} className="bg-white rounded-lg shadow-sm p-4">
-          <h3 className="font-medium text-lg mb-4">{category}</h3>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Detektert komponent</TableHead>
-                <TableHead className="text-right">Nivå</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {groupedComponents[category]
-                .sort((a, b) => b.level - a.level) // Sort by level descending
-                .map(component => (
-                  <TableRow key={component.id}>
-                    <TableCell className="font-medium">
-                      {cleanComponentName(component.name)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Progress 
-                          value={component.level} 
-                          className={cn("h-2 w-24", getLevelColor(component.level))} 
-                        />
-                        <span className="w-10 text-right">{component.level}%</span>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
+      {Object.entries(groupedComponents).map(([category, categoryComponents]) => (
+        <div key={category} className="bg-white/50 rounded-xl p-4">
+          <h3 className="text-sm font-medium mb-3 text-gray-700 uppercase">{category}</h3>
+          <div className="space-y-3">
+            {categoryComponents.map((component) => (
+              <div key={component.id} className="bg-white/70 rounded-lg p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">{component.name}</span>
+                  <span className={cn("text-sm font-medium", getTextColor(component.level))}>
+                    {component.level}%
+                  </span>
+                </div>
+                <Progress value={component.level} className={cn("h-1", getProgressColor(component.level))} />
+              </div>
+            ))}
+          </div>
         </div>
       ))}
     </div>

@@ -8,10 +8,10 @@ import { getLatestCoherenceData, getHealthIssues, seedDemoData } from '@/service
 import ChatButton from '@/components/ChatButton';
 import ScanDateCard from '@/components/ScanDateCard';
 import CoherenceDisplay from '@/components/CoherenceDisplay';
-import HealthIssuesCarousel from '@/components/HealthIssuesCarousel';
 import NewScanButton from '@/components/NewScanButton';
 import ExplanationCard from '@/components/ExplanationCard';
 import InsightCard from '@/components/InsightCard';
+import IssuesByPriorityGroup from '@/components/IssuesByPriorityGroup';
 
 // Hardcoded mock data to ensure it always displays
 const mockCoherenceData: CoherenceData = {
@@ -49,6 +49,24 @@ const mockHealthIssues: HealthIssue[] = [
     load: 65,
     created_at: new Date().toISOString(),
     recommendations: ["Vurder kiropraktikk, massasje og spesifikke øvelser for nakkeområdet."]
+  },
+  {
+    id: "issue-4",
+    scan_id: "mock-scan-id",
+    name: "Vitamin D mangel",
+    description: "Analysen indikerer lave nivåer av vitamin D som kan påvirke immunsystemet.",
+    load: 72,
+    created_at: new Date().toISOString(),
+    recommendations: ["Daglig tilskudd av vitamin D, økt eksponering for sollys når mulig."]
+  },
+  {
+    id: "issue-5",
+    scan_id: "mock-scan-id",
+    name: "Lett dehydrering",
+    description: "Cellulære signaler tyder på redusert væskebalanse.",
+    load: 25,
+    created_at: new Date().toISOString(),
+    recommendations: ["Øk daglig vanninntak, vurder elektrolytter ved trening."]
   }
 ];
 
@@ -83,6 +101,11 @@ const Home = () => {
     fetchData();
   }, []);
 
+  // Group health issues by priority (based on load value)
+  const highPriorityIssues = healthIssues.filter(issue => issue.load >= 60);
+  const moderatePriorityIssues = healthIssues.filter(issue => issue.load >= 30 && issue.load < 60);
+  const lowPriorityIssues = healthIssues.filter(issue => issue.load < 30);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] pt-4 pb-24">
       <main className="container max-w-md mx-auto px-4">
@@ -94,9 +117,31 @@ const Home = () => {
         
         <CoherenceDisplay coherenceData={coherenceData} />
         
-        <HealthIssuesCarousel 
-          healthIssues={healthIssues}
-        />
+        <div className="mt-8 space-y-8">
+          {highPriorityIssues.length > 0 && (
+            <IssuesByPriorityGroup 
+              title="Høy prioritet" 
+              issues={highPriorityIssues}
+              priorityType="high"
+            />
+          )}
+          
+          {moderatePriorityIssues.length > 0 && (
+            <IssuesByPriorityGroup 
+              title="Moderat prioritet" 
+              issues={moderatePriorityIssues}
+              priorityType="medium"
+            />
+          )}
+          
+          {lowPriorityIssues.length > 0 && (
+            <IssuesByPriorityGroup 
+              title="Lav prioritet" 
+              issues={lowPriorityIssues}
+              priorityType="low"
+            />
+          )}
+        </div>
         
         <InsightCard healthIssues={healthIssues} />
       </main>

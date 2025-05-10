@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Brain, LeafyGreen, Moon, CloudFog, Bone, Heart, Activity, Salad, Eye } from 'lucide-react';
+import { Brain, LeafyGreen, Moon, CloudFog, Bone, Heart, Activity, Salad, Eye, ArrowRight } from 'lucide-react';
 import { HealthIssue } from '@/types/supabase';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 
 interface IssueCardProps {
   issue: HealthIssue;
-  onClick?: () => void; // Keep for backward compatibility
+  onClick?: () => void;
 }
 
 const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
@@ -28,7 +28,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
     return 'text-[#EA384C]';  // Red for high load
   };
 
-  // Get background color - flatter design with frosted glass effect
+  // Get background color based on issue type
   const getBackgroundColor = (name: string): string => {
     const lowerName = name.toLowerCase();
     
@@ -40,6 +40,10 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
       return 'bg-purple-50/80';
     } else if (lowerName.includes('hjerte') || lowerName.includes('kardio')) {
       return 'bg-red-50/80';
+    } else if (lowerName.includes('vitamin') || lowerName.includes('mineral')) {
+      return 'bg-yellow-50/80';
+    } else if (lowerName.includes('dehydrer') || lowerName.includes('væske')) {
+      return 'bg-cyan-50/80';
     } else {
       return 'bg-slate-50/80';
     }
@@ -63,27 +67,12 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
       return <Bone className="text-amber-600" size={22} />;
     } else if (name.includes('øye') || name.includes('syn')) {
       return <Eye className="text-indigo-600" size={22} />;
+    } else if (name.includes('vitamin') || name.includes('mineral')) {
+      return <LeafyGreen className="text-yellow-600" size={22} />;
     } else {
       return <CloudFog className="text-slate-600" size={22} />;
     }
   };
-
-  // Get related systems for this issue
-  const getRelatedSystems = (): string[] => {
-    const name = issue.name.toLowerCase();
-    
-    if (name.includes('tarm')) {
-      return ['Hormonsystem', 'Nervesystem'];
-    } else if (name.includes('hormon')) {
-      return ['Fordøyelsessystem', 'Nervesystem'];
-    } else if (name.includes('nakkevirvler')) {
-      return ['Nervesystem'];
-    } else {
-      return [];
-    }
-  };
-
-  const relatedSystems = getRelatedSystems();
   
   // Navigate to issue detail page
   const handleViewDetail = () => {
@@ -93,81 +82,45 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
   return (
     <div 
       className={cn(
-        "mb-5 border border-gray-100/20 backdrop-blur-sm rounded-3xl p-5 shadow-sm transition-all hover:shadow-md",
+        "border border-gray-100/20 backdrop-blur-sm rounded-xl p-4 shadow-sm transition-all hover:shadow-md flex flex-col",
         getBackgroundColor(issue.name)
       )}
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-3">
-          <div className={cn("bg-white p-2.5 rounded-full shadow-sm")}>
+          <div className="bg-white p-2 rounded-full shadow-sm">
             {getIssueIcon()}
           </div>
-          <h3 className="text-lg font-semibold text-gray-800">{issue.name}</h3>
+          <h3 className="text-base font-medium text-gray-800">{issue.name}</h3>
         </div>
-      </div>
-      
-      <div className="mt-4 flex items-center space-x-2">
-        <Progress 
-          value={issue.load} 
-          className={cn("h-2.5 flex-grow rounded-full", getProgressColor(issue.load))} 
-        />
-        <span className={cn("text-sm font-medium", getTextColor(issue.load))}>
+        <span className={cn("text-sm font-medium px-2 py-1 rounded-full", getTextColor(issue.load))}>
           {issue.load}%
         </span>
       </div>
       
-      <p className="text-sm text-gray-600 my-4 leading-relaxed">
-        <span className="font-medium">Skanningen viser:</span> {issue.description}
+      <div className="mt-2 mb-3">
+        <Progress 
+          value={issue.load} 
+          className={cn("h-1.5 rounded-full", getProgressColor(issue.load))} 
+        />
+      </div>
+      
+      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+        {issue.description}
       </p>
 
-      {relatedSystems.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          {relatedSystems.map(system => (
-            <span 
-              key={system}
-              className="text-xs px-2.5 py-1.5 bg-white/70 shadow-sm rounded-full text-gray-600"
-            >
-              {system}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {issue.recommendations && issue.recommendations.length > 0 && (
-        <div className="mt-4">
-          <p className="text-sm font-medium mb-2 text-gray-800">Anbefalte tiltak:</p>
-          <p className="text-sm text-gray-600 mb-4 leading-relaxed">
-            {issue.recommendations[0]}
-          </p>
-        </div>
-      )}
-      
-      <Button 
-        onClick={handleViewDetail}
-        variant="outline" 
-        className="w-full mt-2 justify-between bg-white text-gray-800 border border-gray-100/40 hover:bg-gray-50 rounded-xl"
-      >
-        <span>Se detaljer</span>
-        <Arrow className="h-4 w-4" />
-      </Button>
+      <div className="mt-auto">
+        <Button 
+          onClick={handleViewDetail}
+          variant="ghost" 
+          className="w-full justify-between text-gray-700 hover:bg-white/50 hover:text-gray-900 p-2 h-auto"
+        >
+          <span className="text-sm">Se detaljer</span>
+          <ArrowRight className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 };
-
-// Helper component for the arrow icon
-const Arrow = ({ className }: { className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 20 20" 
-    fill="currentColor" 
-    className={className}
-  >
-    <path 
-      fillRule="evenodd" 
-      d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" 
-      clipRule="evenodd" 
-    />
-  </svg>
-);
 
 export default IssueCard;
