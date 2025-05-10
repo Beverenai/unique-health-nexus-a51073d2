@@ -11,7 +11,6 @@ import ScannerComponentTable from '@/components/ScannerComponentTable';
 import { getIssueDetails } from '@/services/supabaseService';
 import { HealthIssue, IssueDetail, IssueRecommendation, ScannerComponent } from '@/types/supabase';
 import ChatButton from '@/components/ChatButton';
-import NavigationBar from '@/components/NavigationBar';
 import { cn } from '@/lib/utils';
 
 const IssueDetailPage: React.FC = () => {
@@ -199,7 +198,6 @@ const IssueDetailPage: React.FC = () => {
       </div>
       
       <ChatButton />
-      <NavigationBar />
     </div>
   );
 };
