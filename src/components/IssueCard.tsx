@@ -12,33 +12,33 @@ interface IssueCardProps {
 }
 
 const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
-  // Determine color based on the load - refreshed organic colors
+  // Determine color based on the load - using the new color palette
   const getProgressColor = (load: number): string => {
-    if (load < 20) return 'bg-emerald-400'; // Lighter green for low load
-    if (load < 50) return 'bg-amber-400'; // Brighter yellow for moderate load
-    return 'bg-rose-400';  // Softer red for high load
+    if (load < 40) return 'bg-[#77C17E]'; // Green for low load
+    if (load < 60) return 'bg-[#F7D154]'; // Yellow for moderate load
+    return 'bg-[#EA384C]';  // Red for high load
   };
 
   const getTextColor = (load: number): string => {
-    if (load < 20) return 'text-emerald-600'; // Deeper green for text
-    if (load < 50) return 'text-amber-600'; // Deeper yellow for text
-    return 'text-rose-600';  // Deeper red for text
+    if (load < 40) return 'text-[#77C17E]'; // Green for low load
+    if (load < 60) return 'text-[#F7D154]'; // Yellow for moderate load
+    return 'text-[#EA384C]';  // Red for high load
   };
 
-  // Get background gradient based on issue type - lighter, more airy
-  const getBackgroundGradient = (name: string): string => {
+  // Get background color - flatter design
+  const getBackgroundColor = (name: string): string => {
     const lowerName = name.toLowerCase();
     
     if (lowerName.includes('nervesystem') || lowerName.includes('nakkevirvler')) {
-      return 'bg-gradient-to-br from-white to-blue-50';
+      return 'bg-blue-50';
     } else if (lowerName.includes('tarm') || lowerName.includes('bakterie') || lowerName.includes('flora')) {
-      return 'bg-gradient-to-br from-white to-green-50';
+      return 'bg-green-50';
     } else if (lowerName.includes('hormon') || lowerName.includes('melatonin')) {
-      return 'bg-gradient-to-br from-white to-purple-50';
+      return 'bg-purple-50';
     } else if (lowerName.includes('hjerte') || lowerName.includes('kardio')) {
-      return 'bg-gradient-to-br from-white to-red-50';
+      return 'bg-red-50';
     } else {
-      return 'bg-gradient-to-br from-white to-slate-50';
+      return 'bg-slate-50';
     }
   };
 
@@ -84,7 +84,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
 
   return (
     <div 
-      className={`health-card mb-5 transition-all hover:shadow-md border border-gray-100 rounded-xl p-5 shadow-sm ${getBackgroundGradient(issue.name)}`}
+      className={`health-card mb-5 border border-gray-100 rounded-xl p-5 shadow-sm ${getBackgroundColor(issue.name)}`}
       style={{ borderRadius: "20px" }}
     >
       <div className="flex items-center justify-between mb-3">
@@ -107,7 +107,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
       </div>
       
       <p className="text-sm text-gray-600 my-4 leading-relaxed">
-        {issue.description}
+        <span className="font-medium">Skanningen viser:</span> {issue.description}
       </p>
 
       {relatedSystems.length > 0 && (
@@ -125,7 +125,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
 
       {issue.recommendations && issue.recommendations.length > 0 && (
         <div className="mt-4">
-          <p className="text-sm font-medium mb-2 text-gray-800">Tiltak:</p>
+          <p className="text-sm font-medium mb-2 text-gray-800">Anbefalte tiltak:</p>
           <p className="text-sm text-gray-600 mb-4 leading-relaxed">
             {issue.recommendations[0]}
           </p>

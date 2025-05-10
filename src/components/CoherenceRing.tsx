@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { getScoreColor, getScoreTextColor } from '@/data/mockData';
 
 interface CoherenceRingProps {
   score: number;
@@ -18,29 +17,26 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
   showText = true,
   className
 }) => {
-  // New modern color assignments
+  // Color assignments using the requested color palette
   const getModernColor = (score: number): string => {
-    if (score < 30) return 'from-rose-400 to-rose-300';
-    if (score < 50) return 'from-amber-400 to-amber-300';
-    if (score < 70) return 'from-blue-400 to-blue-300';
-    return 'from-emerald-400 to-emerald-300';
+    if (score < 40) return '#EA384C'; // Red for high load/low score
+    if (score < 60) return '#F7D154'; // Yellow for moderate load
+    return '#77C17E'; // Green for low load/high score
   };
   
   const getModernTextColor = (score: number): string => {
-    if (score < 30) return 'text-rose-600';
-    if (score < 50) return 'text-amber-600';
-    if (score < 70) return 'text-blue-600';
-    return 'text-emerald-600';
+    if (score < 40) return 'text-[#EA384C]'; 
+    if (score < 60) return 'text-[#F7D154]';
+    return 'text-[#77C17E]';
   };
   
   const getStatusLabel = (score: number): string => {
-    if (score < 30) return 'Krever oppmerksomhet';
-    if (score < 50) return 'Under optimalt';
-    if (score < 70) return 'Bra';
-    return 'Utmerket';
+    if (score < 40) return 'Krever oppmerksomhet';
+    if (score < 60) return 'Moderat';
+    return 'God';
   };
   
-  const circleGradient = getModernColor(score);
+  const color = getModernColor(score);
   const textColorClass = getModernTextColor(score);
   const statusLabel = getStatusLabel(score);
   
@@ -60,12 +56,17 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
     <div className="flex flex-col items-center">
       <div className={cn(
         "relative flex items-center justify-center rounded-full",
-        `bg-gradient-to-br ${circleGradient}`,
         sizeClasses[size],
         className
       )}>
-        {/* Outer ring with pulse effect */}
-        <div className="absolute inset-0 rounded-full bg-white opacity-20 animate-ping"></div>
+        {/* Ring with flat design - no pulsing effect */}
+        <div 
+          className="absolute inset-0 rounded-full" 
+          style={{
+            background: color,
+            opacity: 0.2
+          }}
+        />
         
         {/* Inner white circle */}
         <div className="bg-white rounded-full flex items-center justify-center" style={{width: '85%', height: '85%'}}>

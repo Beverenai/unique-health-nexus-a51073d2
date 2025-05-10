@@ -5,6 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Brain, LeafyGreen, Moon, CloudFog, Bone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface IssueDetailDialogProps {
   issue: HealthIssue | null;
@@ -13,19 +15,21 @@ interface IssueDetailDialogProps {
 }
 
 const IssueDetailDialog: React.FC<IssueDetailDialogProps> = ({ issue, open, onOpenChange }) => {
+  const navigate = useNavigate();
+  
   if (!issue) return null;
 
-  // Determine color based on the load
+  // Determine color based on the load using the requested color palette
   const getProgressColor = (load: number): string => {
-    if (load < 20) return 'bg-[#88C999]'; // Green for low load
-    if (load < 50) return 'bg-[#F6C85E]'; // Yellow for moderate load
-    return 'bg-[#EF5E5E]';  // Red for high load
+    if (load < 40) return 'bg-[#77C17E]'; // Green for low load
+    if (load < 60) return 'bg-[#F7D154]'; // Yellow for moderate load
+    return 'bg-[#EA384C]';  // Red for high load
   };
 
   const getTextColor = (load: number): string => {
-    if (load < 20) return 'text-[#88C999]'; // Green for low load
-    if (load < 50) return 'text-[#F6C85E]'; // Yellow for moderate load
-    return 'text-[#EF5E5E]';  // Red for high load
+    if (load < 40) return 'text-[#77C17E]'; // Green for low load
+    if (load < 60) return 'text-[#F7D154]'; // Yellow for moderate load
+    return 'text-[#EA384C]';  // Red for high load
   };
 
   // Get icon based on issue name
@@ -48,15 +52,15 @@ const IssueDetailDialog: React.FC<IssueDetailDialogProps> = ({ issue, open, onOp
     const name = issue.name.toLowerCase();
     
     if (name.includes('tarm') || name.includes('bakterie') || name.includes('flora')) {
-      return "Tarmen inneholder billioner av bakterier som hjelper med fordøyelse, immunfunksjon og produksjon av næringsstoffer. Ubalanse i denne mikrobiomet kan forstyrre disse funksjonene og føre til inflammasjon.";
+      return "Skanningen indikerer at tarmen inneholder en ubalanse i bakteriesammensetningen som påvirker fordøyelse, immunfunksjon og produksjon av næringsstoffer. Denne ubalansen kan forstyrre disse funksjonene og føre til inflammasjon.";
     } else if (name.includes('hormon')) {
-      return "Hormoner er kroppens kjemiske budbringere som regulerer alt fra energiproduksjon til søvn og stemning. Ubalanser i dette systemet påvirker mange kroppslige funksjoner samtidig.";
+      return "Skanningen viser ubalanse i kroppens kjemiske budbringere som regulerer alt fra energiproduksjon til søvn og stemning. Denne ubalansen kan påvirke mange kroppslige funksjoner samtidig.";
     } else if (name.includes('kompresjon') || name.includes('nakkevirvler')) {
-      return "Nakkevirvlene beskytter ryggmargen og nervebaner som kommuniserer mellom hjernen og kroppen. Kompresjon kan forstyrre nervesignaler og påvirke omkringliggende vev og blodforsyning.";
+      return "Skanningen avslører kompresjon i nakkevirvlene som beskytter ryggmargen og nervebaner. Dette kan forstyrre nervesignaler og påvirke omkringliggende vev og blodforsyning.";
     } else if (name.includes('nervesystem')) {
-      return "Nervesystemet er kroppens kommunikasjonsnettverk. God nervefunksjon er avgjørende for alle kroppslige prosesser og reaksjoner på ytre og indre stimuli.";
+      return "Kroppsskanningen indikerer utfordringer i nervesystemet, som er kroppens kommunikasjonsnettverk. God nervefunksjon er avgjørende for alle kroppslige prosesser og reaksjoner.";
     } else {
-      return "Denne tilstanden påvirker kroppens naturlige balanse og selvregulerende systemer, noe som kan føre til redusert funksjon og økt belastning over tid.";
+      return "Skanningen viser at denne tilstanden påvirker kroppens naturlige balanse og selvregulerende systemer, noe som kan føre til redusert funksjon over tid.";
     }
   };
 
@@ -102,35 +106,10 @@ const IssueDetailDialog: React.FC<IssueDetailDialogProps> = ({ issue, open, onOp
     }
   };
 
-  // Example educational links
-  const getEducationalLinks = () => {
-    const name = issue.name.toLowerCase();
-    
-    if (name.includes('tarm') || name.includes('bakterie') || name.includes('flora')) {
-      return [
-        { title: "Mikrobiomet og dets innvirkning på helsen", url: "#" },
-        { title: "Prebiotika vs. Probiotika: Hvilken forskjell?", url: "#" },
-        { title: "Kosthold for optimal tarmhelse", url: "#" }
-      ];
-    } else if (name.includes('hormon')) {
-      return [
-        { title: "Balansere stress- og søvnhormoner naturlig", url: "#" },
-        { title: "Hormonsykluser og deres betydning", url: "#" },
-        { title: "Kosthold og hormoner: Den skjulte sammenhengen", url: "#" }
-      ];
-    } else if (name.includes('kompresjon') || name.includes('nakkevirvler')) {
-      return [
-        { title: "Ergonomi for nakke og rygg i hverdagen", url: "#" },
-        { title: "Øvelser for å redusere nakkebelastning", url: "#" },
-        { title: "Forstå sammenhengen mellom nakke og nervesystem", url: "#" }
-      ];
-    } else {
-      return [
-        { title: "Helhetlig tilnærming til optimal helse", url: "#" },
-        { title: "Forebyggende helsetiltak i hverdagen", url: "#" },
-        { title: "Kronisk belastning og langtidseffekter", url: "#" }
-      ];
-    }
+  // View detail page button handler
+  const handleViewDetail = () => {
+    onOpenChange(false);
+    navigate(`/issues/${issue.id}`);
   };
 
   return (
@@ -161,7 +140,7 @@ const IssueDetailDialog: React.FC<IssueDetailDialogProps> = ({ issue, open, onOp
           
           {/* Status summary */}
           <div>
-            <h3 className="text-lg font-medium mb-2 text-[#1E1E1E]">Oppsummering</h3>
+            <h3 className="text-lg font-medium mb-2 text-[#1E1E1E]">Fra kroppsskanningen</h3>
             <p className="text-[#1E1E1E] leading-relaxed">
               {issue.description}
             </p>
@@ -169,7 +148,7 @@ const IssueDetailDialog: React.FC<IssueDetailDialogProps> = ({ issue, open, onOp
           
           {/* Biological explanation */}
           <div>
-            <h3 className="text-lg font-medium mb-2 text-[#1E1E1E]">Biologisk forklaring</h3>
+            <h3 className="text-lg font-medium mb-2 text-[#1E1E1E]">Biofysisk analyse</h3>
             <p className="text-[#1E1E1E] leading-relaxed">
               {getBiologicalExplanation()}
             </p>
@@ -203,22 +182,12 @@ const IssueDetailDialog: React.FC<IssueDetailDialogProps> = ({ issue, open, onOp
             )}
           </div>
           
-          {/* Educational links */}
-          <div>
-            <h3 className="text-lg font-medium mb-2 text-[#1E1E1E]">Lær mer</h3>
-            <ul className="space-y-1">
-              {getEducationalLinks().map((link, index) => (
-                <li key={index}>
-                  <a 
-                    href={link.url} 
-                    className="text-blue-500 hover:underline flex items-center"
-                  >
-                    <span className="mr-1">•</span> {link.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <Button 
+            onClick={handleViewDetail} 
+            className="w-full justify-center bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            Se full detaljside
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

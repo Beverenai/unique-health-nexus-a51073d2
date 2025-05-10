@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
@@ -13,6 +14,7 @@ import ScanDateCard from '@/components/ScanDateCard';
 import CoherenceDisplay from '@/components/CoherenceDisplay';
 import HealthIssuesCarousel from '@/components/HealthIssuesCarousel';
 import NewScanButton from '@/components/NewScanButton';
+import ExplanationCard from '@/components/ExplanationCard';
 
 // Hardcoded mock data to ensure it always displays
 const mockCoherenceData: CoherenceData = {
@@ -97,6 +99,8 @@ const Home = () => {
       
       <main className="container max-w-md mx-auto px-4 pt-4 pb-24">
         <ScanDateCard scanDate={new Date(coherenceData?.created_at || scanDate)} />
+        
+        <ExplanationCard />
         
         <CoherenceDisplay coherenceData={coherenceData} />
         
