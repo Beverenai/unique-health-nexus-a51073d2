@@ -7,10 +7,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { seedHistoricalData } from '@/services/supabaseService';
-import { AppNavigation } from "./components/navigation/AppSidebar";
+import BottomNavigation from "./components/navigation/BottomNavigation";
+import { useIsMobile } from "@/hooks/use-mobile";
 import Index from "./pages/Index";
 import History from "./pages/History";
 import Profile from "./pages/Profile";
+import Insights from "./pages/Insights";
 import IssueDetail from "./pages/IssueDetail";
 import NotFound from "./pages/NotFound";
 import Onboarding from "./components/Onboarding";
@@ -21,6 +23,7 @@ const App = () => {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     // Check if onboarding has been completed
@@ -51,6 +54,20 @@ const App = () => {
     };
   }, []);
 
+  const renderContent = () => (
+    <div className="min-h-screen flex flex-col pb-16">
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/history" element={<History />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/insights" element={<Insights />} />
+        <Route path="/issue/:issueId" element={<IssueDetail />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <BottomNavigation />
+    </div>
+  );
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -61,15 +78,7 @@ const App = () => {
             {showOnboarding && (
               <Onboarding onComplete={() => setShowOnboarding(false)} />
             )}
-            <AppNavigation>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/history" element={<History />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/issue/:issueId" element={<IssueDetail />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </AppNavigation>
+            {renderContent()}
           </BrowserRouter>
         </div>
       </TooltipProvider>

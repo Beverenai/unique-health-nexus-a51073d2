@@ -4,9 +4,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import ChatButton from '@/components/ChatButton';
 import { Profile as ProfileType } from '@/types/supabase';
-import { Scan } from 'lucide-react';
+import { Scan, Settings, ChevronRight } from 'lucide-react';
 
 const Profile: React.FC = () => {
   const [profile, setProfile] = useState<ProfileType | null>(null);
@@ -113,7 +112,7 @@ const Profile: React.FC = () => {
         </p>
       </header>
 
-      <Card className="mb-8">
+      <Card className="mb-8 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
         <CardContent className="pt-6">
           <div className="flex items-center">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary font-medium text-xl">
@@ -150,10 +149,10 @@ const Profile: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* New Card for Scan Management */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Helseanalyse</CardTitle>
+      {/* Scan Management Card */}
+      <Card className="mb-8 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-medium">Helseanalyse</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -171,16 +170,16 @@ const Profile: React.FC = () => {
                 className="mt-2 bg-[#9b87f5] hover:bg-[#7E69AB] w-full"
               >
                 <Scan size={16} className="mr-2" />
-                Ny skanning
+                Start ny skanning
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Medlemskap</CardTitle>
+      <Card className="mb-8 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-medium">Medlemskap</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex justify-between items-center">
@@ -201,38 +200,26 @@ const Profile: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Varsler</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Daglige påminnelser</p>
-                <p className="text-sm text-gray-500">Motta daglige påminnelser om helseanbefalinger</p>
-              </div>
-              <div className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200">
-                <span className="absolute h-4 w-4 transform rounded-full bg-white transition ml-1"></span>
-              </div>
+      {/* Settings button card */}
+      <Card className="mb-8 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
+        <CardContent className="p-0">
+          <Button 
+            variant="ghost" 
+            className="w-full flex justify-between items-center p-4 h-auto"
+            onClick={() => toast.info('Innstillinger ville åpnes her')}
+          >
+            <div className="flex items-center">
+              <Settings size={20} className="text-gray-500 mr-3" />
+              <span className="text-left font-medium">Innstillinger</span>
             </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Ukentlig rapport</p>
-                <p className="text-sm text-gray-500">Motta en ukentlig sammendrag av din helsestatus</p>
-              </div>
-              <div className="relative inline-flex h-6 w-11 items-center rounded-full bg-primary">
-                <span className="absolute h-4 w-4 transform rounded-full bg-white transition ml-6"></span>
-              </div>
-            </div>
-          </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </Button>
         </CardContent>
       </Card>
 
-      <div className="text-center">
+      <div className="text-center mb-10">
         {isDemo ? (
-          <Button onClick={handleLogin}>
+          <Button onClick={handleLogin} className="bg-[#9b87f5] hover:bg-[#7E69AB]">
             Logg inn med Google
           </Button>
         ) : (
@@ -241,8 +228,6 @@ const Profile: React.FC = () => {
           </Button>
         )}
       </div>
-
-      <ChatButton />
     </div>
   );
 };

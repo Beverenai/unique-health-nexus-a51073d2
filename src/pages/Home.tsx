@@ -1,11 +1,10 @@
+
 import React, { useEffect, useState } from 'react';
-import { toast } from 'sonner';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
 import { supabase } from '@/integrations/supabase/client';
 import { getLatestCoherenceData, getHealthIssues, seedDemoData } from '@/services/supabaseService';
 
 // Import components
-import ChatButton from '@/components/ChatButton';
 import ScanDateCard from '@/components/ScanDateCard';
 import CoherenceDisplay from '@/components/CoherenceDisplay';
 import ExplanationCard from '@/components/ExplanationCard';
@@ -73,6 +72,7 @@ const Home = () => {
   const [coherenceData, setCoherenceData] = useState<CoherenceData | null>(mockCoherenceData);
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
   const [scanDate, setScanDate] = useState<Date>(new Date());
+  const [userName, setUserName] = useState<string>("Demo");
   
   // Fetch real data from Supabase when available
   useEffect(() => {
@@ -91,6 +91,20 @@ const Home = () => {
         if (issuesResult && issuesResult.length > 0) {
           setHealthIssues(issuesResult);
         }
+
+        // Try to get user profile
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('first_name')
+            .eq('id', user.id)
+            .single();
+          
+          if (profile?.first_name) {
+            setUserName(profile.first_name);
+          }
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
         // Keep using mock data (already set as default state)
@@ -108,7 +122,8 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] pt-4 pb-24">
       <main className="container max-w-md mx-auto px-4">
-        <h1 className="text-2xl font-semibold mb-6 text-center">Oversikt</h1>
+        <h1 className="text-2xl font-semibold mb-2 text-center">Hei, {userName}</h1>
+        <p className="text-gray-500 text-center text-sm mb-4">Slik ser helsen din ut i dag</p>
         
         <ScanDateCard scanDate={new Date(coherenceData?.created_at || scanDate)} />
         
@@ -144,8 +159,6 @@ const Home = () => {
         
         <InsightCard healthIssues={healthIssues} />
       </main>
-      
-      <ChatButton />
     </div>
   );
 };
