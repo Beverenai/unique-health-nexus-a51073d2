@@ -6,12 +6,10 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 
 interface HealthIssuesCarouselProps {
   healthIssues: HealthIssue[];
-  onIssueClick: (issue: HealthIssue) => void;
 }
 
 const HealthIssuesCarousel: React.FC<HealthIssuesCarouselProps> = ({ 
-  healthIssues, 
-  onIssueClick 
+  healthIssues 
 }) => {
   return (
     <div className="mb-10">
@@ -30,7 +28,6 @@ const HealthIssuesCarousel: React.FC<HealthIssuesCarouselProps> = ({
                 <IssueCard 
                   key={issue.id} 
                   issue={issue}
-                  onClick={() => onIssueClick(issue)} 
                 />
               </div>
             </CarouselItem>

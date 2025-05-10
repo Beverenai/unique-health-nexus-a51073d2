@@ -12,7 +12,7 @@ const ExplanationCard: React.FC = () => {
           </div>
           <p className="text-sm text-gray-600 leading-relaxed">
             Alt du ser her er basert på en grundig kroppsskanning som tolker over 200 millioner signaler fra kroppen din. 
-            Det er ikke sanntidsdata, men et øyeblikksbilde av kroppens tilstand.
+            Trykk på et område for å se mer detaljer og anbefalinger.
           </p>
         </div>
       </div>

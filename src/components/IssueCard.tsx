@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { ArrowRight, Brain, LeafyGreen, Moon, CloudFog, Bone, Heart, Activity, Salad, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Brain, LeafyGreen, Moon, CloudFog, Bone, Heart, Activity, Salad, Eye } from 'lucide-react';
 import { HealthIssue } from '@/types/supabase';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
@@ -8,10 +9,12 @@ import { Button } from '@/components/ui/button';
 
 interface IssueCardProps {
   issue: HealthIssue;
-  onClick: () => void;
+  onClick?: () => void; // Keep for backward compatibility
 }
 
 const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
+  const navigate = useNavigate();
+  
   // Determine color based on the load - using the new color palette
   const getProgressColor = (load: number): string => {
     if (load < 40) return 'bg-[#77C17E]'; // Green for low load
@@ -81,6 +84,11 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
   };
 
   const relatedSystems = getRelatedSystems();
+  
+  // Navigate to issue detail page
+  const handleViewDetail = () => {
+    navigate(`/issue/${issue.id}`);
+  };
 
   return (
     <div 
@@ -135,15 +143,31 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
       )}
       
       <Button 
-        onClick={onClick} 
+        onClick={handleViewDetail}
         variant="outline" 
         className="w-full mt-2 justify-between bg-white text-gray-800 border border-gray-100/40 hover:bg-gray-50 rounded-xl"
       >
         <span>Se detaljer</span>
-        <ArrowRight size={16} />
+        <Arrow className="h-4 w-4" />
       </Button>
     </div>
   );
 };
+
+// Helper component for the arrow icon
+const Arrow = ({ className }: { className?: string }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 20 20" 
+    fill="currentColor" 
+    className={className}
+  >
+    <path 
+      fillRule="evenodd" 
+      d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" 
+      clipRule="evenodd" 
+    />
+  </svg>
+);
 
 export default IssueCard;

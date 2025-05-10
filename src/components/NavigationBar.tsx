@@ -12,12 +12,12 @@ const NavigationBar: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 py-3 px-6 flex justify-around items-center z-40 shadow-sm">
+    <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-100 py-3 px-6 flex justify-around items-center z-40 shadow-sm">
       <Link 
         to="/" 
         className={cn(
           "flex flex-col items-center p-2 rounded-lg transition-colors",
-          isActive('/') ? "text-blue-600" : "text-gray-500 hover:text-gray-700"
+          isActive('/') ? "text-[#9b87f5]" : "text-gray-500 hover:text-gray-700"
         )}
       >
         <Home size={22} />
@@ -28,7 +28,7 @@ const NavigationBar: React.FC = () => {
         to="/history" 
         className={cn(
           "flex flex-col items-center p-2 rounded-lg transition-colors",
-          isActive('/history') ? "text-blue-600" : "text-gray-500 hover:text-gray-700"
+          isActive('/history') ? "text-[#9b87f5]" : "text-gray-500 hover:text-gray-700"
         )}
       >
         <History size={22} />
@@ -39,7 +39,7 @@ const NavigationBar: React.FC = () => {
         to="/profile" 
         className={cn(
           "flex flex-col items-center p-2 rounded-lg transition-colors",
-          isActive('/profile') ? "text-blue-600" : "text-gray-500 hover:text-gray-700"
+          isActive('/profile') ? "text-[#9b87f5]" : "text-gray-500 hover:text-gray-700"
         )}
       >
         <User size={22} />

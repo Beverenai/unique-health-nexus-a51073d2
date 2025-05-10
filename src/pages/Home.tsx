@@ -7,13 +7,13 @@ import { getLatestCoherenceData, getHealthIssues, seedDemoData } from '@/service
 // Import components
 import NavigationHeader from '@/components/navigation/NavigationHeader';
 import ChatButton from '@/components/ChatButton';
-import IssueDetailDialog from '@/components/IssueDetailDialog';
 import ScanDateCard from '@/components/ScanDateCard';
 import CoherenceDisplay from '@/components/CoherenceDisplay';
 import HealthIssuesCarousel from '@/components/HealthIssuesCarousel';
 import NewScanButton from '@/components/NewScanButton';
 import ExplanationCard from '@/components/ExplanationCard';
 import InsightCard from '@/components/InsightCard';
+import NavigationBar from '@/components/NavigationBar';
 
 // Hardcoded mock data to ensure it always displays
 const mockCoherenceData: CoherenceData = {
@@ -57,8 +57,6 @@ const mockHealthIssues: HealthIssue[] = [
 const Home = () => {
   const [coherenceData, setCoherenceData] = useState<CoherenceData | null>(mockCoherenceData);
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
-  const [selectedIssue, setSelectedIssue] = useState<HealthIssue | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [scanDate, setScanDate] = useState<Date>(new Date());
   
   // Fetch real data from Supabase when available
@@ -87,11 +85,6 @@ const Home = () => {
     fetchData();
   }, []);
 
-  const handleIssueClick = (issue: HealthIssue) => {
-    setSelectedIssue(issue);
-    setIsDialogOpen(true);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC]">
       <NavigationHeader />
@@ -105,20 +98,14 @@ const Home = () => {
         
         <HealthIssuesCarousel 
           healthIssues={healthIssues}
-          onIssueClick={handleIssueClick}
         />
         
         <InsightCard healthIssues={healthIssues} />
-        
-        <IssueDetailDialog
-          issue={selectedIssue}
-          open={isDialogOpen}
-          onOpenChange={setIsDialogOpen}
-        />
       </main>
       
       <NewScanButton />
       <ChatButton />
+      <NavigationBar />
     </div>
   );
 };
