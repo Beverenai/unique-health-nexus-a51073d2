@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { HealthIssue, CoherenceData, IssueDetail, IssueRecommendation, ScannerComponent } from "@/types/supabase";
 import { mockHealthIssues } from "@/data/mockData";
@@ -108,15 +107,17 @@ export const getIssueDetails = async (issueId: string): Promise<{
         // Convert mock data to match the expected types
         // This fixes the Property 'details' does not exist on type 'HealthIssue' error
         
-        // Create proper IssueDetail objects from mock data
-        const mockDetails: IssueDetail[] = mockIssue.details ? mockIssue.details.map(detail => ({
-          id: `mock-detail-${detail.id}`,
-          issue_id: mockIssue.id,
-          title: detail.title,
-          description: detail.description,
-          impact: detail.impact,
-          created_at: new Date().toISOString()
-        })) : [];
+        // Create proper IssueDetail objects from mock data by accessing the details from the mock data properly
+        // This is a safe type assertion as we're handling the case where details might not exist
+        const mockDetails: IssueDetail[] = (mockIssue as any).details ? 
+          (mockIssue as any).details.map((detail: any) => ({
+            id: `mock-detail-${detail.id}`,
+            issue_id: mockIssue.id,
+            title: detail.title,
+            description: detail.description,
+            impact: detail.impact,
+            created_at: new Date().toISOString()
+          })) : [];
         
         // Create proper recommendation objects from mock data
         const mockRecommendations: IssueRecommendation[] = mockIssue.recommendations?.map((rec, index) => ({
