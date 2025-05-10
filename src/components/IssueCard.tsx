@@ -12,54 +12,56 @@ interface IssueCardProps {
 }
 
 const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
-  // Determine color based on the load - organic colors
+  // Determine color based on the load - refreshed organic colors
   const getProgressColor = (load: number): string => {
-    if (load < 20) return 'bg-[#88C999]'; // Green for low load
-    if (load < 50) return 'bg-[#F6C85E]'; // Yellow for moderate load
-    return 'bg-[#EF5E5E]';  // Red for high load
+    if (load < 20) return 'bg-emerald-400'; // Lighter green for low load
+    if (load < 50) return 'bg-amber-400'; // Brighter yellow for moderate load
+    return 'bg-rose-400';  // Softer red for high load
   };
 
   const getTextColor = (load: number): string => {
-    if (load < 20) return 'text-[#88C999]'; // Green for low load
-    if (load < 50) return 'text-[#F6C85E]'; // Yellow for moderate load
-    return 'text-[#EF5E5E]';  // Red for high load
+    if (load < 20) return 'text-emerald-600'; // Deeper green for text
+    if (load < 50) return 'text-amber-600'; // Deeper yellow for text
+    return 'text-rose-600';  // Deeper red for text
   };
 
-  // Get background gradient based on issue type
+  // Get background gradient based on issue type - lighter, more airy
   const getBackgroundGradient = (name: string): string => {
     const lowerName = name.toLowerCase();
     
     if (lowerName.includes('nervesystem') || lowerName.includes('nakkevirvler')) {
-      return 'bg-gradient-to-br from-white to-[#F7F7F7]';
+      return 'bg-gradient-to-br from-white to-blue-50';
     } else if (lowerName.includes('tarm') || lowerName.includes('bakterie') || lowerName.includes('flora')) {
-      return 'bg-gradient-to-br from-white to-[#F9FBF7]';
+      return 'bg-gradient-to-br from-white to-green-50';
     } else if (lowerName.includes('hormon') || lowerName.includes('melatonin')) {
-      return 'bg-gradient-to-br from-white to-[#F9F8FB]';
+      return 'bg-gradient-to-br from-white to-purple-50';
+    } else if (lowerName.includes('hjerte') || lowerName.includes('kardio')) {
+      return 'bg-gradient-to-br from-white to-red-50';
     } else {
-      return 'bg-gradient-to-br from-white to-[#F7F7F7]';
+      return 'bg-gradient-to-br from-white to-slate-50';
     }
   };
 
-  // Get icon based on issue name - expanded with more organ types
+  // Get icon based on issue name
   const getIssueIcon = () => {
     const name = issue.name.toLowerCase();
     
     if (name.includes('nervesystem') || name.includes('nakkevirvler') || name.includes('kompresjon')) {
-      return <Brain className="text-[#1E1E1E]" size={22} />;
+      return <Brain className="text-blue-600" size={22} />;
     } else if (name.includes('tarm') || name.includes('bakterie') || name.includes('flora')) {
-      return <Salad className="text-[#1E1E1E]" size={22} />;
+      return <Salad className="text-green-600" size={22} />;
     } else if (name.includes('hormon') || name.includes('melatonin') || name.includes('kortisol')) {
-      return <Moon className="text-[#1E1E1E]" size={22} />;
+      return <Moon className="text-purple-600" size={22} />;
     } else if (name.includes('hjerte') || name.includes('kardio')) {
-      return <Heart className="text-[#1E1E1E]" size={22} />;
+      return <Heart className="text-rose-600" size={22} />;
     } else if (name.includes('lunge') || name.includes('puste')) {
-      return <Activity className="text-[#1E1E1E]" size={22} />;
+      return <Activity className="text-sky-600" size={22} />;
     } else if (name.includes('muskel')) {
-      return <Bone className="text-[#1E1E1E]" size={22} />;
+      return <Bone className="text-amber-600" size={22} />;
     } else if (name.includes('øye') || name.includes('syn')) {
-      return <Eye className="text-[#1E1E1E]" size={22} />;
+      return <Eye className="text-indigo-600" size={22} />;
     } else {
-      return <CloudFog className="text-[#1E1E1E]" size={22} />;
+      return <CloudFog className="text-slate-600" size={22} />;
     }
   };
 
@@ -83,18 +85,18 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
   return (
     <div 
       className={`health-card mb-5 transition-all hover:shadow-md border border-gray-100 rounded-xl p-5 shadow-sm ${getBackgroundGradient(issue.name)}`}
-      style={{ borderRadius: "16px" }}
+      style={{ borderRadius: "20px" }}
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-3">
-          <div className={cn("bg-[#F7F7F7] p-2 rounded-full")}>
+          <div className={cn("bg-white p-2.5 rounded-full shadow-sm")}>
             {getIssueIcon()}
           </div>
-          <h3 className="text-lg font-medium text-[#1E1E1E]">{issue.name}</h3>
+          <h3 className="text-lg font-semibold text-gray-800">{issue.name}</h3>
         </div>
       </div>
       
-      <div className="mt-3 flex items-center space-x-2">
+      <div className="mt-4 flex items-center space-x-2">
         <Progress 
           value={issue.load} 
           className={cn("h-2.5 flex-grow rounded-full", getProgressColor(issue.load))} 
@@ -104,7 +106,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
         </span>
       </div>
       
-      <p className="text-sm text-[#1E1E1E] my-4 leading-relaxed">
+      <p className="text-sm text-gray-600 my-4 leading-relaxed">
         {issue.description}
       </p>
 
@@ -113,7 +115,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
           {relatedSystems.map(system => (
             <span 
               key={system}
-              className="text-xs px-2 py-1 bg-[#F7F7F7] rounded-full text-gray-600"
+              className="text-xs px-2.5 py-1.5 bg-white shadow-sm rounded-full text-gray-600"
             >
               {system}
             </span>
@@ -123,8 +125,8 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
 
       {issue.recommendations && issue.recommendations.length > 0 && (
         <div className="mt-4">
-          <p className="text-sm font-medium mb-2 text-[#1E1E1E]">Tiltak:</p>
-          <p className="text-sm text-[#1E1E1E] mb-4 leading-relaxed">
+          <p className="text-sm font-medium mb-2 text-gray-800">Tiltak:</p>
+          <p className="text-sm text-gray-600 mb-4 leading-relaxed">
             {issue.recommendations[0]}
           </p>
         </div>
@@ -133,9 +135,9 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
       <Button 
         onClick={onClick} 
         variant="outline" 
-        className="w-full mt-2 justify-between bg-[#F7F7F7] text-[#1E1E1E] border-none hover:bg-gray-100 rounded-xl"
+        className="w-full mt-2 justify-between bg-white text-gray-800 border border-gray-200 hover:bg-gray-50 rounded-xl"
       >
-        <span>Utforsk mer</span>
+        <span>Se detaljer</span>
         <ArrowRight size={16} />
       </Button>
     </div>

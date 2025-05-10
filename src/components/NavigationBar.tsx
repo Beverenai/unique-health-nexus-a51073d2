@@ -12,38 +12,38 @@ const NavigationBar: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 px-6 flex justify-around items-center z-40">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 py-3 px-6 flex justify-around items-center z-40 shadow-sm">
       <Link 
         to="/" 
         className={cn(
           "flex flex-col items-center p-2 rounded-lg transition-colors",
-          isActive('/') ? "text-primary" : "text-gray-500 hover:text-gray-700"
+          isActive('/') ? "text-blue-600" : "text-gray-500 hover:text-gray-700"
         )}
       >
-        <Home size={24} />
-        <span className="text-xs mt-1">Hjem</span>
+        <Home size={22} />
+        <span className="text-xs mt-1 font-medium">Hjem</span>
       </Link>
       
       <Link 
         to="/history" 
         className={cn(
           "flex flex-col items-center p-2 rounded-lg transition-colors",
-          isActive('/history') ? "text-primary" : "text-gray-500 hover:text-gray-700"
+          isActive('/history') ? "text-blue-600" : "text-gray-500 hover:text-gray-700"
         )}
       >
-        <History size={24} />
-        <span className="text-xs mt-1">Historikk</span>
+        <History size={22} />
+        <span className="text-xs mt-1 font-medium">Historikk</span>
       </Link>
       
       <Link 
         to="/profile" 
         className={cn(
           "flex flex-col items-center p-2 rounded-lg transition-colors",
-          isActive('/profile') ? "text-primary" : "text-gray-500 hover:text-gray-700"
+          isActive('/profile') ? "text-blue-600" : "text-gray-500 hover:text-gray-700"
         )}
       >
-        <User size={24} />
-        <span className="text-xs mt-1">Profil</span>
+        <User size={22} />
+        <span className="text-xs mt-1 font-medium">Profil</span>
       </Link>
     </div>
   );

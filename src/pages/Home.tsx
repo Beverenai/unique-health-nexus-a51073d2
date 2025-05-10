@@ -1,6 +1,10 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
+import { nb } from 'date-fns/locale';
+import { Calendar, ChevronRight } from 'lucide-react';
 import CoherenceRing from '@/components/CoherenceRing';
 import IssueCard from '@/components/IssueCard';
 import ChatButton from '@/components/ChatButton';
@@ -10,6 +14,8 @@ import IssueDetailDialog from '@/components/IssueDetailDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { getLatestCoherenceData, getHealthIssues, seedDemoData, seedHistoricalData } from '@/services/supabaseService';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 // Hardcoded mock data to ensure it always displays
@@ -68,6 +74,7 @@ const HomePage: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [selectedIssue, setSelectedIssue] = useState<HealthIssue | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [scanDate, setScanDate] = useState<Date>(new Date());
 
   useEffect(() => {
     // This will ensure we have some demo data to work with
@@ -77,7 +84,6 @@ const HomePage: React.FC = () => {
         await seedHistoricalData();
       } catch (error) {
         console.error('Error seeding data:', error);
-        // Fallback to mock data is handled by default state
       }
     };
     
@@ -104,13 +110,13 @@ const HomePage: React.FC = () => {
             issues = await getHealthIssues();
           } catch (seedError) {
             console.error('Error seeding demo data:', seedError);
-            // Keep using the mock data (already set in state)
           }
         }
         
         // Only update state if we got valid data from Supabase
         if (coherenceData) {
           setCoherenceData(coherenceData);
+          setScanDate(new Date(coherenceData.created_at));
         }
         
         if (issues && issues.length > 0) {
@@ -118,8 +124,6 @@ const HomePage: React.FC = () => {
         }
       } catch (error) {
         console.error('Error loading data:', error);
-        // No need to show an error toast since we're falling back to mock data
-        // Mock data is already set as the default state
       } finally {
         setLoading(false);
       }
@@ -135,37 +139,59 @@ const HomePage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F7F7F7] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F9FAFE] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-[#1E1E1E]">Laster...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Laster resultater...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7] px-6 pb-20 pt-10">
-      <header className="mb-8 flex justify-between items-center">
+    <div className="min-h-screen bg-[#F9FAFE] px-6 pb-20 pt-8">
+      <header className="mb-6 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-semibold text-[#1E1E1E]">Unique</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Unique</h1>
           <p className="text-gray-500">Din personlige helseassistent</p>
         </div>
       </header>
 
+      {/* Scan date */}
+      <Card className="mb-6 bg-white border-none shadow-sm">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="bg-blue-100 p-2 rounded-full">
+                <Calendar className="text-blue-600" size={18} />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Siste skanning</p>
+                <p className="font-medium text-gray-800">
+                  {format(scanDate, 'd. MMMM yyyy', { locale: nb })}
+                </p>
+              </div>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-blue-600 hover:bg-blue-50" 
+              onClick={() => navigate('/history')}
+            >
+              <span className="text-sm">Historikk</span>
+              <ChevronRight size={16} />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="flex flex-col items-center justify-center mb-8">
         <CoherenceRing score={coherenceData?.score || 64} />
-        <p className="text-[#1E1E1E] mt-6 text-center max-w-xs">
-          {coherenceData?.message || "Din kroppskanning indikerer en total koherens-score på 64%."}
-        </p>
       </div>
 
-      {/* Always show InsightCard with health issues */}
-      <InsightCard healthIssues={healthIssues} />
-
-      {/* Swipeable cards using Carousel */}
+      {/* Health issues carousel */}
       <div className="mb-8">
-        <h2 className="text-xl font-medium mb-4 text-[#1E1E1E]">Prioriterte områder</h2>
+        <h2 className="text-lg font-semibold mb-4 text-gray-800">Prioriterte områder</h2>
         
         <Carousel className="w-full mb-8">
           <CarouselContent>
@@ -188,12 +214,27 @@ const HomePage: React.FC = () => {
         </Carousel>
       </div>
 
+      {/* System insight card */}
+      <InsightCard healthIssues={healthIssues} />
+
       {/* Issue Detail Dialog */}
       <IssueDetailDialog 
         issue={selectedIssue} 
         open={dialogOpen}
         onOpenChange={setDialogOpen}
       />
+
+      {/* New scan button */}
+      <div className="fixed bottom-20 inset-x-0 flex justify-center z-30">
+        <Button 
+          className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-6 rounded-full shadow-lg"
+          onClick={() => toast.success('Starter ny skanning...', {
+            description: 'Dette ville starte en ny skanning i en reell applikasjon.'
+          })}
+        >
+          Start ny skanning
+        </Button>
+      </div>
 
       <ChatButton />
       <NavigationBar />
