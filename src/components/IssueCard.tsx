@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowRight, Brain, LeafyGreen, Moon, CloudFog } from 'lucide-react';
+import { ArrowRight, Brain, LeafyGreen, Moon, CloudFog, Bone } from 'lucide-react';
 import { HealthIssue } from '@/types/supabase';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
@@ -12,17 +12,17 @@ interface IssueCardProps {
 }
 
 const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
-  // Determine color based on the load
+  // Determine color based on the load - updated with new colors
   const getProgressColor = (load: number): string => {
-    if (load < 20) return 'bg-[#7BCFA0]'; // Green for low load
-    if (load < 50) return 'bg-[#FFA963]'; // Orange for moderate load
-    return 'bg-[#F15B5B]';  // Red for high load
+    if (load < 20) return 'bg-[#88C999]'; // Green for low load
+    if (load < 50) return 'bg-[#F6C85E]'; // Yellow for moderate load
+    return 'bg-[#EF5E5E]';  // Red for high load
   };
 
   const getTextColor = (load: number): string => {
-    if (load < 20) return 'text-[#7BCFA0]'; // Green for low load
-    if (load < 50) return 'text-[#FFA963]'; // Orange for moderate load
-    return 'text-[#F15B5B]';  // Red for high load
+    if (load < 20) return 'text-[#88C999]'; // Green for low load
+    if (load < 50) return 'text-[#F6C85E]'; // Yellow for moderate load
+    return 'text-[#EF5E5E]';  // Red for high load
   };
 
   // Get icon based on issue name
@@ -30,7 +30,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
     const name = issue.name.toLowerCase();
     
     if (name.includes('nervesystem') || name.includes('nakkevirvler') || name.includes('kompresjon')) {
-      return <Brain className="text-[#1E1E1E]" size={22} />;
+      return <Bone className="text-[#1E1E1E]" size={22} />;
     } else if (name.includes('tarm') || name.includes('bakterie') || name.includes('flora')) {
       return <LeafyGreen className="text-[#1E1E1E]" size={22} />;
     } else if (name.includes('hormon') || name.includes('melatonin') || name.includes('kortisol')) {

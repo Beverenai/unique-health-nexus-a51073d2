@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -7,6 +6,7 @@ import IssueCard from '@/components/IssueCard';
 import ChatButton from '@/components/ChatButton';
 import NavigationBar from '@/components/NavigationBar';
 import InsightCard from '@/components/InsightCard';
+import IssueDetailDialog from '@/components/IssueDetailDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { getLatestCoherenceData, getHealthIssues, seedDemoData, seedHistoricalData } from '@/services/supabaseService';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
@@ -66,6 +66,8 @@ const HomePage: React.FC = () => {
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [selectedIssue, setSelectedIssue] = useState<HealthIssue | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     // This will ensure we have some demo data to work with
@@ -126,8 +128,9 @@ const HomePage: React.FC = () => {
     loadData();
   }, []);
 
-  const handleIssueClick = (issueId: string) => {
-    navigate(`/issue/${issueId}`);
+  const handleIssueClick = (issue: HealthIssue) => {
+    setSelectedIssue(issue);
+    setDialogOpen(true);
   };
 
   if (loading) {
@@ -172,7 +175,7 @@ const HomePage: React.FC = () => {
                   <IssueCard 
                     key={issue.id} 
                     issue={issue}
-                    onClick={() => handleIssueClick(issue.id)} 
+                    onClick={() => handleIssueClick(issue)} 
                   />
                 </div>
               </CarouselItem>
@@ -184,6 +187,13 @@ const HomePage: React.FC = () => {
           </div>
         </Carousel>
       </div>
+
+      {/* Issue Detail Dialog */}
+      <IssueDetailDialog 
+        issue={selectedIssue} 
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      />
 
       <ChatButton />
       <NavigationBar />
