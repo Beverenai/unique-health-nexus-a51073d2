@@ -12,6 +12,7 @@ import RecommendationList from '@/components/insight/RecommendationList';
 import { getSystemConnections } from '@/utils/systemUtils';
 import ConnectionChart from '@/components/insight/ConnectionChart';
 import HealthSystemGrid from '@/components/health/HealthSystemGrid';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Sample health information data - using the same structure as the original table
 const healthInfoData = [
@@ -105,50 +106,52 @@ const Insights: React.FC = () => {
   const connections = getSystemConnections(healthIssues);
 
   return (
-    <div className="min-h-screen pb-24 pt-4">
-      <main className="container max-w-lg mx-auto px-4">
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold mb-2 text-center">Innsikter</h1>
-          <p className="text-gray-500 text-center text-sm">Sammenhengen mellom dine helseutfordringer</p>
-        </div>
-        
-        <HealthSystemGrid 
-          healthData={healthInfoData}
-        />
-        
-        <Card className="mb-6 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium">Helsebelastninger</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ConnectionChart healthIssues={healthIssues} />
-          </CardContent>
-        </Card>
-        
-        {healthIssues.map((issue) => (
-          <div key={issue.id} className="mb-4">
-            <SystemCard name={issue.name} issue={issue} />
+    <div className="h-[calc(100vh-4rem)] overflow-hidden">
+      <ScrollArea className="h-full pb-16">
+        <main className="container max-w-lg mx-auto px-4 py-4">
+          <div className="mb-6">
+            <h1 className="text-2xl font-semibold mb-2 text-center">Innsikter</h1>
+            <p className="text-gray-500 text-center text-sm">Sammenhengen mellom dine helseutfordringer</p>
           </div>
-        ))}
-        
-        <Card className="mb-6 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium">Sammenhenger</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ConnectionList connections={connections} />
-          </CardContent>
-        </Card>
-        
-        <Card className="mb-6 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium">Anbefalte tiltak</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RecommendationList recommendations={recommendations} />
-          </CardContent>
-        </Card>
-      </main>
+          
+          <HealthSystemGrid 
+            healthData={healthInfoData}
+          />
+          
+          <Card className="mb-6 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-medium">Helsebelastninger</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ConnectionChart healthIssues={healthIssues} />
+            </CardContent>
+          </Card>
+          
+          {healthIssues.map((issue) => (
+            <div key={issue.id} className="mb-4">
+              <SystemCard name={issue.name} issue={issue} />
+            </div>
+          ))}
+          
+          <Card className="mb-6 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-medium">Sammenhenger</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ConnectionList connections={connections} />
+            </CardContent>
+          </Card>
+          
+          <Card className="mb-6 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-medium">Anbefalte tiltak</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <RecommendationList recommendations={recommendations} />
+            </CardContent>
+          </Card>
+        </main>
+      </ScrollArea>
     </div>
   );
 };

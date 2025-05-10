@@ -1,9 +1,9 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import SystemIcon from './SystemIcon';
-import HealthSystemDialog from './HealthSystemDialog';
 
 interface HealthInfoItem {
   area: string;
@@ -23,8 +23,7 @@ const HealthSystemGrid: React.FC<HealthSystemGridProps> = ({
   description = "Trykk på et system for å se detaljert informasjon",
   healthData
 }) => {
-  const [selectedSystem, setSelectedSystem] = useState<HealthInfoItem | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const navigate = useNavigate();
   
   // Determine background color based on system type
   const getBgGradient = (area: string): string => {
@@ -55,13 +54,8 @@ const HealthSystemGrid: React.FC<HealthSystemGridProps> = ({
     }
   };
   
-  const handleCardClick = (system: HealthInfoItem) => {
-    setSelectedSystem(system);
-    setDialogOpen(true);
-  };
-  
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
+  const handleCardClick = (index: number) => {
+    navigate(`/health-system/${index}`);
   };
   
   // Animation variants
@@ -108,7 +102,7 @@ const HealthSystemGrid: React.FC<HealthSystemGridProps> = ({
               variants={itemVariants}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => handleCardClick(system)}
+              onClick={() => handleCardClick(index)}
               className={`bg-gradient-to-br ${getBgGradient(system.area)} rounded-xl p-4 border border-white/40 shadow-sm cursor-pointer transition-all hover:shadow-md flex flex-col items-center text-center`}
             >
               <div className="bg-white/80 p-2.5 rounded-full shadow-sm mb-2">
@@ -121,12 +115,6 @@ const HealthSystemGrid: React.FC<HealthSystemGridProps> = ({
           ))}
         </motion.div>
       </CardContent>
-      
-      <HealthSystemDialog 
-        isOpen={dialogOpen} 
-        onClose={handleCloseDialog} 
-        healthInfo={selectedSystem} 
-      />
     </Card>
   );
 };
