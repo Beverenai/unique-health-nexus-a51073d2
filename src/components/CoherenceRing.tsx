@@ -1,7 +1,10 @@
 
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { CoherenceRingCanvas } from '@/components/coherence/CoherenceRingCanvas';
+import { StatusLabel } from '@/components/coherence/StatusLabel';
+import { getModernColor, getModernTextColor, getStatusLabel } from '@/utils/coherenceUtils';
 
 interface CoherenceRingProps {
   score: number;
@@ -18,28 +21,6 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
   showText = true,
   className
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  
-  // Color assignments using modern color palette
-  const getModernColor = (score: number): string => {
-    if (score < 40) return '#EA384C'; // Red for high load/low score
-    if (score < 60) return '#F7D154'; // Yellow for moderate load
-    return '#77C17E'; // Green for low load/high score
-  };
-  
-  const getModernTextColor = (score: number): string => {
-    if (score < 40) return 'text-[#EA384C]'; 
-    if (score < 60) return 'text-[#F7D154]';
-    return 'text-[#77C17E]';
-  };
-  
-  const getStatusLabel = (score: number): string => {
-    if (score < 40) return 'Krever oppmerksomhet';
-    if (score < 60) return 'Moderat';
-    return 'Balansert';
-  };
-  
-  const color = getModernColor(score);
   const textColorClass = getModernTextColor(score);
   const statusLabel = getStatusLabel(score);
   
@@ -55,113 +36,6 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
     md: 'text-2xl',
     lg: 'text-4xl' // Reduced from text-5xl
   };
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Set canvas size
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
-    
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const radius = Math.min(centerX, centerY) - 10;
-    
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Create subtle gradient for background ring
-    const bgGradient = ctx.createLinearGradient(0, 0, 0, rect.height);
-    bgGradient.addColorStop(0, 'rgba(228, 228, 231, 0.4)');
-    bgGradient.addColorStop(1, 'rgba(228, 228, 231, 0.2)');
-    
-    // Draw background ring
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-    ctx.lineWidth = 15;
-    ctx.strokeStyle = bgGradient;
-    ctx.stroke();
-    
-    // Create subtle gradient for progress ring
-    const progressGradient = ctx.createLinearGradient(0, 0, rect.width, rect.height);
-    
-    if (score < 40) {
-      // Red gradient
-      progressGradient.addColorStop(0, '#EA384C');
-      progressGradient.addColorStop(1, '#FF6B81');
-    } else if (score < 60) {
-      // Yellow gradient
-      progressGradient.addColorStop(0, '#F7D154');
-      progressGradient.addColorStop(1, '#FFE082');
-    } else {
-      // Green gradient
-      progressGradient.addColorStop(0, '#77C17E');
-      progressGradient.addColorStop(1, '#A5D6A7');
-    }
-    
-    // Draw progress ring
-    const progressAngle = (score / 100) * Math.PI * 2;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, -Math.PI / 2, progressAngle - Math.PI / 2);
-    ctx.lineWidth = 15;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = progressGradient;
-    ctx.stroke();
-    
-    // Draw glow effect
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, -Math.PI / 2, progressAngle - Math.PI / 2);
-    ctx.lineWidth = 20;
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.filter = `blur(8px)`;
-    ctx.stroke();
-    ctx.restore();
-    
-    // Draw small circles along the progress ring
-    const totalDots = 40;
-    const visibleDots = Math.floor((score / 100) * totalDots);
-    
-    for (let i = 0; i < totalDots; i++) {
-      const angle = (i / totalDots) * Math.PI * 2 - Math.PI / 2;
-      const dotX = centerX + (radius) * Math.cos(angle);
-      const dotY = centerY + (radius) * Math.sin(angle);
-      
-      ctx.beginPath();
-      
-      // Make dots bigger and with varied sizes for more dynamic look
-      const dotSize = i % 3 === 0 ? 2.2 : 1.8;
-      
-      ctx.arc(dotX, dotY, dotSize, 0, Math.PI * 2);
-      
-      if (i < visibleDots) {
-        // Add slight glow to active dots
-        ctx.fillStyle = color;
-        
-        // Add subtle shadow/glow to active dots
-        if (i % 4 === 0) {
-          ctx.shadowColor = color;
-          ctx.shadowBlur = 4;
-        } else {
-          ctx.shadowBlur = 0;
-        }
-      } else {
-        ctx.fillStyle = 'rgba(228, 228, 231, 0.3)';
-        ctx.shadowBlur = 0;
-      }
-      
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    }
-
-  }, [score, color]);
 
   return (
     <div className="flex flex-col items-center">
@@ -179,11 +53,7 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
           delay: 0.2 
         }}
       >
-        <canvas 
-          ref={canvasRef} 
-          className="absolute inset-0 w-full h-full"
-          style={{ width: "100%", height: "100%" }}
-        />
+        <CoherenceRingCanvas score={score} />
         
         {/* Inner white circle with text */}
         <motion.div 
@@ -220,19 +90,18 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
         </motion.div>
         
         {/* Animated pulse ring */}
-        <div className="absolute inset-0 rounded-full animate-pulse-ring opacity-40" 
-             style={{ border: `1px solid ${color}` }} />
+        <div 
+          className="absolute inset-0 rounded-full animate-pulse-ring opacity-40" 
+          style={{ border: `1px solid ${getModernColor(score)}` }} 
+        />
       </motion.div>
       
       {/* Status label below ring */}
-      <motion.div 
-        className={cn("mt-2 px-3 py-1 rounded-full bg-white shadow-sm text-xs font-medium", textColorClass)} /* Reduced size and spacing */
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-      >
-        {statusLabel}
-      </motion.div>
+      <StatusLabel 
+        score={score} 
+        statusLabel={statusLabel} 
+        textColorClass={textColorClass} 
+      />
       
       {message && (
         <motion.p 
