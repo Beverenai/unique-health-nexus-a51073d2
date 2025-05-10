@@ -2,9 +2,10 @@
 import React from 'react';
 import { ScannerComponent } from '@/types/supabase';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
-import { Activity, Brain, Heart, Lung, Pill, Stethoscope } from 'lucide-react';
+import { Activity, Brain, Heart, Stethoscope } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import Flask from '@/components/issue-detail/Flask';
 
 interface SystemAnalysisSectionProps {
   components: ScannerComponent[];
@@ -84,9 +85,9 @@ const SystemAnalysisSection: React.FC<SystemAnalysisSectionProps> = ({ component
       case 'hjerte-kar':
         return <Heart className="h-5 w-5" />;
       case 'respirasjonssystem':
-        return <Lung className="h-5 w-5" />;
+        return <Activity className="h-5 w-5" />; // Replaced Lung with Activity
       case 'fordøyelsessystem':
-        return <Activity className="h-5 w-5" />;
+        return <Flask className="h-5 w-5" />; // Using the Flask icon from issue-detail
       default:
         return <Stethoscope className="h-5 w-5" />;
     }
