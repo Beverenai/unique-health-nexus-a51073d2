@@ -9,6 +9,7 @@ import SystemCard from '@/components/insight/SystemCard';
 import ConnectionList from '@/components/insight/ConnectionList';
 import RecommendationList from '@/components/insight/RecommendationList';
 import { getSystemConnections } from '@/utils/systemUtils';
+import ConnectionChart from '@/components/insight/ConnectionChart';
 
 const Insights: React.FC = () => {
   // Initialize with the correct mock data that now matches the expected type
@@ -44,6 +45,15 @@ const Insights: React.FC = () => {
           <h1 className="text-2xl font-semibold mb-2 text-center">Innsikter</h1>
           <p className="text-gray-500 text-center text-sm">Sammenhengen mellom dine helseutfordringer</p>
         </div>
+        
+        <Card className="mb-6 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg font-medium">Helsebelastninger</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ConnectionChart healthIssues={healthIssues} />
+          </CardContent>
+        </Card>
         
         {healthIssues.map((issue) => (
           <div key={issue.id} className="mb-4">
