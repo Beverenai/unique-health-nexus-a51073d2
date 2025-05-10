@@ -4,9 +4,9 @@ import { MessageSquare, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { sendChatMessage, getChatMessages } from '@/services/supabaseService';
+import { sendChatMessage, getChatMessages, getHealthIssues } from '@/services/supabaseService';
 import { toast } from 'sonner';
-import { ChatMessage } from '@/types/supabase';
+import { ChatMessage, HealthIssue } from '@/types/supabase';
 import { useLocation } from 'react-router-dom';
 
 interface ChatButtonProps {
@@ -18,12 +18,14 @@ const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
+  const [healthSummary, setHealthSummary] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
   useEffect(() => {
     if (isOpen) {
       fetchMessages();
+      fetchHealthSummary();
     }
   }, [isOpen]);
 
@@ -42,6 +44,50 @@ const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
+  };
+  
+  const fetchHealthSummary = async () => {
+    try {
+      const issues = await getHealthIssues();
+      if (issues.length > 0) {
+        const sortedIssues = [...issues].sort((a, b) => b.load - a.load);
+        setHealthSummary(generateInsightSummary(sortedIssues));
+      }
+    } catch (error) {
+      console.error('Error fetching health summary:', error);
+    }
+  };
+  
+  // Helper function to generate a summary based on health issues
+  const generateInsightSummary = (issues: HealthIssue[]): string => {
+    if (!issues.length) {
+      return "Vi har ingen helseproblemer å rapportere";
+    }
+
+    // Get the top issues (max 3)
+    const topIssues = issues.slice(0, 3);
+    const issueNames = topIssues.map(issue => issue.name.toLowerCase());
+    
+    // Create different types of summaries based on the combination of issues
+    if (issueNames.some(name => name.includes('stress'))) {
+      if (issueNames.some(name => name.includes('søvn') || name.includes('sleep'))) {
+        return "stress og søvnproblemer";
+      } else if (issueNames.some(name => name.includes('vitamin'))) {
+        return "stress og vitaminmangel";
+      }
+      return "stress";
+    } 
+    
+    if (issueNames.some(name => name.includes('søvn') || name.includes('sleep'))) {
+      return "redusert søvnkvalitet";
+    }
+    
+    if (issueNames.some(name => name.includes('vitamin d'))) {
+      return "lave vitamin D-nivåer";
+    }
+    
+    // Generic fallback
+    return "ubalanse i kroppssystemene";
   };
 
   const toggleChat = () => {
@@ -63,7 +109,12 @@ const ChatButton: React.FC<ChatButtonProps> = ({ className }) => {
     } else if (path.includes('/issue/')) {
       return 'Jeg ser at du utforsker en helseinsikt. Jeg kan hjelpe deg med å forstå hva dette betyr for deg.';
     } else {
-      return 'Hei! Jeg er din personlige helseassistent. Hvordan kan jeg hjelpe deg i dag?';
+      // Home page with health summary
+      if (healthSummary) {
+        return `Hei! Basert på din nylige skanning ser jeg at kroppen din jobber med ${healthSummary}. Hva lurer du på om dette?`;
+      } else {
+        return 'Hei! Jeg er din personlige helseassistent. Hvordan kan jeg hjelpe deg i dag?';
+      }
     }
   };
 

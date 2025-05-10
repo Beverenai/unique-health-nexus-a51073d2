@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -5,6 +6,7 @@ import CoherenceRing from '@/components/CoherenceRing';
 import IssueCard from '@/components/IssueCard';
 import ChatButton from '@/components/ChatButton';
 import NavigationBar from '@/components/NavigationBar';
+import InsightCard from '@/components/InsightCard';
 import { supabase } from '@/integrations/supabase/client';
 import { getLatestCoherenceData, getHealthIssues, seedDemoData } from '@/services/supabaseService';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
@@ -83,6 +85,10 @@ const HomePage: React.FC = () => {
           {coherenceData?.message || "Din kroppskanning indikerer en total koherens-score på " + (coherenceData?.score || 0) + "%."}
         </p>
       </div>
+
+      {healthIssues.length > 0 && (
+        <InsightCard healthIssues={healthIssues} />
+      )}
 
       {healthIssues.length > 0 && (
         <div className="mb-8">
