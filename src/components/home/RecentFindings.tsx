@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { HealthIssue } from '@/types/supabase';
-import HealthIssuesCarousel from '@/components/HealthIssuesCarousel';
+import { HealthIssuesCarousel } from '@/components/carousel';
 import { Lightbulb } from 'lucide-react';
 
 interface RecentFindingsProps {
