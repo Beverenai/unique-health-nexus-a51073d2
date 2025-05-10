@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { HealthIssue } from '@/types/supabase';
-import { CloudFog, Bacteria, Moon } from 'lucide-react';
+import { CloudFog, LeafyGreen, Moon, Brain } from 'lucide-react';
 
 interface InsightCardProps {
   healthIssues: HealthIssue[];
@@ -17,11 +17,11 @@ const getInsightIcon = (issues: HealthIssue[]) => {
   if (primaryIssue.includes('stress') || primaryIssue.includes('søvn')) {
     return <Moon className="text-indigo-500" />;
   } else if (primaryIssue.includes('tarm') || primaryIssue.includes('parasitt')) {
-    return <Bacteria className="text-teal-500" />;
+    return <LeafyGreen className="text-teal-500" />;
   } else if (primaryIssue.includes('tungmetall') || primaryIssue.includes('miljø')) {
     return <CloudFog className="text-blue-500" />;
   } else {
-    return <Moon className="text-indigo-500" />;
+    return <Brain className="text-indigo-500" />;
   }
 };
 

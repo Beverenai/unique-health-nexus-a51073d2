@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ChevronRight, ArrowRight, CloudFog, Bacteria, Moon } from 'lucide-react';
+import { ChevronRight, ArrowRight, CloudFog, Moon, LeafyGreen, Brain } from 'lucide-react';
 import { HealthIssue } from '@/types/supabase';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
@@ -26,11 +26,11 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onClick }) => {
     if (name.includes('stress') || name.includes('søvn')) {
       return <Moon className="text-indigo-500" size={20} />;
     } else if (name.includes('tarm') || name.includes('parasitt')) {
-      return <Bacteria className="text-teal-500" size={20} />;
+      return <LeafyGreen className="text-teal-500" size={20} />;
     } else if (name.includes('tungmetall') || name.includes('miljø')) {
       return <CloudFog className="text-blue-500" size={20} />;
     } else {
-      return <Moon className="text-indigo-500" size={20} />;
+      return <Brain className="text-indigo-500" size={20} />;
     }
   };
 
