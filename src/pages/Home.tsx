@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -9,6 +10,7 @@ import InsightCard from '@/components/InsightCard';
 import { supabase } from '@/integrations/supabase/client';
 import { getLatestCoherenceData, getHealthIssues, seedDemoData, seedHistoricalData } from '@/services/supabaseService';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 // Hardcoded mock data to ensure it always displays
 const mockCoherenceData: CoherenceData = {
@@ -27,25 +29,34 @@ const mockHealthIssues: HealthIssue[] = [
     description: "Bakterielle mønstre viser redusert mangfold og lett inflammasjon.",
     load: 45,
     created_at: new Date().toISOString(),
-    recommendations: ["Spis mer fermentert mat og probiotika", "Øk inntaket av fiberrike matvarer"]
+    recommendations: ["Fermentert mat, pre- og probiotika, vurder test av matintoleranser."]
   },
   {
     id: "issue-2",
     scan_id: "mock-scan-id",
-    name: "Hormonelle svingninger",
-    description: "Skanningen indikerer ubalanser i kortisol og østrogen.",
+    name: "Hormonell ubalanse",
+    description: "Kortisol og melatonin viser avvik som kan påvirke søvn og stressrespons.",
     load: 38,
     created_at: new Date().toISOString(),
-    recommendations: ["Prioriter jevn søvnrytme og stressreduksjon", "Vurder adaptogene urter"]
+    recommendations: ["Regelmessig døgnrytme, dagslys, adaptogener."]
   },
   {
     id: "issue-3",
+    scan_id: "mock-scan-id",
+    name: "Kompresjon i nakkevirvler C4–C5",
+    description: "Signalene indikerer redusert sirkulasjon og stress i nakke/skulderområdet.",
+    load: 65,
+    created_at: new Date().toISOString(),
+    recommendations: ["Vurder kiropraktikk, massasje eller lette tøyninger."]
+  },
+  {
+    id: "issue-4",
     scan_id: "mock-scan-id",
     name: "Godt fungerende nervesystem",
     description: "Ingen tegn til stresspåvirkning eller nevrologisk ubalanse.",
     load: 15,
     created_at: new Date().toISOString(),
-    recommendations: ["Fortsett med nåværende aktivitetsnivå og balansert livsstil"]
+    recommendations: ["Fortsett med nåværende aktivitetsnivå og balansert livsstil."]
   }
 ];
 
@@ -121,27 +132,27 @@ const HomePage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#F7F7F7] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Laster...</p>
+          <p className="text-[#1E1E1E]">Laster...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 pb-20 pt-10">
+    <div className="min-h-screen bg-[#F7F7F7] px-6 pb-20 pt-10">
       <header className="mb-8 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-semibold">Unique</h1>
+          <h1 className="text-3xl font-semibold text-[#1E1E1E]">Unique</h1>
           <p className="text-gray-500">Din personlige helseassistent</p>
         </div>
       </header>
 
       <div className="flex flex-col items-center justify-center mb-8">
         <CoherenceRing score={coherenceData?.score || 64} />
-        <p className="text-gray-600 mt-6 text-center max-w-xs">
+        <p className="text-[#1E1E1E] mt-6 text-center max-w-xs">
           {coherenceData?.message || "Din kroppskanning indikerer en total koherens-score på 64%."}
         </p>
       </div>
@@ -149,16 +160,29 @@ const HomePage: React.FC = () => {
       {/* Always show InsightCard with health issues */}
       <InsightCard healthIssues={healthIssues} />
 
-      {/* Always show IssueCards */}
+      {/* Swipeable cards using Carousel */}
       <div className="mb-8">
-        <h2 className="text-xl font-medium mb-4">Prioriterte områder</h2>
-        {healthIssues.map(issue => (
-          <IssueCard 
-            key={issue.id} 
-            issue={issue} 
-            onClick={() => handleIssueClick(issue.id)} 
-          />
-        ))}
+        <h2 className="text-xl font-medium mb-4 text-[#1E1E1E]">Prioriterte områder</h2>
+        
+        <Carousel className="w-full mb-8">
+          <CarouselContent>
+            {healthIssues.map(issue => (
+              <CarouselItem key={issue.id} className="md:basis-2/3 lg:basis-1/2">
+                <div className="p-1">
+                  <IssueCard 
+                    key={issue.id} 
+                    issue={issue}
+                    onClick={() => handleIssueClick(issue.id)} 
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="flex justify-center gap-2 mt-4">
+            <CarouselPrevious className="static translate-y-0 h-8 w-8 bg-white/80 backdrop-blur-sm" />
+            <CarouselNext className="static translate-y-0 h-8 w-8 bg-white/80 backdrop-blur-sm" />
+          </div>
+        </Carousel>
       </div>
 
       <ChatButton />
