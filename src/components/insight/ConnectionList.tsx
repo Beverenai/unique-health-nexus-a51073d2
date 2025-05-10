@@ -63,11 +63,11 @@ const ConnectionList: React.FC<ConnectionListProps> = ({ connections }) => {
             whileHover={{ scale: 1.01, backgroundColor: "rgba(255, 255, 255, 0.9)" }}
           >
             <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 mr-2"></div>
-            <div>
-              <span className="text-gray-800">
-                <span className="font-medium text-[#9b87f5]">{connection.from}</span>
+            <div className="flex-1 min-w-0"> {/* Added flex-1 and min-width-0 to make text wrap properly */}
+              <span className="text-gray-800 break-words"> {/* Added break-words to prevent overflow */}
+                <span className="font-medium text-[#9b87f5] break-all">{connection.from}</span>
                 <span className="mx-1.5 text-gray-400">→</span>
-                <span className="font-medium text-[#9b87f5]">{connection.to}:</span> 
+                <span className="font-medium text-[#9b87f5] break-all">{connection.to}:</span> 
                 <span className="ml-1">{connection.description}</span>
               </span>
             </div>
