@@ -1,12 +1,18 @@
-import React from 'react';
+
+import React, { useEffect } from 'react';
 import HomeContent from '@/components/home/HomeContent';
 import HomeLoading from '@/components/home/HomeLoading';
 import BackgroundDecorations from '@/components/home/BackgroundDecorations';
 import HomeDataProvider from '@/components/home/HomeDataProvider';
 import { seedHistoricalData } from '@/services/supabaseService';
-import { useEffect } from 'react';
 
 const Home = () => {
+  // Seed dashboard data when the home page loads
+  useEffect(() => {
+    // Seed health check-ins and recommendations data
+    seedHistoricalData();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="container max-w-md mx-auto px-4 pb-20">
@@ -34,11 +40,5 @@ const Home = () => {
     </div>
   );
 };
-
-// Seed dashboard data when the home page loads
-useEffect(() => {
-  // Seed health check-ins and recommendations data
-  seedHistoricalData();
-}, []);
 
 export default Home;
