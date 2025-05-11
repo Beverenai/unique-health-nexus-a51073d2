@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Recommendation {
   color: string;
@@ -41,6 +42,7 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
   const navigate = useNavigate();
   const [completed, setCompleted] = React.useState<string[]>([]);
   const [openCategories, setOpenCategories] = React.useState<string[]>([]);
+  const isMobile = useIsMobile();
   
   const groupedRecommendations = groupRecommendationsByCategory(recommendations);
   
@@ -112,19 +114,19 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="mb-6"
+      className="mb-5"
     >
       <Card className="bg-white/80 backdrop-blur-xl border-white/20 shadow-lg rounded-2xl overflow-hidden">
-        <CardHeader className="pb-0">
-          <CardTitle className="text-lg font-medium flex items-center justify-between">
+        <CardHeader className={`${isMobile ? 'pb-0 p-4' : 'pb-0'}`}>
+          <CardTitle className={`${isMobile ? 'text-base' : 'text-lg'} font-medium flex items-center justify-between`}>
             <div className="flex items-center gap-2">
               <span>Anbefalte tiltak</span>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <CircleHelp className="h-4 w-4 text-gray-400" />
+                    <CircleHelp className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-gray-400`} />
                   </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
+                  <TooltipContent className="max-w-xs" side={isMobile ? "bottom" : "top"}>
                     <p className="text-sm">Tiltak som er tilpasset din situasjon basert på skanningen</p>
                   </TooltipContent>
                 </Tooltip>
@@ -133,8 +135,8 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
             
             <Button 
               variant="outline" 
-              size="sm"
-              className="text-xs text-[#9b87f5] border-[#9b87f5]/20 hover:bg-[#9b87f5]/5"
+              size={isMobile ? "sm" : "sm"}
+              className={`${isMobile ? 'text-[10px] px-2 py-1 h-auto' : 'text-xs'} text-[#9b87f5] border-[#9b87f5]/20 hover:bg-[#9b87f5]/5`}
               onClick={() => navigate('/my-plan')}
             >
               Min plan
@@ -142,13 +144,13 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
           </CardTitle>
         </CardHeader>
         
-        <CardContent className="pt-4">
-          <motion.div variants={itemVariants} className="mb-4 flex flex-wrap gap-2">
+        <CardContent className={`${isMobile ? 'pt-3 p-4' : 'pt-4'}`}>
+          <motion.div variants={itemVariants} className="mb-3 sm:mb-4 flex flex-wrap gap-1 sm:gap-2">
             {categories.map((category) => (
               <Badge 
                 key={category}
                 variant="outline"
-                className={`cursor-pointer ${openCategories.includes(category) 
+                className={`cursor-pointer text-xs ${openCategories.includes(category) 
                   ? getCategoryColor(category) 
                   : 'bg-white text-gray-500 hover:bg-gray-50'}`}
                 onClick={() => toggleCategory(category)}
@@ -158,33 +160,33 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
             ))}
           </motion.div>
           
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {categories.map((category) => (
               <Collapsible 
                 key={category}
                 open={openCategories.includes(category)}
                 onOpenChange={() => toggleCategory(category)}
               >
-                <CollapsibleTrigger className="w-full text-left mb-2">
+                <CollapsibleTrigger className="w-full text-left mb-1.5 sm:mb-2">
                   <motion.div 
                     variants={itemVariants}
                     className="flex items-center gap-2"
                   >
-                    <h3 className={`text-sm font-medium ${openCategories.includes(category) ? 'text-[#9b87f5]' : 'text-gray-600'}`}>
+                    <h3 className={`text-xs sm:text-sm font-medium ${openCategories.includes(category) ? 'text-[#9b87f5]' : 'text-gray-600'}`}>
                       {category}
                     </h3>
                     <div className={`h-px flex-1 ${openCategories.includes(category) ? 'bg-[#9b87f5]/20' : 'bg-gray-200'}`}></div>
                     <div className={`rounded-full p-0.5 ${openCategories.includes(category) ? 'bg-[#9b87f5]/10' : 'bg-gray-100'}`}>
                       {openCategories.includes(category) ? (
-                        <CircleHelp className="h-4 w-4 text-[#9b87f5]" />
+                        <CircleHelp className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-[#9b87f5]`} />
                       ) : (
-                        <CircleHelp className="h-4 w-4 text-gray-400" />
+                        <CircleHelp className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-gray-400`} />
                       )}
                     </div>
                   </motion.div>
                 </CollapsibleTrigger>
                 
-                <CollapsibleContent className="space-y-2.5 mb-4">
+                <CollapsibleContent className="space-y-2 sm:space-y-2.5 mb-3 sm:mb-4">
                   {groupedRecommendations[category].map((recommendation, index) => {
                     const isCompleted = completed.includes(recommendation.text);
                     const importanceColor = getImportanceColor(recommendation.importance);
@@ -193,13 +195,13 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
                       <motion.div 
                         key={`${category}-${index}`}
                         variants={itemVariants}
-                        whileHover={{ scale: 1.01 }}
+                        whileHover={{ scale: isMobile ? 1 : 1.01 }}
                         transition={{ type: "spring", stiffness: 400 }}
                         className={`rounded-xl ${isCompleted ? 'bg-green-50/40 border-green-100' : 'bg-white border-gray-100'} shadow-sm border`}
                       >
-                        <div className="flex items-center gap-2.5 px-4 py-3">
+                        <div className={`flex items-center gap-2 ${isMobile ? 'px-3 py-2.5' : 'px-4 py-3'}`}>
                           <div className={`flex-shrink-0 h-2 w-2 rounded-full ${isCompleted ? 'bg-green-500' : importanceColor}`}></div>
-                          <span className={`text-sm ${isCompleted ? 'text-green-700 line-through decoration-green-500/30' : 'text-gray-700'} leading-snug flex-1`}>
+                          <span className={`${isMobile ? 'text-xs' : 'text-sm'} ${isCompleted ? 'text-green-700 line-through decoration-green-500/30' : 'text-gray-700'} leading-snug flex-1`}>
                             {recommendation.text}
                           </span>
                           
@@ -207,12 +209,16 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 rounded-full">
-                                    <Info size={14} className="text-gray-500" />
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className={`${isMobile ? 'h-6 w-6' : 'h-7 w-7'} p-0 rounded-full`}
+                                  >
+                                    <Info size={isMobile ? 12 : 14} className="text-gray-500" />
                                   </Button>
                                 </TooltipTrigger>
-                                <TooltipContent className="max-w-xs">
-                                  <p>{recommendation.explanation}</p>
+                                <TooltipContent className="max-w-xs" side={isMobile ? "bottom" : "top"}>
+                                  <p className="text-xs">{recommendation.explanation}</p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -222,7 +228,7 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
                             <Button 
                               variant="outline" 
                               size="sm" 
-                              className="h-7 text-xs border-gray-200 hover:border-[#9b87f5] hover:text-[#9b87f5]"
+                              className={`${isMobile ? 'h-6 text-[10px] px-2' : 'h-7 text-xs'} border-gray-200 hover:border-[#9b87f5] hover:text-[#9b87f5]`}
                               onClick={() => handleComplete(recommendation.text)}
                             >
                               Merk utført
@@ -230,8 +236,8 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
                           )}
                           
                           {isCompleted && (
-                            <div className="h-7 w-7 rounded-full bg-green-100/50 flex items-center justify-center">
-                              <Check size={14} className="text-green-600" />
+                            <div className={`${isMobile ? 'h-6 w-6' : 'h-7 w-7'} rounded-full bg-green-100/50 flex items-center justify-center`}>
+                              <Check size={isMobile ? 12 : 14} className="text-green-600" />
                             </div>
                           )}
                         </div>

@@ -3,40 +3,42 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Home, BarChart2, History, User, ListTodo, CalendarClock, LayoutDashboard } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const BottomNavigation = () => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const isMobile = useIsMobile();
   
   const navItems = [
     { 
       path: '/', 
       label: 'Hjem', 
-      icon: <Home size={22} />,
+      icon: <Home size={isMobile ? 20 : 22} />,
       active: currentPath === '/'
     },
     { 
       path: '/dashboard', 
       label: 'Dashboard', 
-      icon: <LayoutDashboard size={22} />,
+      icon: <LayoutDashboard size={isMobile ? 20 : 22} />,
       active: currentPath === '/dashboard'
     },
     { 
       path: '/insights', 
       label: 'Innsikt', 
-      icon: <BarChart2 size={22} />,
+      icon: <BarChart2 size={isMobile ? 20 : 22} />,
       active: currentPath === '/insights'
     },
     { 
       path: '/checkin', 
       label: 'Dagslogg', 
-      icon: <CalendarClock size={22} />,
+      icon: <CalendarClock size={isMobile ? 20 : 22} />,
       active: currentPath === '/checkin'
     },
     { 
       path: '/profile', 
       label: 'Profil', 
-      icon: <User size={22} />,
+      icon: <User size={isMobile ? 20 : 22} />,
       active: currentPath === '/profile'
     }
   ];
@@ -49,7 +51,7 @@ const BottomNavigation = () => {
             <Link 
               key={item.path} 
               to={item.path} 
-              className={`flex flex-col items-center justify-center w-16 h-full ${
+              className={`flex flex-col items-center justify-center ${isMobile ? 'w-14' : 'w-16'} h-full ${
                 item.active ? 'text-[#9b87f5]' : 'text-gray-500'
               }`}
             >
@@ -60,12 +62,12 @@ const BottomNavigation = () => {
                   className="flex flex-col items-center"
                 >
                   {item.icon}
-                  <span className="text-xs mt-0.5 font-medium">{item.label}</span>
+                  <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} mt-0.5 font-medium`}>{item.label}</span>
                 </motion.div>
               ) : (
                 <div className="flex flex-col items-center">
                   {item.icon}
-                  <span className="text-xs mt-0.5">{item.label}</span>
+                  <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} mt-0.5`}>{item.label}</span>
                 </div>
               )}
             </Link>

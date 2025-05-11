@@ -7,6 +7,7 @@ import SystemIcon from './SystemIcon';
 import { HealthSystemItem } from '@/services/healthSystemService';
 import { SYSTEM_CATEGORIES, groupSystemsByCategory } from './SystemCategories';
 import { Info } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HealthSystemGridProps {
   title?: string;
@@ -20,6 +21,7 @@ const HealthSystemGrid: React.FC<HealthSystemGridProps> = ({
   healthData
 }) => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const categorizedSystems = groupSystemsByCategory(healthData);
   
   // Get background color for category
@@ -67,22 +69,22 @@ const HealthSystemGrid: React.FC<HealthSystemGridProps> = ({
   };
   
   return (
-    <Card className="bg-gradient-to-br from-white/80 to-white/50 backdrop-blur-sm border-none shadow-lg mb-8">
-      <CardContent className="p-6">
-        <div className="mb-4">
+    <Card className="bg-gradient-to-br from-white/80 to-white/50 backdrop-blur-sm border-none shadow-lg">
+      <CardContent className={`${isMobile ? 'p-4' : 'p-6'}`}>
+        <div className="mb-3 sm:mb-4">
           <div className="flex items-center gap-2 mb-1">
-            <h2 className="text-xl font-medium">{title}</h2>
+            <h2 className={`${isMobile ? 'text-lg' : 'text-xl'} font-medium`}>{title}</h2>
             <div className="bg-[#9b87f5]/10 rounded-full p-1">
-              <Info size={14} className="text-[#9b87f5]" />
+              <Info size={isMobile ? 14 : 16} className="text-[#9b87f5]" />
             </div>
           </div>
           {description && (
-            <p className="text-gray-500 text-sm">{description}</p>
+            <p className="text-gray-500 text-xs sm:text-sm">{description}</p>
           )}
         </div>
         
         <motion.div 
-          className="grid grid-cols-1 gap-3 sm:grid-cols-2"
+          className="grid grid-cols-2 gap-2 sm:gap-3"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -91,18 +93,18 @@ const HealthSystemGrid: React.FC<HealthSystemGridProps> = ({
             <motion.div 
               key={`${category}-${index}`}
               variants={itemVariants}
-              whileHover={{ scale: 1.03 }}
+              whileHover={{ scale: isMobile ? 1.02 : 1.03 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => handleCategoryClick(index)}
-              className={`bg-gradient-to-br ${getCategoryGradient(category)} rounded-xl p-4 border border-white/40 shadow-sm cursor-pointer transition-all hover:shadow-md flex flex-col items-center text-center`}
+              className={`bg-gradient-to-br ${getCategoryGradient(category)} rounded-xl ${isMobile ? 'p-3' : 'p-4'} border border-white/40 shadow-sm cursor-pointer transition-all hover:shadow-md flex flex-col items-center text-center`}
             >
-              <div className="bg-white/80 p-2.5 rounded-full shadow-sm mb-2">
-                <SystemIcon name={category} size={24} />
+              <div className={`bg-white/80 ${isMobile ? 'p-2' : 'p-2.5'} rounded-full shadow-sm mb-2`}>
+                <SystemIcon name={category} size={isMobile ? 20 : 24} />
               </div>
-              <h3 className="font-medium text-sm text-gray-800 break-words">
+              <h3 className="font-medium text-xs sm:text-sm text-gray-800 break-words">
                 {category}
               </h3>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-500 mt-0.5 sm:mt-1`}>
                 {systems.length} systemer
               </p>
             </motion.div>

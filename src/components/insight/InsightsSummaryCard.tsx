@@ -8,6 +8,7 @@ import { SystemChart } from '@/components/system-analysis';
 import { ChartData } from '@/components/system-analysis/types';
 import { HealthIssue } from '@/types/supabase';
 import { getSystemColor } from '@/components/system-analysis/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface InsightsSummaryCardProps {
   healthIssues: HealthIssue[];
@@ -15,6 +16,7 @@ interface InsightsSummaryCardProps {
 
 const InsightsSummaryCard: React.FC<InsightsSummaryCardProps> = ({ healthIssues }) => {
   const [expanded, setExpanded] = useState(false);
+  const isMobile = useIsMobile();
   const topIssues = [...healthIssues].sort((a, b) => b.load - a.load).slice(0, 5);
   
   // Create chart data
@@ -56,30 +58,33 @@ const InsightsSummaryCard: React.FC<InsightsSummaryCardProps> = ({ healthIssues 
       initial="hidden"
       animate="visible"
     >
-      <Card className="mb-6 bg-white/80 backdrop-blur-xl border-white/20 shadow-lg rounded-2xl overflow-hidden">
-        <CardContent className="p-6">
+      <Card className="mb-5 bg-white/80 backdrop-blur-xl border-white/20 shadow-lg rounded-2xl overflow-hidden">
+        <CardContent className={`${isMobile ? 'p-4' : 'p-6'}`}>
           <motion.div className="flex items-center gap-2 mb-4" variants={itemVariants}>
-            <div className="bg-[#9b87f5]/10 p-2 rounded-full">
-              <Lightbulb size={18} className="text-[#9b87f5]" />
+            <div className="bg-[#9b87f5]/10 p-1.5 sm:p-2 rounded-full">
+              <Lightbulb size={isMobile ? 16 : 18} className="text-[#9b87f5]" />
             </div>
-            <h3 className="text-xl font-medium text-gray-800">Hovedfunn</h3>
+            <h3 className="text-lg sm:text-xl font-medium text-gray-800">Hovedfunn</h3>
           </motion.div>
           
-          <motion.div variants={itemVariants} className="flex flex-col md:flex-row items-center gap-6 mb-6">
+          <motion.div 
+            variants={itemVariants} 
+            className={`flex flex-col ${isMobile ? 'gap-4' : 'md:flex-row gap-6'} items-center mb-6`}
+          >
             <div className="flex justify-center">
-              <SystemChart data={chartData} size="lg" />
+              <SystemChart data={chartData} size={isMobile ? "md" : "lg"} />
             </div>
             
-            <div className="flex-1">
-              <h4 className="text-base font-medium mb-3">Dine 5 viktigste helseutfordringer:</h4>
-              <div className="space-y-2.5">
+            <div className="flex-1 w-full">
+              <h4 className="text-sm sm:text-base font-medium mb-2 sm:mb-3">Dine 5 viktigste helseutfordringer:</h4>
+              <div className="space-y-2">
                 {topIssues.map((issue, index) => (
                   <motion.div
                     key={issue.id}
-                    className="bg-white rounded-lg p-3 shadow-sm border border-gray-100"
+                    className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-gray-100"
                     variants={itemVariants}
                     custom={index}
-                    whileHover={{ scale: 1.01 }}
+                    whileHover={{ scale: isMobile ? 1 : 1.01 }}
                   >
                     <div className="flex items-center gap-2">
                       <div
@@ -88,8 +93,8 @@ const InsightsSummaryCard: React.FC<InsightsSummaryCardProps> = ({ healthIssues 
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-center">
-                          <p className="font-medium text-gray-800 truncate">{issue.name}</p>
-                          <span className="text-sm font-medium px-2 py-0.5 rounded-full bg-gray-100">
+                          <p className="font-medium text-gray-800 truncate text-sm sm:text-base">{issue.name}</p>
+                          <span className="text-xs sm:text-sm font-medium px-1.5 sm:px-2 py-0.5 rounded-full bg-gray-100">
                             {issue.load}%
                           </span>
                         </div>
@@ -102,7 +107,7 @@ const InsightsSummaryCard: React.FC<InsightsSummaryCardProps> = ({ healthIssues 
           </motion.div>
           
           <motion.div variants={itemVariants}>
-            <div className="bg-[#9b87f5]/5 rounded-xl p-4 text-sm">
+            <div className="bg-[#9b87f5]/5 rounded-xl p-3 sm:p-4 text-xs sm:text-sm">
               <p className="text-gray-700 leading-relaxed">
                 {topIssues[0]?.load > 70 
                   ? 'Skanningen indikerer flere systemer med høy belastning som kan påvirke hverandre. Følg anbefalingene nedenfor for å adressere de viktigste områdene først.'

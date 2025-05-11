@@ -11,11 +11,13 @@ import InsightsSummaryCard from '@/components/insight/InsightsSummaryCard';
 import SystemConnectionsCard from '@/components/insight/SystemConnectionsCard';
 import RecommendedActionsCard from '@/components/insight/RecommendedActionsCard';
 import HealthSystemGrid from '@/components/health/HealthSystemGrid';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Insights: React.FC = () => {
   // Initialize with the correct mock data that now matches the expected type
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
   const [healthSystemData, setHealthSystemData] = useState<HealthSystemItem[]>([]);
+  const isMobile = useIsMobile();
   const [recommendations, setRecommendations] = useState<{
     color: string; 
     text: string; 
@@ -93,11 +95,11 @@ const Insights: React.FC = () => {
 
   return (
     <div className="h-[calc(100vh-4rem)] overflow-hidden">
-      <ScrollArea className="h-full pb-16">
-        <main className="container max-w-lg mx-auto px-4 py-4">
-          <div className="mb-6">
-            <h1 className="text-2xl font-semibold mb-2 text-center">Innsikter</h1>
-            <p className="text-gray-500 text-center text-sm">Sammenhengen mellom dine helseutfordringer</p>
+      <ScrollArea className="h-full pb-20">
+        <main className={`container mx-auto px-3 py-3 ${isMobile ? 'max-w-[100%]' : 'max-w-lg'}`}>
+          <div className="mb-5">
+            <h1 className="text-xl sm:text-2xl font-semibold mb-1.5 text-center">Innsikter</h1>
+            <p className="text-gray-500 text-center text-xs sm:text-sm">Sammenhengen mellom dine helseutfordringer</p>
           </div>
           
           {/* Main insights summary */}
@@ -110,7 +112,7 @@ const Insights: React.FC = () => {
           <RecommendedActionsCard recommendations={recommendations} />
           
           {/* Health systems grid */}
-          <div className="mb-6">
+          <div className="mb-20 sm:mb-6">
             <HealthSystemGrid 
               healthData={healthSystemData}
               title="Kroppssystemer"
