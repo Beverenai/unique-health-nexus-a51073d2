@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, BarChart2, History, User, ListTodo, CalendarClock, LayoutDashboard } from 'lucide-react';
+import { Home, BarChart2, History, User, CalendarClock, LayoutDashboard } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const BottomNavigation = () => {
@@ -19,7 +19,7 @@ const BottomNavigation = () => {
     },
     { 
       path: '/dashboard', 
-      label: 'Dashboard', 
+      label: 'Oversikt', 
       icon: <LayoutDashboard size={isMobile ? 20 : 22} />,
       active: currentPath === '/dashboard'
     },
@@ -30,10 +30,10 @@ const BottomNavigation = () => {
       active: currentPath === '/insights'
     },
     { 
-      path: '/checkin', 
-      label: 'Dagslogg', 
-      icon: <CalendarClock size={isMobile ? 20 : 22} />,
-      active: currentPath === '/checkin'
+      path: '/history', 
+      label: 'Historikk', 
+      icon: <History size={isMobile ? 20 : 22} />,
+      active: currentPath === '/history'
     },
     { 
       path: '/profile', 

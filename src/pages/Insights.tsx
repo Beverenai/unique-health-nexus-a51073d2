@@ -17,6 +17,7 @@ const Insights: React.FC = () => {
   // Initialize with the correct mock data that now matches the expected type
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
   const [healthSystemData, setHealthSystemData] = useState<HealthSystemItem[]>([]);
+  const [lastScanDate, setLastScanDate] = useState<Date | null>(null);
   const isMobile = useIsMobile();
   const [recommendations, setRecommendations] = useState<{
     color: string; 
@@ -76,6 +77,11 @@ const Insights: React.FC = () => {
         const issuesResult = await getHealthIssues();
         if (issuesResult && issuesResult.length > 0) {
           setHealthIssues(issuesResult);
+          
+          // Set the last scan date from the created_at field of the first health issue
+          if (issuesResult[0]?.created_at) {
+            setLastScanDate(new Date(issuesResult[0].created_at));
+          }
         }
         
         // Fetch health systems data
@@ -99,7 +105,9 @@ const Insights: React.FC = () => {
         <main className={`container mx-auto px-3 py-3 ${isMobile ? 'max-w-[100%]' : 'max-w-lg'}`}>
           <div className="mb-5">
             <h1 className="text-xl sm:text-2xl font-semibold mb-1.5 text-center">Innsikter</h1>
-            <p className="text-gray-500 text-center text-xs sm:text-sm">Sammenhengen mellom dine helseutfordringer</p>
+            <p className="text-gray-500 text-center text-xs sm:text-sm">
+              Basert på din skanning {lastScanDate ? `fra ${lastScanDate.toLocaleDateString('nb-NO', {day: 'numeric', month: 'long'})}` : ''}
+            </p>
           </div>
           
           {/* Main insights summary */}

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
 import { supabase } from '@/integrations/supabase/client';
@@ -77,6 +78,7 @@ const HomeDataProvider: React.FC<HomeDataProviderProps> = ({ children }) => {
   const [scanDate, setScanDate] = useState<Date>(new Date());
   const [userName, setUserName] = useState<string>("Demo");
   const [isLoading, setIsLoading] = useState(true);
+  const [daysSinceLastScan, setDaysSinceLastScan] = useState<number>(0);
   
   // Fetch real data from Supabase when available
   useEffect(() => {
@@ -90,6 +92,14 @@ const HomeDataProvider: React.FC<HomeDataProviderProps> = ({ children }) => {
         const coherenceResult = await getLatestCoherenceData();
         if (coherenceResult) {
           setCoherenceData(coherenceResult);
+          
+          // Calculate days since last scan
+          const lastScanDate = new Date(coherenceResult.created_at);
+          const today = new Date();
+          const diffTime = Math.abs(today.getTime() - lastScanDate.getTime());
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          setDaysSinceLastScan(diffDays);
+          setScanDate(lastScanDate);
         }
         
         const issuesResult = await getHealthIssues();
