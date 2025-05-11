@@ -12,6 +12,7 @@ interface CoherenceRingProps {
   size?: 'sm' | 'md' | 'lg';
   showText?: boolean;
   className?: string;
+  showLabel?: boolean;
 }
 
 const CoherenceRing: React.FC<CoherenceRingProps> = ({ 
@@ -19,6 +20,7 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
   message,
   size = 'lg', 
   showText = true,
+  showLabel = false,
   className
 }) => {
   const textColorClass = getModernTextColor(score);
@@ -97,11 +99,13 @@ const CoherenceRing: React.FC<CoherenceRingProps> = ({
       </motion.div>
       
       {/* Status label below ring */}
-      <StatusLabel 
-        score={score} 
-        statusLabel={statusLabel} 
-        textColorClass={textColorClass} 
-      />
+      {showLabel && (
+        <StatusLabel 
+          score={score} 
+          statusLabel={statusLabel} 
+          textColorClass={textColorClass} 
+        />
+      )}
       
       {message && (
         <motion.p 
