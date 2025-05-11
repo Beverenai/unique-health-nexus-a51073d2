@@ -1,11 +1,9 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import DetailCard from '@/components/DetailCard';
 import { IssueDetail } from '@/types/supabase';
-import HealthInfoTable from '@/components/HealthInfoTable';
-import { getHealthSystems, HealthSystemItem } from '@/services/healthSystemService';
 
 interface OverviewTabProps {
   details: IssueDetail[];
@@ -13,17 +11,6 @@ interface OverviewTabProps {
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ details, detailedInfo }) => {
-  const [healthData, setHealthData] = useState<HealthSystemItem[]>([]);
-  
-  useEffect(() => {
-    const fetchHealthData = async () => {
-      const data = await getHealthSystems();
-      setHealthData(data);
-    };
-    
-    fetchHealthData();
-  }, []);
-  
   return (
     <>
       {/* Details section */}
@@ -66,12 +53,19 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ details, detailedInfo }) => {
         </CardContent>
       </Card>
       
-      {/* Health info table section */}
-      <HealthInfoTable 
-        title="Relatert helseinformasjon" 
-        description="Oversikt over helsesystemer og anbefalte tiltak"
-        healthData={healthData}
-      />
+      <Card className="mb-6 glassmorphism border-none bg-gradient-to-br from-white/80 to-white/50 shadow-lg">
+        <CardContent className="pt-6 pb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-medium">Relaterte systemer</h2>
+            <Badge variant="outline" className="bg-[#9b87f5]/10 text-[#9b87f5] hover:bg-[#9b87f5]/20 cursor-pointer" onClick={() => document.querySelector('[value="related-systems"]')?.dispatchEvent(new Event('click', { bubbles: true }))}>
+              Se alle
+            </Badge>
+          </div>
+          <p className="text-gray-700">
+            Dette helseproblemet er forbundet med flere av kroppens systemer. Gå til "Relaterte systemer" for å se detaljert informasjon om hvordan disse systemene påvirker hverandre og hvilke tiltak som kan hjelpe.
+          </p>
+        </CardContent>
+      </Card>
     </>
   );
 };

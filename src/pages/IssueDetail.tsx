@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, BookOpen, PanelLeft, Database, MessageSquare, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, BookOpen, PanelLeft, Database, MessageSquare, Network, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getIssueDetails } from '@/services/healthIssueService';
+import { getHealthSystems, HealthSystemItem } from '@/services/healthSystemService';
 import { HealthIssue, IssueDetail, IssueRecommendation, ScannerComponent } from '@/types/supabase';
 import ChatButton from '@/components/ChatButton';
 import { toast } from 'sonner';
@@ -14,6 +15,7 @@ import IssueHeader from '@/components/issue-detail/IssueHeader';
 import OverviewTab from '@/components/issue-detail/OverviewTab';
 import RecommendationsTab from '@/components/issue-detail/RecommendationsTab';
 import DataTab from '@/components/issue-detail/DataTab';
+import RelatedSystemsTab from '@/components/issue-detail/RelatedSystemsTab';
 
 const IssueDetailPage: React.FC = () => {
   const { issueId } = useParams<{ issueId: string }>();
@@ -23,12 +25,13 @@ const IssueDetailPage: React.FC = () => {
   const [details, setDetails] = useState<IssueDetail[]>([]);
   const [recommendations, setRecommendations] = useState<IssueRecommendation[]>([]);
   const [scannerComponents, setScannerComponents] = useState<ScannerComponent[]>([]);
+  const [healthData, setHealthData] = useState<HealthSystemItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("overview");
 
   useEffect(() => {
-    const loadIssueData = async () => {
+    const loadData = async () => {
       if (!issueId) {
         setError("Manglende henvisnings-ID");
         setLoading(false);
@@ -37,9 +40,9 @@ const IssueDetailPage: React.FC = () => {
 
       try {
         console.log("Loading issue with ID:", issueId);
-        const data = await getIssueDetails(issueId);
+        const issueData = await getIssueDetails(issueId);
         
-        if (!data.issue) {
+        if (!issueData.issue) {
           console.error('No issue found with ID:', issueId);
           setError("Kunne ikke finne helseproblemet med ID: " + issueId);
           toast.error("Kunne ikke finne helseproblemet", {
@@ -49,11 +52,15 @@ const IssueDetailPage: React.FC = () => {
           return;
         }
         
-        console.log("Issue data loaded successfully:", data.issue);
-        setIssue(data.issue);
-        setDetails(data.details);
-        setRecommendations(data.recommendations);
-        setScannerComponents(data.scannerComponents);
+        // Load health systems data
+        const systemsData = await getHealthSystems();
+        
+        console.log("Issue data loaded successfully:", issueData.issue);
+        setIssue(issueData.issue);
+        setDetails(issueData.details);
+        setRecommendations(issueData.recommendations);
+        setScannerComponents(issueData.scannerComponents);
+        setHealthData(systemsData);
         setError(null);
       } catch (error) {
         console.error('Error loading issue data:', error);
@@ -66,7 +73,7 @@ const IssueDetailPage: React.FC = () => {
       }
     };
 
-    loadIssueData();
+    loadData();
   }, [issueId]);
 
   if (loading) {
@@ -114,7 +121,7 @@ const IssueDetailPage: React.FC = () => {
         onValueChange={setActiveTab}
         className="mb-6"
       >
-        <TabsList className="grid grid-cols-3 mb-4 bg-white/70 backdrop-blur-sm">
+        <TabsList className="grid grid-cols-4 mb-4 bg-white/70 backdrop-blur-sm">
           <TabsTrigger value="overview" className="flex gap-1 items-center">
             <BookOpen size={14} />
             <span>Oversikt</span>
@@ -122,6 +129,10 @@ const IssueDetailPage: React.FC = () => {
           <TabsTrigger value="recommendations" className="flex gap-1 items-center">
             <PanelLeft size={14} />
             <span>Anbefalinger</span>
+          </TabsTrigger>
+          <TabsTrigger value="related-systems" className="flex gap-1 items-center">
+            <Network size={14} />
+            <span>Relaterte systemer</span>
           </TabsTrigger>
           <TabsTrigger value="data" className="flex gap-1 items-center">
             <Database size={14} />
@@ -140,6 +151,13 @@ const IssueDetailPage: React.FC = () => {
           <RecommendationsTab 
             recommendations={recommendations} 
             issue={issue} 
+          />
+        </TabsContent>
+        
+        <TabsContent value="related-systems">
+          <RelatedSystemsTab 
+            healthData={healthData}
+            currentIssue={issue}
           />
         </TabsContent>
         
