@@ -1,12 +1,19 @@
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, InfoIcon, Layers, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
+import { useGestureHaptics } from '@/utils/advanced-haptic-utils';
 
 const ActionButtons: React.FC = () => {
   const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { trigger } = useHapticFeedback();
+  
+  // Add gesture recognition
+  useGestureHaptics(containerRef, trigger);
   
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -32,12 +39,27 @@ const ActionButtons: React.FC = () => {
     }
   };
 
+  // Enhanced button click with progressive haptics
+  const handleButtonClick = (path: string) => {
+    // Simulate a progressive haptic pattern for navigation
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+    
+    (async () => {
+      trigger('light');
+      await delay(50);
+      trigger('medium');
+      await delay(100);
+      navigate(path);
+    })();
+  };
+
   return (
     <motion.div 
       className="space-y-3"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
+      ref={containerRef}
     >
       <div className="relative">
         <motion.div 
@@ -64,7 +86,8 @@ const ActionButtons: React.FC = () => {
         <Button 
           variant="outline" 
           className="w-full flex justify-between items-center bg-white hover:bg-white/90 backdrop-blur-sm border-white/40 shadow-sm hover:shadow"
-          onClick={() => navigate('/insights')}
+          onClick={() => handleButtonClick('/insights')}
+          hapticPattern="medium"
         >
           <div className="flex items-center gap-2">
             <div className="bg-[#9b87f5]/10 p-1.5 rounded-full">
@@ -84,7 +107,8 @@ const ActionButtons: React.FC = () => {
         <Button 
           variant="outline" 
           className="w-full flex justify-between items-center bg-white hover:bg-white/90 backdrop-blur-sm border-white/40 shadow-sm hover:shadow"
-          onClick={() => navigate('/history')}
+          onClick={() => handleButtonClick('/history')}
+          hapticPattern="medium"
         >
           <div className="flex items-center gap-2">
             <div className="bg-[#9b87f5]/10 p-1.5 rounded-full">
@@ -105,7 +129,8 @@ const ActionButtons: React.FC = () => {
         <Button 
           variant="outline" 
           className="w-full flex justify-between items-center bg-white/60 hover:bg-white/90 backdrop-blur-sm border-white/40 shadow-sm hover:shadow"
-          onClick={() => navigate('/')}
+          onClick={() => handleButtonClick('/')}
+          hapticPattern="medium"
         >
           <div className="flex items-center gap-2">
             <div className="bg-[#9b87f5]/10 p-1.5 rounded-full">

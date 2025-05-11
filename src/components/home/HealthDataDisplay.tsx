@@ -1,10 +1,12 @@
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { CoherenceData } from '@/types/supabase';
 import ScanDateCard from '@/components/ScanDateCard';
 import BodyBalanceDisplay from '@/components/balance/BodyBalanceDisplay';
 import HealthInsightSummary from '@/components/balance/HealthInsightSummary';
+import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
+import { useGestureHaptics } from '@/utils/advanced-haptic-utils';
 
 interface HealthDataDisplayProps {
   coherenceData: CoherenceData | null;
@@ -17,6 +19,12 @@ const HealthDataDisplay: React.FC<HealthDataDisplayProps> = ({
   scanDate,
   healthIssues
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { trigger } = useHapticFeedback();
+  
+  // Add gesture recognition for haptic feedback
+  useGestureHaptics(containerRef, trigger);
+  
   // Create a staggered animation effect
   const containerAnimation = {
     hidden: { opacity: 0 },
@@ -46,6 +54,7 @@ const HealthDataDisplay: React.FC<HealthDataDisplayProps> = ({
   
   return (
     <motion.div
+      ref={containerRef}
       className="relative mb-20 z-10"
       variants={containerAnimation}
       initial="hidden"
@@ -58,6 +67,8 @@ const HealthDataDisplay: React.FC<HealthDataDisplayProps> = ({
           initial={{ opacity: 1 }}
           animate={{ opacity: 0 }}
           transition={{ duration: 1.5, delay: 0.7 }}
+          onAnimationStart={() => trigger('medium')}
+          onAnimationComplete={() => trigger('light')}
         >
           <motion.div 
             className="w-16 h-16 rounded-full bg-[#9b87f5]/10 flex items-center justify-center"
