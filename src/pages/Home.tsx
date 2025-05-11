@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,6 +11,7 @@ import ScanDateCard from '@/components/ScanDateCard';
 import OverviewTab from '@/components/home/tabs/OverviewTab';
 import PrioritiesTab from '@/components/home/tabs/PrioritiesTab';
 import FindingsTab from '@/components/home/tabs/FindingsTab';
+import BodyFocusSummary from '@/components/home/BodyFocusSummary';
 
 // Hardcoded mock data to ensure it always displays
 const mockCoherenceData: CoherenceData = {
@@ -151,7 +153,15 @@ const Home = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9b87f5]"></div>
           </div>
         ) : (
-          <TabView tabs={tabs} className="pt-2" />
+          <>
+            <div className="my-6">
+              <BodyFocusSummary 
+                coherenceScore={coherenceData?.score || 64} 
+                healthIssues={healthIssues} 
+              />
+            </div>
+            <TabView tabs={tabs} className="pt-2" />
+          </>
         )}
       </main>
     </div>
