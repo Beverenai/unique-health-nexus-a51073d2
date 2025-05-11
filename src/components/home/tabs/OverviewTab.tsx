@@ -21,19 +21,19 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ healthIssues }) => {
   return (
     <div className="space-y-5">
       <TabViewItem isActive={true}>
-        <Card className="bg-white/80 backdrop-blur-lg border border-white/50 shadow-sm">
-          <CardHeader>
-            <h3 className="text-lg font-medium">Systembelastninger</h3>
+        <Card className="bg-white border-0 shadow-sm rounded-lg">
+          <CardHeader className="pb-0">
+            <h3 className="text-base font-medium text-gray-800">Systembelastninger</h3>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {topIssues.map((issue, index) => (
                 <motion.div
                   key={issue.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 * index }}
-                  className="p-3 bg-white/70 rounded-xl border border-gray-100 hover:border-[#9b87f5]/30 hover:bg-white/90 transition-all cursor-pointer"
+                  className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all cursor-pointer"
                   onClick={() => navigate(`/issue/${issue.id}`)}
                 >
                   <div className="flex justify-between items-center">
@@ -44,7 +44,13 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ healthIssues }) => {
                     <div className="flex items-center">
                       <Badge 
                         variant="outline" 
-                        className={`px-2.5 py-1 ${issue.load > 60 ? 'bg-red-50 text-red-500' : issue.load > 40 ? 'bg-amber-50 text-amber-500' : 'bg-green-50 text-green-500'}`}
+                        className={`px-2 py-0.5 ${
+                          issue.load > 60 
+                            ? 'bg-red-50 text-red-500 border-red-100' 
+                            : issue.load > 40 
+                              ? 'bg-amber-50 text-amber-500 border-amber-100' 
+                              : 'bg-green-50 text-green-500 border-green-100'
+                        }`}
                       >
                         {issue.load}%
                       </Badge>
@@ -59,20 +65,20 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ healthIssues }) => {
       </TabViewItem>
       
       <TabViewItem isActive={true} transitionDelay={0.1}>
-        <Card className="bg-white/80 backdrop-blur-lg border border-white/50 shadow-sm">
-          <CardHeader>
-            <h3 className="text-lg font-medium">Helhetsvurdering</h3>
+        <Card className="bg-white border-0 shadow-sm rounded-lg">
+          <CardHeader className="pb-0">
+            <h3 className="text-base font-medium text-gray-800">Helhetsvurdering</h3>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-700">
+            <p className="text-gray-700 text-sm">
               Din kropp viser tegn på belastning i flere systemer, med størst fokus på fordøyelse og nervesystem. 
               Følg anbefalingene for hvert problemområde for å forbedre helsen din.
             </p>
             
             <motion.button 
-              className="w-full mt-4 py-2.5 flex items-center justify-center bg-[#9b87f5]/10 hover:bg-[#9b87f5]/20 text-[#9b87f5] font-medium rounded-xl transition-all"
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
+              className="w-full mt-4 py-2.5 flex items-center justify-center bg-[#9b87f5]/5 hover:bg-[#9b87f5]/10 text-[#9b87f5] font-medium rounded-lg transition-all"
+              whileHover={{ scale: 1.005 }}
+              whileTap={{ scale: 0.995 }}
               onClick={() => navigate('/insights')}
             >
               Se detaljert analyse <ArrowUpRight size={14} className="ml-1" />

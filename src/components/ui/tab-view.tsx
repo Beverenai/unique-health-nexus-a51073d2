@@ -31,17 +31,17 @@ export const TabView: React.FC<TabViewProps> = ({
       className={className}
     >
       <motion.div 
-        className="w-full overflow-x-auto pb-3"
+        className="w-full overflow-x-auto pb-2"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.3 }}
       >
-        <TabsList className="bg-white/80 backdrop-blur-lg border border-white/50 p-1.5 w-full justify-between rounded-xl shadow-sm">
+        <TabsList className="bg-gray-100 p-1 w-full justify-between rounded-lg">
           {tabs.map((tab) => (
             <TabsTrigger 
               key={tab.id} 
               value={tab.id}
-              className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-300 ease-in-out rounded-lg px-5 py-2.5"
+              className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-200 ease-out rounded-md px-4 py-2"
             >
               {tab.icon && (
                 <motion.div 
@@ -55,22 +55,13 @@ export const TabView: React.FC<TabViewProps> = ({
                   {tab.icon}
                 </motion.div>
               )}
-              <span className="font-medium">{tab.label}</span>
-              
-              {/* Active indicator dot */}
-              {activeTab === tab.id && (
-                <motion.div
-                  className="absolute -bottom-0.5 w-1.5 h-1.5 rounded-full bg-[#9b87f5]"
-                  layoutId="activeTabIndicator"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
+              <span className="font-medium text-sm">{tab.label}</span>
             </TabsTrigger>
           ))}
         </TabsList>
       </motion.div>
 
-      <div className="mt-4 relative">
+      <div className="mt-3 relative">
         <AnimatePresence mode="wait">
           {tabs.map((tab) => (
             activeTab === tab.id && (
@@ -80,7 +71,7 @@ export const TabView: React.FC<TabViewProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ 
-                  duration: 0.3,
+                  duration: 0.2,
                   type: "spring",
                   stiffness: 200,
                   damping: 25

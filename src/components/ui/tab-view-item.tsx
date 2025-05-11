@@ -21,7 +21,7 @@ const TabViewItem: React.FC<TabViewItemProps> = ({
         y: isActive ? 0 : 15
       }}
       transition={{
-        duration: 0.4,
+        duration: 0.3,
         delay: transitionDelay,
         ease: [0.25, 0.1, 0.25, 1.0]
       }}

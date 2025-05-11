@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
 import { supabase } from '@/integrations/supabase/client';
@@ -145,11 +144,11 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] subtle-pattern">
+    <div className="min-h-screen bg-gray-50">
       <main className="container max-w-md mx-auto px-4 pb-20">
         <div className="relative">
           {/* Integrated header with scan date */}
-          <div className="pt-4 pb-2 sticky top-0 bg-gradient-to-b from-white to-transparent z-10 backdrop-blur-sm">
+          <div className="pt-4 pb-2 sticky top-0 bg-gray-50 z-10">
             <HomeHeader 
               userName={userName} 
               scanDate={new Date(coherenceData?.created_at || scanDate)} 
@@ -161,14 +160,14 @@ const Home = () => {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9b87f5]"></div>
             </div>
           ) : (
-            <div className="space-y-6 mt-3">
+            <div className="space-y-5 mt-3">
               {/* Body Balance - Now at the top */}
-              <div className="transform transition-all duration-500 hover:translate-y-[-4px]">
+              <div className="transform transition-all duration-300 hover:translate-y-[-2px]">
                 <BodyBalanceDisplay coherenceData={coherenceData} />
               </div>
               
               {/* Health insights summary */}
-              <div className="transform transition-all duration-500">
+              <div className="transform transition-all duration-300">
                 <HealthInsightSummary 
                   healthIssues={healthIssues.sort((a, b) => b.load - a.load).slice(0, 3)} 
                 />
@@ -178,15 +177,15 @@ const Home = () => {
               <BodyFocusSummary 
                 coherenceScore={coherenceData?.score || 64} 
                 healthIssues={healthIssues}
-                className="transform transition-all duration-500 hover:translate-y-[-4px]" 
+                className="transform transition-all duration-300 hover:translate-y-[-2px]" 
               />
               
               {/* Action buttons section */}
               <ActionButtons />
               
               {/* Tab view moved below the main content */}
-              <div className="pt-2">
-                <h3 className="text-lg font-medium text-gray-700 mb-3">Detaljert informasjon</h3>
+              <div className="pt-1">
+                <h3 className="text-base font-medium text-gray-700 mb-3">Detaljert informasjon</h3>
                 <TabView tabs={tabs} className="bg-transparent" />
               </div>
             </div>

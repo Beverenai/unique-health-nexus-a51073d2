@@ -41,7 +41,7 @@ const BodyBalanceDisplay: React.FC<BodyBalanceDisplayProps> = ({ coherenceData }
       initial="hidden"
       animate="show"
     >
-      <Card className="w-full overflow-visible bg-gradient-to-br from-white/95 to-white/80 backdrop-blur-lg border-white/40 shadow-lg rounded-xl relative">
+      <Card className="w-full overflow-visible bg-white shadow-sm border-0 rounded-xl relative">
         <motion.div className="p-5 flex flex-col items-center" variants={itemVariants}>
           <motion.h2 
             className="text-lg font-medium text-gray-800 mb-3"
@@ -52,14 +52,14 @@ const BodyBalanceDisplay: React.FC<BodyBalanceDisplayProps> = ({ coherenceData }
           
           <motion.div 
             className="relative"
-            whileHover={{ scale: 1.02 }}
+            whileHover={{ scale: 1.01 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
             <BodyBalanceRing score={score} />
           </motion.div>
           
           <motion.div 
-            className="bg-white/90 backdrop-blur-sm rounded-xl p-3 border border-white/30 shadow-sm w-full mt-4 text-center"
+            className="bg-gray-50 rounded-xl p-3 w-full mt-4 text-center"
             variants={itemVariants}
             transition={{ delay: 0.3 }}
           >
@@ -69,10 +69,10 @@ const BodyBalanceDisplay: React.FC<BodyBalanceDisplayProps> = ({ coherenceData }
           </motion.div>
           
           <motion.button 
-            className="w-full mt-4 py-2.5 flex items-center justify-center bg-[#9b87f5]/10 hover:bg-[#9b87f5]/20 text-[#9b87f5] font-medium rounded-xl transition-all"
+            className="w-full mt-4 py-2.5 flex items-center justify-center bg-[#9b87f5]/5 hover:bg-[#9b87f5]/10 text-[#9b87f5] font-medium rounded-lg transition-all"
             variants={itemVariants}
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.005 }}
+            whileTap={{ scale: 0.995 }}
             onClick={() => navigate('/insights')}
           >
             Se detaljer <ArrowUpRight size={14} className="ml-1" />
