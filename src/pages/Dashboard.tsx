@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { toast } from 'sonner';
 import { ResponsiveContainer, LineChart as RechartLineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
-import { tables } from '@/integrations/supabase/client-extensions';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import BodyBalanceDisplay from '@/components/balance/BodyBalanceDisplay';
@@ -65,9 +64,10 @@ const Dashboard = () => {
           setHistoricalData(historyResult);
         }
         
-        // Fetch recommendations directly from the plan_recommendations table
+        // Fetch recommendations directly from Supabase
         if (user) {
-          const { data: recommendationsData } = await tables.planRecommendations()
+          const { data: recommendationsData } = await supabase
+            .from('plan_recommendations')
             .select('*')
             .eq('completed', false)
             .limit(3);
@@ -76,8 +76,9 @@ const Dashboard = () => {
             setRecommendations(recommendationsData as PlanRecommendation[]);
           }
           
-          // Fetch check-ins directly from the health_checkins table
-          const { data: checkInsData } = await tables.healthCheckins()
+          // Fetch check-ins directly from Supabase
+          const { data: checkInsData } = await supabase
+            .from('health_checkins')
             .select('id, date, mood, energy_level, sleep_quality')
             .eq('user_id', user.id)
             .order('date', { ascending: false })
@@ -99,7 +100,8 @@ const Dashboard = () => {
   
   const handleMarkRecommendationComplete = async (id: string) => {
     try {
-      const { error } = await tables.planRecommendations()
+      const { error } = await supabase
+        .from('plan_recommendations')
         .update({ completed: true, completed_at: new Date().toISOString() })
         .eq('id', id);
       

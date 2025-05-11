@@ -30,6 +30,16 @@ export interface Database {
         Insert: Omit<UserProgress, 'id' | 'created_at'> & { id?: string; created_at?: string };
         Update: Partial<Omit<UserProgress, 'id' | 'user_id'>>;
       };
+      // Include existing tables
+      chat_messages: any;
+      coherence_data: any;
+      scans: any;
+      health_issues: any;
+      health_systems: any;
+      issue_details: any;
+      issue_recommendations: any;
+      profiles: any;
+      scanner_components: any;
     };
   };
 }
