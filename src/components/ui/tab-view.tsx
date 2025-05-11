@@ -29,7 +29,7 @@ export const TabView: React.FC<TabViewProps> = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <TabsList className="bg-white/50 backdrop-blur-sm border border-white/40 p-1 w-full justify-between rounded-xl">
+        <TabsList className="bg-white/70 backdrop-blur-sm border border-white/40 p-1 w-full justify-between rounded-xl">
           {tabs.map((tab) => (
             <TabsTrigger 
               key={tab.id} 
@@ -43,17 +43,19 @@ export const TabView: React.FC<TabViewProps> = ({
         </TabsList>
       </motion.div>
 
-      {tabs.map((tab) => (
-        <TabsContent key={tab.id} value={tab.id} className="mt-2">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            {tab.content}
-          </motion.div>
-        </TabsContent>
-      ))}
+      <div className="mt-3 border-t border-gray-100 pt-3">
+        {tabs.map((tab) => (
+          <TabsContent key={tab.id} value={tab.id}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              {tab.content}
+            </motion.div>
+          </TabsContent>
+        ))}
+      </div>
     </Tabs>
   );
 };

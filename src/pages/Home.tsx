@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,6 +11,7 @@ import OverviewTab from '@/components/home/tabs/OverviewTab';
 import PrioritiesTab from '@/components/home/tabs/PrioritiesTab';
 import FindingsTab from '@/components/home/tabs/FindingsTab';
 import BodyFocusSummary from '@/components/home/BodyFocusSummary';
+import ActionButtons from '@/components/home/ActionButtons';
 
 // Hardcoded mock data to ensure it always displays
 const mockCoherenceData: CoherenceData = {
@@ -143,27 +143,46 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] pt-4 pb-24 subtle-pattern">
-      <main className="container max-w-md mx-auto px-4">
-        <HomeHeader userName={userName} />
-        <ScanDateCard scanDate={new Date(coherenceData?.created_at || scanDate)} />
-        
-        {isLoading ? (
-          <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9b87f5]"></div>
+    <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] subtle-pattern">
+      <main className="container max-w-md mx-auto px-4 pb-20">
+        <div className="relative">
+          {/* Integrated header with scan date */}
+          <div className="pt-4 pb-2 sticky top-0 bg-gradient-to-b from-white to-transparent z-10 backdrop-blur-sm">
+            <HomeHeader 
+              userName={userName} 
+              scanDate={new Date(coherenceData?.created_at || scanDate)} 
+            />
           </div>
-        ) : (
-          <>
-            <div className="my-6">
+          
+          {isLoading ? (
+            <div className="flex justify-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9b87f5]"></div>
+            </div>
+          ) : (
+            <div className="space-y-6 mt-3">
+              {/* Main focus area - more prominent */}
               <BodyFocusSummary 
                 coherenceScore={coherenceData?.score || 64} 
-                healthIssues={healthIssues} 
+                healthIssues={healthIssues}
+                className="transform transition-all duration-500 hover:translate-y-[-4px]" 
               />
+              
+              {/* Action buttons section */}
+              <ActionButtons />
+              
+              {/* Tab view moved below the main content */}
+              <div className="pt-2">
+                <h3 className="text-lg font-medium text-gray-700 mb-3">Detaljert informasjon</h3>
+                <TabView tabs={tabs} className="bg-transparent" />
+              </div>
             </div>
-            <TabView tabs={tabs} className="pt-2" />
-          </>
-        )}
+          )}
+        </div>
       </main>
+      
+      {/* Decorative elements */}
+      <div className="fixed -z-10 top-1/4 left-0 w-40 h-40 bg-purple-100/30 rounded-full blur-3xl" />
+      <div className="fixed -z-10 bottom-1/3 right-0 w-60 h-60 bg-blue-50/20 rounded-full blur-3xl" />
     </div>
   );
 };
