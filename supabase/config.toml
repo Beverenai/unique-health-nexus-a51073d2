@@ -1,5 +1,33 @@
 
 project_id = "jondlbgouhsdedhdnwpx"
 
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+
+[db]
+port = 54322
+
+[studio]
+enabled = true
+port = 54323
+browser_open = false
+
+[inbucket]
+enabled = true
+port = 54324
+
+[auth]
+enabled = true
+port = 54325
+
+[realtime]
+enabled = true
+
+[storage]
+enabled = true
+
+[edge_functions]
 [functions.chat-with-context]
 verify_jwt = false

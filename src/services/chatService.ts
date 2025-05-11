@@ -70,7 +70,8 @@ export const sendMessageToAI = async (message: string, context: any = null): Pro
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${supabase.supabaseKey}`
+        // Use the anon key from the client URL instead of trying to access the protected property
+        'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpvbmRsYmdvdWhzZGVkaGRud3B4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxODMyNTUsImV4cCI6MjA1Mzc1OTI1NX0.fmEpQxOe0Z76-sUd-OG8bQwQLE46DTm3uRrQpJjLvlk'}`
       },
       body: JSON.stringify({
         message,
