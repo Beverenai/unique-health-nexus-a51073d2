@@ -7,12 +7,13 @@ import { seedDemoData } from '@/services/demoDataService';
 import { Gauge, List, Lightbulb } from 'lucide-react';
 import { TabView } from '@/components/ui/tab-view';
 import HomeHeader from '@/components/home/HomeHeader';
-import ScanDateCard from '@/components/ScanDateCard';
+import BodyBalanceDisplay from '@/components/balance/BodyBalanceDisplay';
 import OverviewTab from '@/components/home/tabs/OverviewTab';
 import PrioritiesTab from '@/components/home/tabs/PrioritiesTab';
 import FindingsTab from '@/components/home/tabs/FindingsTab';
 import { BodyFocusSummary } from '@/components/home';
 import ActionButtons from '@/components/home/ActionButtons';
+import HealthInsightSummary from '@/components/balance/HealthInsightSummary';
 
 // Hardcoded mock data to ensure it always displays
 const mockCoherenceData: CoherenceData = {
@@ -127,7 +128,7 @@ const Home = () => {
       id: "overview",
       label: "Oversikt",
       icon: <Gauge size={16} />,
-      content: <OverviewTab coherenceData={coherenceData} healthIssues={healthIssues} />
+      content: <OverviewTab healthIssues={healthIssues} />
     },
     {
       id: "priorities",
@@ -161,7 +162,19 @@ const Home = () => {
             </div>
           ) : (
             <div className="space-y-6 mt-3">
-              {/* Main focus area - more prominent */}
+              {/* Body Balance - Now at the top */}
+              <div className="transform transition-all duration-500 hover:translate-y-[-4px]">
+                <BodyBalanceDisplay coherenceData={coherenceData} />
+              </div>
+              
+              {/* Health insights summary */}
+              <div className="transform transition-all duration-500">
+                <HealthInsightSummary 
+                  healthIssues={healthIssues.sort((a, b) => b.load - a.load).slice(0, 3)} 
+                />
+              </div>
+              
+              {/* Main focus area */}
               <BodyFocusSummary 
                 coherenceScore={coherenceData?.score || 64} 
                 healthIssues={healthIssues}

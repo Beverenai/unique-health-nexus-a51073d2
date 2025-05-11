@@ -25,8 +25,8 @@ const HealthInsightSummary: React.FC<HealthInsightSummaryProps> = ({
   ];
   
   return (
-    <Card className={`p-4 bg-white/70 backdrop-blur-sm border border-white/40 shadow-sm rounded-xl ${className}`}>
-      <h3 className="text-sm font-medium text-gray-700 mb-3">Nøkkelinnsikt</h3>
+    <Card className={`p-4 bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-lg border-white/40 shadow-md rounded-xl ${className}`}>
+      <h3 className="text-base font-medium text-gray-800 mb-3">Nøkkelinnsikt</h3>
       
       {insights.length > 0 ? (
         <motion.ul 
@@ -38,13 +38,13 @@ const HealthInsightSummary: React.FC<HealthInsightSummaryProps> = ({
           {insights.map((insight, index) => (
             <motion.li 
               key={index}
-              className="flex items-center bg-white/80 backdrop-blur-sm p-2 rounded-lg border border-white/60 shadow-sm"
+              className="flex items-center bg-white/80 backdrop-blur-sm p-3 rounded-lg border border-white/60 shadow-sm"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + (0.1 * index) }}
               whileHover={{ scale: 1.01, backgroundColor: "rgba(255, 255, 255, 0.9)" }}
             >
-              <div className="bg-[#9b87f5]/10 p-1.5 rounded-full mr-2">
+              <div className="bg-[#9b87f5]/10 p-1.5 rounded-full mr-2.5">
                 {insightIcons[index % insightIcons.length]}
               </div>
               <span className="text-gray-700 text-sm">{insight}</span>

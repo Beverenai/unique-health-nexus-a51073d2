@@ -41,9 +41,14 @@ const BodyBalanceDisplay: React.FC<BodyBalanceDisplayProps> = ({ coherenceData }
       initial="hidden"
       animate="show"
     >
-      <Card className="w-full overflow-visible bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-lg border-white/40 shadow-md rounded-2xl relative">
+      <Card className="w-full overflow-visible bg-gradient-to-br from-white/95 to-white/80 backdrop-blur-lg border-white/40 shadow-lg rounded-xl relative">
         <motion.div className="p-5 flex flex-col items-center" variants={itemVariants}>
-          <h2 className="text-lg font-medium text-gray-800 mb-4">Kroppens balanse</h2>
+          <motion.h2 
+            className="text-lg font-medium text-gray-800 mb-3"
+            variants={itemVariants}
+          >
+            Kroppens balanse
+          </motion.h2>
           
           <motion.div 
             className="relative"
@@ -54,11 +59,11 @@ const BodyBalanceDisplay: React.FC<BodyBalanceDisplayProps> = ({ coherenceData }
           </motion.div>
           
           <motion.div 
-            className="bg-white/80 backdrop-blur-sm rounded-xl p-3 border border-white/30 shadow-sm w-full mt-4 text-center"
+            className="bg-white/90 backdrop-blur-sm rounded-xl p-3 border border-white/30 shadow-sm w-full mt-4 text-center"
             variants={itemVariants}
             transition={{ delay: 0.3 }}
           >
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-700">
               {healthMessage}
             </p>
           </motion.div>
