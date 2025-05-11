@@ -57,22 +57,50 @@ const BodyBalanceRing: React.FC<BodyBalanceRingProps> = ({
             stiffness: 100
           }}
         >
-          <div className="text-center">
+          <motion.div 
+            className="text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
             <motion.div 
-              className={cn("font-medium text-base", textColorClass)}
+              className={cn("font-medium text-lg mb-1", textColorClass)}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
             >
               {bodyState}
             </motion.div>
-          </div>
+            
+            <motion.div
+              className="text-gray-500 text-xs px-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              {score < 60 ? "Følg anbefalingene" : "Oppretthold balansen"}
+            </motion.div>
+          </motion.div>
         </motion.div>
         
-        {/* Animated pulse ring */}
+        {/* Animated pulse rings */}
         <div 
-          className="absolute inset-0 rounded-full animate-pulse-ring opacity-40" 
+          className="absolute inset-0 rounded-full animate-pulse-ring opacity-30" 
           style={{ border: `1px solid ${getModernColor(score)}` }} 
+        />
+        
+        <motion.div 
+          className="absolute inset-0 rounded-full opacity-10" 
+          style={{ border: `4px solid ${getModernColor(score)}` }}
+          animate={{ 
+            scale: [1, 1.03, 1],
+            opacity: [0.1, 0.2, 0.1]
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
         />
       </motion.div>
     </div>

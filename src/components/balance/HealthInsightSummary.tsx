@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { generateInsightSummary } from '@/utils/coherenceUtils';
 import { HealthIssue } from '@/types/supabase';
+import { Activity, TrendingUp, Zap } from 'lucide-react';
 
 interface HealthInsightSummaryProps {
   healthIssues: HealthIssue[];
@@ -16,24 +17,39 @@ const HealthInsightSummary: React.FC<HealthInsightSummaryProps> = ({
 }) => {
   const insights = generateInsightSummary(healthIssues);
   
+  // Icons to use for insights based on index
+  const insightIcons = [
+    <Activity size={14} className="text-[#9b87f5]" />,
+    <TrendingUp size={14} className="text-[#77C17E]" />,
+    <Zap size={14} className="text-[#F7D154]" />
+  ];
+  
   return (
     <Card className={`p-4 bg-white/70 backdrop-blur-sm border border-white/40 shadow-sm rounded-xl ${className}`}>
       <h3 className="text-sm font-medium text-gray-700 mb-3">Nøkkelinnsikt</h3>
       
-      <ul className="space-y-2">
+      <motion.ul 
+        className="space-y-3"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
         {insights.map((insight, index) => (
           <motion.li 
             key={index}
-            className="flex items-start"
-            initial={{ opacity: 0, x: -5 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 * index }}
+            className="flex items-center bg-white/80 backdrop-blur-sm p-2 rounded-lg border border-white/60 shadow-sm"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 + (0.2 * index) }}
+            whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.9)" }}
           >
-            <div className="w-1.5 h-1.5 rounded-full bg-[#9b87f5] mt-1.5 mr-2 flex-shrink-0" />
-            <span className="text-gray-600 text-sm">{insight}</span>
+            <div className="bg-[#9b87f5]/10 p-1.5 rounded-full mr-2">
+              {insightIcons[index % insightIcons.length]}
+            </div>
+            <span className="text-gray-700 text-sm font-medium">{insight}</span>
           </motion.li>
         ))}
-      </ul>
+      </motion.ul>
     </Card>
   );
 };

@@ -42,6 +42,19 @@ const BodyBalanceDisplay: React.FC<BodyBalanceDisplayProps> = ({ coherenceData }
       initial="hidden"
       animate="show"
     >
+      <motion.div 
+        className="absolute -z-10 top-40 left-1/2 -translate-x-1/2 w-64 h-64 bg-[#9b87f5]/5 rounded-full blur-[80px]"
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.5, 0.7, 0.5]
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      
       <Card className="w-full overflow-visible bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-lg border-white/40 shadow-lg rounded-3xl relative z-20">
         <motion.div className="p-6 flex flex-col items-center" variants={itemVariants}>
           <div className="flex items-center justify-between w-full mb-2">
@@ -69,7 +82,10 @@ const BodyBalanceDisplay: React.FC<BodyBalanceDisplayProps> = ({ coherenceData }
           <motion.button 
             className="w-full mt-4 py-3 flex items-center justify-center bg-[#9b87f5]/10 hover:bg-[#9b87f5]/20 text-[#9b87f5] font-medium rounded-xl transition-all"
             variants={itemVariants}
-            whileHover={{ scale: 1.02 }}
+            whileHover={{ 
+              scale: 1.02,
+              boxShadow: "0 10px 25px -5px rgba(155, 135, 245, 0.1), 0 10px 10px -5px rgba(155, 135, 245, 0.04)"
+            }}
             whileTap={{ scale: 0.98 }}
           >
             Se detaljer om kroppsbalanse <ArrowUpRight size={16} className="ml-1" />
@@ -78,9 +94,13 @@ const BodyBalanceDisplay: React.FC<BodyBalanceDisplayProps> = ({ coherenceData }
       </Card>
       
       <motion.div 
-        className="bg-white/40 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow w-11/12 mt-4 z-10"
+        className="bg-white/40 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow-sm w-11/12 mt-4 z-10"
         variants={itemVariants}
         transition={{ delay: 0.6 }}
+        whileHover={{ 
+          backgroundColor: "rgba(255, 255, 255, 0.5)",
+          boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025)"
+        }}
       >
         <p className="text-sm text-gray-600 text-center">
           {healthMessage}
