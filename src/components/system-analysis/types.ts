@@ -7,5 +7,6 @@ export interface ChartData {
   name: string;
   value: number;
   color: string;
+  description?: string;  // Added description property as optional
 }
 
