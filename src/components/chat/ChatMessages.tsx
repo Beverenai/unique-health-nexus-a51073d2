@@ -3,7 +3,7 @@ import { ChatMessage } from '@/types/supabase';
 import { Avatar } from '@/components/ui/avatar';
 import { BrainCircuit, User } from 'lucide-react';
 import { format } from 'date-fns';
-import { useChatMessages } from '@/hooks/useChatMessages';
+import { useChatSuggestions } from '@/hooks/chat/useChatSuggestions';
 
 interface ChatMessagesProps {
   messages: ChatMessage[];
@@ -12,7 +12,9 @@ interface ChatMessagesProps {
 
 const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, getContextBasedIntro }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { getSuggestedQuestions } = useChatMessages(true);
+  
+  // Use the location path directly since we're just getting suggestions
+  const { getSuggestedQuestions } = useChatSuggestions('/', '', []);
 
   // Scroll to bottom whenever messages change
   useEffect(() => {
