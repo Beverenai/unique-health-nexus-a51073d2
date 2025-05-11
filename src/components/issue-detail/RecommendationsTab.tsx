@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Activity } from 'lucide-react';
 import LeafyGreen from './LeafyGreen';
 import Flask from './Flask';
@@ -47,9 +46,9 @@ const RecommendationsTab: React.FC<RecommendationsTabProps> = ({ recommendations
       <motion.div 
         variants={itemVariants}
         whileHover={{ scale: 1.01 }}
-        className="group rounded-xl bg-gradient-to-r from-[#f8fcf5] to-[#f1f8f0] p-[1px] shadow-sm"
+        className="rounded-xl bg-white shadow-sm border border-gray-100"
       >
-        <div className="flex items-start gap-3 rounded-xl bg-white px-4 py-3.5">
+        <div className="flex items-start gap-3 px-4 py-3.5">
           <div className="flex-shrink-0 h-8 w-8 rounded-full bg-green-50 flex items-center justify-center mt-0.5">
             <LeafyGreen size={16} className="text-green-600" />
           </div>
@@ -65,9 +64,9 @@ const RecommendationsTab: React.FC<RecommendationsTabProps> = ({ recommendations
       <motion.div 
         variants={itemVariants}
         whileHover={{ scale: 1.01 }}
-        className="group rounded-xl bg-gradient-to-r from-[#f5f8fc] to-[#f0f5fa] p-[1px] shadow-sm"
+        className="rounded-xl bg-white shadow-sm border border-gray-100"
       >
-        <div className="flex items-start gap-3 rounded-xl bg-white px-4 py-3.5">
+        <div className="flex items-start gap-3 px-4 py-3.5">
           <div className="flex-shrink-0 h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center mt-0.5">
             <Activity size={16} className="text-blue-600" />
           </div>
@@ -83,9 +82,9 @@ const RecommendationsTab: React.FC<RecommendationsTabProps> = ({ recommendations
       <motion.div 
         variants={itemVariants}
         whileHover={{ scale: 1.01 }}
-        className="group rounded-xl bg-gradient-to-r from-[#fcf9f5] to-[#faf7f0] p-[1px] shadow-sm"
+        className="rounded-xl bg-white shadow-sm border border-gray-100"
       >
-        <div className="flex items-start gap-3 rounded-xl bg-white px-4 py-3.5">
+        <div className="flex items-start gap-3 px-4 py-3.5">
           <div className="flex-shrink-0 h-8 w-8 rounded-full bg-amber-50 flex items-center justify-center mt-0.5">
             <Flask size={16} className="text-amber-600" />
           </div>

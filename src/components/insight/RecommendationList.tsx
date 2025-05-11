@@ -52,21 +52,18 @@ const RecommendationList: React.FC<RecommendationListProps> = ({ recommendations
         Anbefalinger basert på helheten
       </motion.h4>
       
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         {recommendations.map((recommendation, index) => (
           <motion.div 
             key={index}
             variants={itemVariants}
-            whileHover={{ 
-              scale: 1.01, 
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" 
-            }}
+            whileHover={{ scale: 1.01 }}
             transition={{ type: "spring", stiffness: 400 }}
-            className="group rounded-xl bg-gradient-to-r from-[#f8f8f8] to-[#f1f1f5] p-[1px] shadow-sm"
+            className="rounded-xl bg-white shadow-sm border border-gray-100"
           >
-            <div className={`flex items-center gap-2.5 rounded-xl bg-white px-3 py-3`}>
-              <div className={`flex-shrink-0 h-2 w-2 rounded-full ${recommendation.color.replace('bg-', 'bg-').replace('-50', '-400')} mt-0.5`}></div>
-              <span className="text-sm text-gray-700 leading-tight">{recommendation.text}</span>
+            <div className="flex items-center gap-2.5 px-4 py-3">
+              <div className={`flex-shrink-0 h-2 w-2 rounded-full ${recommendation.color.replace('bg-', 'bg-').replace('-50', '-400')}`}></div>
+              <span className="text-sm text-gray-700 leading-snug">{recommendation.text}</span>
             </div>
           </motion.div>
         ))}

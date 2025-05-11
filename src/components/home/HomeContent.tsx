@@ -50,7 +50,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
   return (
     <>
       {/* Integrated header with scan date */}
-      <div className="pt-4 pb-2 sticky top-0 bg-gray-50 z-10">
+      <div className="pt-4 pb-2 bg-gray-50 z-10">
         <HomeHeader 
           userName={userName} 
           scanDate={new Date(coherenceData?.created_at || scanDate)} 
@@ -59,7 +59,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
       
       <div className="space-y-5 mt-3">
         {/* Body Balance - Now at the top */}
-        <div className="transform transition-all duration-300 hover:translate-y-[-2px]">
+        <div className="transform transition-all duration-300">
           <BodyBalanceDisplay coherenceData={coherenceData} />
         </div>
         
@@ -74,7 +74,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
         <BodyFocusSummary 
           coherenceScore={coherenceData?.score || 64} 
           healthIssues={healthIssues}
-          className="transform transition-all duration-300 hover:translate-y-[-2px]" 
+          className="transform transition-all duration-300" 
         />
         
         {/* Action buttons section */}
