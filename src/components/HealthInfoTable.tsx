@@ -4,88 +4,21 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
-
-interface HealthInfoItem {
-  area: string;
-  symptoms: string;
-  causes: string;
-  recommendations: string;
-}
+import { HealthSystemItem } from '@/services/healthSystemService';
 
 interface HealthInfoTableProps {
   title?: string;
   description?: string;
+  healthData?: HealthSystemItem[];
 }
-
-const healthInfoData: HealthInfoItem[] = [
-  {
-    area: "Tarm og fordøyelse",
-    symptoms: "Slimhinner og bakterieflora viser ubalanse",
-    causes: "Stress, antibiotika, bearbeidet mat",
-    recommendations: "Spis fermentert mat, ta probiotika, unngå sukker i 1 uke"
-  },
-  {
-    area: "Lymfesystem",
-    symptoms: "Flere lymfekanaler viser treg flyt",
-    causes: "Lav væskeinntak, lite bevegelse, miljøgifter",
-    recommendations: "Drikk mer vann, bruk urtete (nesle, løvetann), lett aktivitet daglig"
-  },
-  {
-    area: "Nakke og rygg (C4–C5)",
-    symptoms: "Spenning og blokkering i nakkevirvler",
-    causes: "Feil arbeidsstilling, stress, lav søvnkvalitet",
-    recommendations: "Lett tøying, ergonomisk sittestilling, massasje"
-  },
-  {
-    area: "Oksidativt stress",
-    symptoms: "Cellemiljøet viser høy belastning",
-    causes: "Miljøgifter, lavt antioksidantinntak, stress",
-    recommendations: "Øk inntak av C-vitamin, bær, og grønne bladgrønnsaker"
-  },
-  {
-    area: "Energisystem (mitokondrier)",
-    symptoms: "Redusert energiproduksjon i cellene",
-    causes: "Søvnunderskudd, tungmetaller, langvarig stress",
-    recommendations: "Sov jevnt, ta Q10 og magnesium, reduser skjermtid før leggetid"
-  },
-  {
-    area: "Hormonelle reseptorer",
-    symptoms: "Lav sensitivitet i kroppens signalreseptorer",
-    causes: "Kronisk stress, inflammasjon, hormonell ubalanse",
-    recommendations: "Adaptogener (ashwagandha), meditasjon, dagslys om morgenen"
-  },
-  {
-    area: "Immunforsvar",
-    symptoms: "Hvite blodceller viser lav regulering",
-    causes: "Langvarig stress, dårlig søvn, tarmubalanse",
-    recommendations: "Søvnhygiene, C-vitamin, probiotika, reduser stimulering om kvelden"
-  },
-  {
-    area: "Hud og bindevev",
-    symptoms: "Redusert elastisitet og regenereringsevne",
-    causes: "Lavt kollagen, lite bevegelse, oksidativt stress",
-    recommendations: "Kollagentilskudd, bær, bevegelse og tøying"
-  },
-  {
-    area: "Avgiftningskapasitet",
-    symptoms: "Leveren og nyrene jobber hardt med eliminasjon",
-    causes: "Kjemikalier, kosthold, medikamenter",
-    recommendations: "Reduser eksponering, bruk melkefrø og løvetann, drikk mye vann"
-  },
-  {
-    area: "Psykisk stress",
-    symptoms: "Signalene fra nervesystemet viser overbelastning",
-    causes: "For mange bekymringer, ytre krav, lite restitusjon",
-    recommendations: "Avslapningsteknikker, pusteøvelser, natur, dagbok"
-  }
-];
 
 const HealthInfoTable: React.FC<HealthInfoTableProps> = ({ 
   title = "Detaljert helseinformasjon",
-  description
+  description,
+  healthData = []
 }) => {
   const [expanded, setExpanded] = useState(false);
-  const visibleItems = expanded ? healthInfoData : healthInfoData.slice(0, 3);
+  const visibleItems = expanded ? healthData : healthData.slice(0, 3);
   
   const tableVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -149,7 +82,7 @@ const HealthInfoTable: React.FC<HealthInfoTableProps> = ({
           </Table>
         </motion.div>
         
-        {healthInfoData.length > 3 && (
+        {healthData.length > 3 && (
           <div className="flex justify-center py-3 border-t border-gray-100/40 bg-white/30">
             <button 
               onClick={() => setExpanded(!expanded)}

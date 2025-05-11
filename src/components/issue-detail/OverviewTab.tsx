@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import DetailCard from '@/components/DetailCard';
 import { IssueDetail } from '@/types/supabase';
 import HealthInfoTable from '@/components/HealthInfoTable';
+import { getHealthSystems, HealthSystemItem } from '@/services/healthSystemService';
 
 interface OverviewTabProps {
   details: IssueDetail[];
@@ -12,6 +13,17 @@ interface OverviewTabProps {
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ details, detailedInfo }) => {
+  const [healthData, setHealthData] = useState<HealthSystemItem[]>([]);
+  
+  useEffect(() => {
+    const fetchHealthData = async () => {
+      const data = await getHealthSystems();
+      setHealthData(data);
+    };
+    
+    fetchHealthData();
+  }, []);
+  
   return (
     <>
       {/* Details section */}
@@ -58,6 +70,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ details, detailedInfo }) => {
       <HealthInfoTable 
         title="Relatert helseinformasjon" 
         description="Oversikt over helsesystemer og anbefalte tiltak"
+        healthData={healthData}
       />
     </>
   );

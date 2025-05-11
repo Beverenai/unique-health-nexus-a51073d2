@@ -5,22 +5,16 @@ import { ChevronDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import HealthSystemCard from './HealthSystemCard';
-
-interface HealthInfoItem {
-  area: string;
-  symptoms: string;
-  causes: string;
-  recommendations: string;
-}
+import { HealthSystemItem } from '@/services/healthSystemService';
 
 interface HealthSystemCardsProps {
   title?: string;
   description?: string;
-  healthData: HealthInfoItem[];
+  healthData: HealthSystemItem[];
 }
 
 // Function to get all unique system categories
-const getSystemCategories = (data: HealthInfoItem[]): string[] => {
+const getSystemCategories = (data: HealthSystemItem[]): string[] => {
   const systemTypes = new Set<string>();
   
   // Add "Alle" option

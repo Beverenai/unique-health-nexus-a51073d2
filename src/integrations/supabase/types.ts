@@ -100,6 +100,36 @@ export type Database = {
           },
         ]
       }
+      health_systems: {
+        Row: {
+          area: string
+          causes: string
+          created_at: string
+          id: string
+          recommendations: string
+          symptoms: string
+          user_id: string | null
+        }
+        Insert: {
+          area: string
+          causes: string
+          created_at?: string
+          id?: string
+          recommendations: string
+          symptoms: string
+          user_id?: string | null
+        }
+        Update: {
+          area?: string
+          causes?: string
+          created_at?: string
+          id?: string
+          recommendations?: string
+          symptoms?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       issue_details: {
         Row: {
           created_at: string

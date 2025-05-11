@@ -13,74 +13,12 @@ import { getSystemConnections } from '@/utils/systemUtils';
 import ConnectionChart from '@/components/insight/ConnectionChart';
 import HealthSystemGrid from '@/components/health/HealthSystemGrid';
 import { ScrollArea } from '@/components/ui/scroll-area';
-
-// Sample health information data - using the same structure as the original table
-const healthInfoData = [
-  {
-    area: "Tarm og fordøyelse",
-    symptoms: "Slimhinner og bakterieflora viser ubalanse",
-    causes: "Stress, antibiotika, bearbeidet mat",
-    recommendations: "Spis fermentert mat, ta probiotika, unngå sukker i 1 uke"
-  },
-  {
-    area: "Lymfesystem",
-    symptoms: "Flere lymfekanaler viser treg flyt",
-    causes: "Lav væskeinntak, lite bevegelse, miljøgifter",
-    recommendations: "Drikk mer vann, bruk urtete (nesle, løvetann), lett aktivitet daglig"
-  },
-  {
-    area: "Nakke og rygg (C4–C5)",
-    symptoms: "Spenning og blokkering i nakkevirvler",
-    causes: "Feil arbeidsstilling, stress, lav søvnkvalitet",
-    recommendations: "Lett tøying, ergonomisk sittestilling, massasje"
-  },
-  {
-    area: "Oksidativt stress",
-    symptoms: "Cellemiljøet viser høy belastning",
-    causes: "Miljøgifter, lavt antioksidantinntak, stress",
-    recommendations: "Øk inntak av C-vitamin, bær, og grønne bladgrønnsaker"
-  },
-  {
-    area: "Energisystem (mitokondrier)",
-    symptoms: "Redusert energiproduksjon i cellene",
-    causes: "Søvnunderskudd, tungmetaller, langvarig stress",
-    recommendations: "Sov jevnt, ta Q10 og magnesium, reduser skjermtid før leggetid"
-  },
-  {
-    area: "Hormonelle reseptorer",
-    symptoms: "Lav sensitivitet i kroppens signalreseptorer",
-    causes: "Kronisk stress, inflammasjon, hormonell ubalanse",
-    recommendations: "Adaptogener (ashwagandha), meditasjon, dagslys om morgenen"
-  },
-  {
-    area: "Immunforsvar",
-    symptoms: "Hvite blodceller viser lav regulering",
-    causes: "Langvarig stress, dårlig søvn, tarmubalanse",
-    recommendations: "Søvnhygiene, C-vitamin, probiotika, reduser stimulering om kvelden"
-  },
-  {
-    area: "Hud og bindevev",
-    symptoms: "Redusert elastisitet og regenereringsevne",
-    causes: "Lavt kollagen, lite bevegelse, oksidativt stress",
-    recommendations: "Kollagentilskudd, bær, bevegelse og tøying"
-  },
-  {
-    area: "Avgiftningskapasitet",
-    symptoms: "Leveren og nyrene jobber hardt med eliminasjon",
-    causes: "Kjemikalier, kosthold, medikamenter",
-    recommendations: "Reduser eksponering, bruk melkefrø og løvetann, drikk mye vann"
-  },
-  {
-    area: "Psykisk stress",
-    symptoms: "Signalene fra nervesystemet viser overbelastning",
-    causes: "For mange bekymringer, ytre krav, lite restitusjon",
-    recommendations: "Avslapningsteknikker, pusteøvelser, natur, dagbok"
-  }
-];
+import { getHealthSystems, HealthSystemItem } from '@/services/healthSystemService';
 
 const Insights: React.FC = () => {
   // Initialize with the correct mock data that now matches the expected type
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
+  const [healthSystemData, setHealthSystemData] = useState<HealthSystemItem[]>([]);
   const [recommendations, setRecommendations] = useState<{color: string, text: string}[]>([
     { color: "bg-blue-50", text: "Støtt nervesystemet med magnesium og B-vitaminer for å redusere overbelastning." },
     { color: "bg-green-50", text: "Forbedre tarmfloraen med daglig inntak av fermentert mat og probiotika." },
@@ -94,6 +32,12 @@ const Insights: React.FC = () => {
         const issuesResult = await getHealthIssues();
         if (issuesResult && issuesResult.length > 0) {
           setHealthIssues(issuesResult);
+        }
+        
+        // Fetch health systems data
+        const healthSystemsResult = await getHealthSystems();
+        if (healthSystemsResult && healthSystemsResult.length > 0) {
+          setHealthSystemData(healthSystemsResult);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -115,7 +59,7 @@ const Insights: React.FC = () => {
           </div>
           
           <HealthSystemGrid 
-            healthData={healthInfoData}
+            healthData={healthSystemData}
           />
           
           <Card className="mb-6 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">

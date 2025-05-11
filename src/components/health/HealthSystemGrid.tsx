@@ -4,18 +4,12 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import SystemIcon from './SystemIcon';
-
-interface HealthInfoItem {
-  area: string;
-  symptoms: string;
-  causes: string;
-  recommendations: string;
-}
+import { HealthSystemItem } from '@/services/healthSystemService';
 
 interface HealthSystemGridProps {
   title?: string;
   description?: string;
-  healthData: HealthInfoItem[];
+  healthData: HealthSystemItem[];
 }
 
 const HealthSystemGrid: React.FC<HealthSystemGridProps> = ({
@@ -37,17 +31,17 @@ const HealthSystemGrid: React.FC<HealthSystemGridProps> = ({
       return 'from-amber-50 to-amber-100/50';
     } else if (areaLower.includes('oksidativ') || areaLower.includes('stress')) {
       return 'from-rose-50 to-rose-100/50';
-    } else if (areaLower.includes('energi') || areaLower.includes('mitokondri')) {
+    } else if (areaLower.includes('energi') || areaLower.includes('mitokondri') || areaLower.includes('celle')) {
       return 'from-yellow-50 to-yellow-100/50';
     } else if (areaLower.includes('hormon')) {
       return 'from-purple-50 to-purple-100/50';
-    } else if (areaLower.includes('immun')) {
+    } else if (areaLower.includes('immun') || areaLower.includes('blod')) {
       return 'from-indigo-50 to-indigo-100/50';
     } else if (areaLower.includes('hud') || areaLower.includes('bindevev')) {
       return 'from-orange-50 to-orange-100/50';
     } else if (areaLower.includes('avgiftning') || areaLower.includes('lever')) {
       return 'from-emerald-50 to-emerald-100/50';
-    } else if (areaLower.includes('psykisk')) {
+    } else if (areaLower.includes('psykisk') || areaLower.includes('følelse')) {
       return 'from-sky-50 to-sky-100/50';
     } else {
       return 'from-gray-50 to-gray-100/50';
