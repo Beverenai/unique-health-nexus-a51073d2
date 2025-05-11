@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { rpcCall } from "@/integrations/supabase/client-extensions";
 
 // Helper function to get the current user ID or fallback to demo user
 export const getUserId = async (): Promise<string> => {
@@ -64,7 +65,7 @@ export const getUserPreferences = async () => {
   if (!authData.user) return null;
   
   try {
-    const { data, error } = await supabase.rpc('get_user_preferences', {
+    const { data, error } = await rpcCall('get_user_preferences', {
       p_user_id: authData.user.id
     });
     
@@ -89,7 +90,7 @@ export const updateUserPreferences = async (updates: any) => {
   }
   
   try {
-    const { data, error } = await supabase.rpc('update_user_preferences', {
+    const { data, error } = await rpcCall('update_user_preferences', {
       p_user_id: authData.user.id,
       p_preferences: updates
     });

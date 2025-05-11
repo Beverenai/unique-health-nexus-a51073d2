@@ -16,8 +16,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
-import { supabase } from '@/integrations/supabase/client';
+} from "@/components/ui/accordion";
+import { tables } from '@/integrations/supabase/client-extensions';
 import { UserPlan, PlanRecommendation } from '@/types/database';
 
 const MyPlan = () => {
@@ -36,8 +36,7 @@ const MyPlan = () => {
     
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('user_plans')
+      const { data, error } = await tables.userPlans()
         .select('*')
         .eq('user_id', user.id)
         .eq('status', 'active')
@@ -64,8 +63,7 @@ const MyPlan = () => {
   
   const fetchRecommendations = async (planId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('plan_recommendations')
+      const { data, error } = await tables.planRecommendations()
         .select('*')
         .eq('plan_id', planId)
         .order('priority', { ascending: false }) as any;
@@ -87,8 +85,7 @@ const MyPlan = () => {
       const endDate = new Date();
       endDate.setDate(startDate.getDate() + 30); // Default plan duration: 30 days
       
-      const { data, error } = await supabase
-        .from('user_plans')
+      const { data, error } = await tables.userPlans()
         .insert({
           user_id: user.id,
           title: 'Standard helseplan',

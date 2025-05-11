@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { tables } from '@/integrations/supabase/client-extensions';
 
 interface Recommendation {
