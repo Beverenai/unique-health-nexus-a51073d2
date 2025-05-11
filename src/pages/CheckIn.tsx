@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -86,9 +85,9 @@ const CheckIn = () => {
         .filter(symptom => symptom.selected)
         .map(symptom => symptom.name);
       
-      // Insert directly using the supabase client
-      const { data, error } = await supabase
-        .from('health_checkins') as any
+      // Fix: Use proper TypeScript casting syntax with parentheses
+      const { data, error } = await (supabase
+        .from('health_checkins') as any)
         .insert({
           user_id: user.id,
           date: new Date().toISOString().split('T')[0],
