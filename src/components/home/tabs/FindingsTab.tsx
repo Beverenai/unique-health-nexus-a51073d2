@@ -2,7 +2,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { HealthIssue } from '@/types/supabase';
-import { HealthIssuesCarousel } from '@/components/carousel';
 import { ArrowRight, Filter, ArrowDownAZ } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
