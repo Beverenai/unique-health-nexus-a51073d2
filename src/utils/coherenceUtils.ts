@@ -23,3 +23,34 @@ export const getStatusLabel = (score: number): string => {
   if (score < 60) return 'Moderat balanse';
   return 'God balanse';
 };
+
+// NEW: Get qualitative body state description
+export const getBodyStateDescription = (score: number): string => {
+  if (score < 40) return 'Nedsatt regulering';
+  if (score < 60) return 'Jobber med belastninger';
+  return 'I balanse';
+};
+
+// NEW: Get empowering health message
+export const getHealthMessage = (score: number): string => {
+  if (score < 40) {
+    return 'Kroppen din trenger støtte for å gjenvinne balanse.';
+  } else if (score < 60) {
+    return 'Kroppen din er i balanse, men håndterer noen belastninger.';
+  } else {
+    return 'Kroppen din er i god balanse og fungerer optimalt.';
+  }
+};
+
+// NEW: Generate summary insights based on health issues
+export const generateInsightSummary = (issues: any[]): string[] => {
+  if (!issues || issues.length === 0) {
+    return ['Ingen spesifikke belastninger identifisert'];
+  }
+  
+  // Sort by load (highest first) and take top 3
+  return issues
+    .sort((a, b) => b.load - a.load)
+    .slice(0, 3)
+    .map(issue => issue.name);
+};

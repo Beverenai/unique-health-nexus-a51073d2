@@ -1,12 +1,12 @@
-
 import React from 'react';
-import CoherenceRing from '@/components/CoherenceRing';
 import { CoherenceData } from '@/types/supabase';
 import { Card } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Activity, User } from 'lucide-react';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
+import BodyBalanceRing from '@/components/balance/BodyBalanceRing';
+import { getModernTextColor, getStatusLabel } from '@/utils/coherenceUtils';
 
 interface CoherenceDisplayProps {
   coherenceData: CoherenceData | null;
@@ -24,6 +24,8 @@ const CoherenceDisplay: React.FC<CoherenceDisplayProps> = ({ coherenceData }) =>
   };
   
   const status = getScoreStatus(score);
+  const textColorClass = getModernTextColor(score);
+  const statusLabel = getStatusLabel(score);
   
   // Simple animation variants
   const containerVariants = {
@@ -64,7 +66,7 @@ const CoherenceDisplay: React.FC<CoherenceDisplayProps> = ({ coherenceData }) =>
             transition={{ type: "spring", stiffness: 300 }}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-[#9b87f5]/10 to-[#9b87f5]/5 rounded-full blur-xl"></div>
-            <CoherenceRing score={score} />
+            <BodyBalanceRing score={score} />
           </motion.div>
           
           <div className="flex justify-between w-full mt-6 text-sm">
@@ -100,7 +102,6 @@ const CoherenceDisplay: React.FC<CoherenceDisplayProps> = ({ coherenceData }) =>
         </motion.div>
       </Card>
       
-      {/* Changed from negative margin to positive margin and adjusted spacing */}
       <motion.div 
         className="bg-white/40 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow w-11/12 mt-4 z-10"
         variants={itemVariants}

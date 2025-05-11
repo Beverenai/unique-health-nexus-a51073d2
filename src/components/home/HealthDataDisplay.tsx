@@ -3,14 +3,20 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { CoherenceData } from '@/types/supabase';
 import ScanDateCard from '@/components/ScanDateCard';
-import CoherenceDisplay from '@/components/CoherenceDisplay';
+import BodyBalanceDisplay from '@/components/balance/BodyBalanceDisplay';
+import HealthInsightSummary from '@/components/balance/HealthInsightSummary';
 
 interface HealthDataDisplayProps {
   coherenceData: CoherenceData | null;
   scanDate: Date;
+  healthIssues: any[];
 }
 
-const HealthDataDisplay: React.FC<HealthDataDisplayProps> = ({ coherenceData, scanDate }) => {
+const HealthDataDisplay: React.FC<HealthDataDisplayProps> = ({ 
+  coherenceData, 
+  scanDate,
+  healthIssues
+}) => {
   // Create a staggered animation effect
   const containerAnimation = {
     hidden: { opacity: 0 },
@@ -30,7 +36,7 @@ const HealthDataDisplay: React.FC<HealthDataDisplayProps> = ({ coherenceData, sc
   
   return (
     <motion.div
-      className="relative mb-20 z-10" /* Increased margin-bottom to 20 */
+      className="relative mb-20 z-10"
       variants={containerAnimation}
       initial="hidden"
       animate="visible"
@@ -44,34 +50,16 @@ const HealthDataDisplay: React.FC<HealthDataDisplayProps> = ({ coherenceData, sc
       </motion.div>
       
       <motion.div variants={childAnimation} transition={{ duration: 0.8, type: "spring", stiffness: 100 }}>
-        <CoherenceDisplay coherenceData={coherenceData} />
+        <BodyBalanceDisplay coherenceData={coherenceData} />
       </motion.div>
       
-      {/* Health summary */}
+      {/* Health insights summary */}
       <motion.div 
-        className="mt-8 bg-gradient-to-br from-white/70 to-white/40 backdrop-blur-sm rounded-xl border border-white/40 shadow-sm p-4"
         variants={childAnimation}
         transition={{ duration: 0.4, delay: 0.3 }}
+        className="mt-4"
       >
-        <h3 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
-          <span className="w-1 h-4 bg-[#9b87f5] rounded-full mr-2"></span>
-          Daglig helsesammendrag
-        </h3>
-        
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Generell balanse</span>
-            <span className="font-medium text-gray-800">74%</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Energinivå</span>
-            <span className="font-medium text-gray-800">68%</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Restitusjon</span>
-            <span className="font-medium text-gray-800">82%</span>
-          </div>
-        </div>
+        <HealthInsightSummary healthIssues={healthIssues} />
       </motion.div>
     </motion.div>
   );

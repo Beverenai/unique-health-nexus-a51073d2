@@ -12,7 +12,7 @@ import RecentFindings from '@/components/home/RecentFindings';
 // Hardcoded mock data to ensure it always displays
 const mockCoherenceData: CoherenceData = {
   score: 64,
-  message: "Din kroppskanning indikerer en total koherens-score på 64%.",
+  message: "Kroppen din er i balanse, men håndterer noen belastninger.",
   id: "mock-id",
   scan_id: "mock-scan-id",
   created_at: new Date().toISOString()
@@ -116,7 +116,11 @@ const Home = () => {
     <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] pt-4 pb-24 subtle-pattern">
       <main className="container max-w-md mx-auto px-4">
         <HomeHeader userName={userName} />
-        <HealthDataDisplay coherenceData={coherenceData} scanDate={scanDate} />
+        <HealthDataDisplay 
+          coherenceData={coherenceData} 
+          scanDate={scanDate} 
+          healthIssues={healthIssues} 
+        />
         <PriorityGroups healthIssues={healthIssues} />
         <ActionButtons />
         <RecentFindings healthIssues={healthIssues} />
