@@ -112,7 +112,7 @@ const Insights: React.FC = () => {
           <RecommendedActionsCard recommendations={recommendations} />
           
           {/* Health systems grid */}
-          <div className="mb-20 sm:mb-6">
+          <div className="mb-16 sm:mb-6">
             <HealthSystemGrid 
               healthData={healthSystemData}
               title="Kroppssystemer"
