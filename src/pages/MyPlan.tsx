@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,25 +17,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
+import { UserPlan, PlanRecommendation } from '@/types/database';
 
-interface Plan {
-  id: string;
-  title: string;
-  description: string | null;
-  created_at: string;
-}
-
-interface Recommendation {
-  id: string;
-  text: string;
-  category: string;
-  priority: string;
-  completed: boolean;
-  completed_at: string | null;
-  due_date: string | null;
-  created_at: string;
-  issue_id: string | null;
-}
+interface Plan extends UserPlan {}
+interface Recommendation extends PlanRecommendation {}
 
 const getIconForCategory = (category: string) => {
   const categoryIconMap: Record<string, React.ReactNode> = {
@@ -60,7 +44,7 @@ const PriorityBadge = ({ priority }: { priority: string }) => {
   };
   
   return (
-    <Badge variant="outline" className={`${colorMap[priority] || 'bg-gray-100 text-gray-700'}`}>
+    <Badge variant="outline" className={`bg-gray-100 text-gray-700`}>
       {priority === 'high' ? 'Høy' : priority === 'medium' ? 'Middels' : 'Lav'}
     </Badge>
   );
@@ -82,7 +66,7 @@ const MyPlan = () => {
       
       setLoading(true);
       try {
-        // Fetch user plans
+        // Fetch user plans directly from the table
         const { data: plansData, error: plansError } = await supabase
           .from('user_plans')
           .select('*')

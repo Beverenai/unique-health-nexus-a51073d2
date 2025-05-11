@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -85,17 +84,20 @@ const CheckIn = () => {
         .filter(symptom => symptom.selected)
         .map(symptom => symptom.name);
       
-      // Using raw SQL query with RPC instead of from() method
-      const { data, error } = await supabase.rpc('add_health_checkin', {
-        p_user_id: user.id,
-        p_date: new Date().toISOString().split('T')[0],
-        p_mood: mood,
-        p_energy_level: energy,
-        p_sleep_quality: sleepQuality,
-        p_pain_level: painLevel,
-        p_symptoms: selectedSymptoms,
-        p_notes: notes
-      });
+      // Insert directly into the table without using RPC
+      const { data, error } = await supabase
+        .from('health_checkins')
+        .insert({
+          user_id: user.id,
+          date: new Date().toISOString().split('T')[0],
+          mood: mood,
+          energy_level: energy,
+          sleep_quality: sleepQuality,
+          pain_level: painLevel > 0 ? painLevel : null,
+          symptoms: selectedSymptoms.length > 0 ? selectedSymptoms : null,
+          notes: notes || null
+        })
+        .select();
         
       if (error) throw error;
       

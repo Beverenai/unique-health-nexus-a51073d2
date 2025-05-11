@@ -64,22 +64,25 @@ const Dashboard = () => {
           setHistoricalData(historyResult);
         }
         
-        // Fetch recommendations using stored procedure
+        // Fetch recommendations directly from the table
         if (user) {
-          const { data: recommendationsData } = await supabase.rpc('get_user_recommendations', {
-            p_user_id: user.id,
-            p_limit: 3
-          });
+          const { data: recommendationsData } = await supabase
+            .from('plan_recommendations')
+            .select('*')
+            .eq('completed', false)
+            .limit(3);
           
           if (recommendationsData) {
             setRecommendations(recommendationsData);
           }
           
-          // Fetch check-ins using stored procedure
-          const { data: checkInsData } = await supabase.rpc('get_user_health_checkins_summary', {
-            p_user_id: user.id,
-            p_limit: 5
-          });
+          // Fetch check-ins directly from the table
+          const { data: checkInsData } = await supabase
+            .from('health_checkins')
+            .select('id, date, mood, energy_level, sleep_quality')
+            .eq('user_id', user.id)
+            .order('date', { ascending: false })
+            .limit(5);
           
           if (checkInsData) {
             setCheckIns(checkInsData);
@@ -101,9 +104,10 @@ const Dashboard = () => {
   
   const handleMarkRecommendationComplete = async (id: string) => {
     try {
-      const { error } = await supabase.rpc('mark_recommendation_complete', {
-        p_recommendation_id: id
-      });
+      const { error } = await supabase
+        .from('plan_recommendations')
+        .update({ completed: true, completed_at: new Date().toISOString() })
+        .eq('id', id);
       
       if (error) throw error;
       

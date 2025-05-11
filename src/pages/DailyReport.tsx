@@ -25,10 +25,12 @@ const DailyReport = () => {
       
       setLoading(true);
       try {
-        // Get all check-ins for the user using a stored procedure instead
-        const { data, error } = await supabase.rpc('get_user_health_checkins', {
-          p_user_id: user.id
-        });
+        // Get all check-ins for the user directly from the table
+        const { data, error } = await supabase
+          .from('health_checkins')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('date', { ascending: false });
         
         if (error) throw error;
         
