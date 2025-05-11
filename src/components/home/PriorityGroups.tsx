@@ -62,7 +62,7 @@ const PriorityGroups: React.FC<PriorityGroupsProps> = ({ healthIssues }) => {
 
   return (
     <motion.div 
-      className="mt-20 pt-6 space-y-4" /* Increased top margin and padding */
+      className="space-y-4"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -81,6 +81,12 @@ const PriorityGroups: React.FC<PriorityGroupsProps> = ({ healthIssues }) => {
           </motion.div>
         )
       ))}
+      
+      {priorityGroups.every(group => group.issues.length === 0) && (
+        <div className="text-center py-8 text-gray-500">
+          Ingen prioriterte funn å vise
+        </div>
+      )}
     </motion.div>
   );
 };

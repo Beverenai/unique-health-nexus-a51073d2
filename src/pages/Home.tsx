@@ -3,11 +3,13 @@ import { CoherenceData, HealthIssue } from '@/types/supabase';
 import { supabase } from '@/integrations/supabase/client';
 import { getLatestCoherenceData, getHealthIssues } from '@/services';
 import { seedDemoData } from '@/services/demoDataService';
+import { Gauge, List, Lightbulb } from 'lucide-react';
+import { TabView } from '@/components/ui/tab-view';
 import HomeHeader from '@/components/home/HomeHeader';
-import HealthDataDisplay from '@/components/home/HealthDataDisplay';
-import PriorityGroups from '@/components/home/PriorityGroups';
-import ActionButtons from '@/components/home/ActionButtons';
-import RecentFindings from '@/components/home/RecentFindings';
+import ScanDateCard from '@/components/ScanDateCard';
+import OverviewTab from '@/components/home/tabs/OverviewTab';
+import PrioritiesTab from '@/components/home/tabs/PrioritiesTab';
+import FindingsTab from '@/components/home/tabs/FindingsTab';
 
 // Hardcoded mock data to ensure it always displays
 const mockCoherenceData: CoherenceData = {
@@ -71,10 +73,12 @@ const Home = () => {
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
   const [scanDate, setScanDate] = useState<Date>(new Date());
   const [userName, setUserName] = useState<string>("Demo");
+  const [isLoading, setIsLoading] = useState(true);
   
   // Fetch real data from Supabase when available
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
         // Try seeding demo data first
         await seedDemoData();
@@ -106,24 +110,49 @@ const Home = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
         // Keep using mock data (already set as default state)
+      } finally {
+        setIsLoading(false);
       }
     };
     
     fetchData();
   }, []);
 
+  // Define tab structure
+  const tabs = [
+    {
+      id: "overview",
+      label: "Oversikt",
+      icon: <Gauge size={16} />,
+      content: <OverviewTab coherenceData={coherenceData} healthIssues={healthIssues} />
+    },
+    {
+      id: "priorities",
+      label: "Prioriteter",
+      icon: <List size={16} />,
+      content: <PrioritiesTab healthIssues={healthIssues} />
+    },
+    {
+      id: "findings",
+      label: "Funn",
+      icon: <Lightbulb size={16} />,
+      content: <FindingsTab healthIssues={healthIssues} />
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F8FC] pt-4 pb-24 subtle-pattern">
       <main className="container max-w-md mx-auto px-4">
         <HomeHeader userName={userName} />
-        <HealthDataDisplay 
-          coherenceData={coherenceData} 
-          scanDate={scanDate} 
-          healthIssues={healthIssues} 
-        />
-        <PriorityGroups healthIssues={healthIssues} />
-        <ActionButtons />
-        <RecentFindings healthIssues={healthIssues} />
+        <ScanDateCard scanDate={new Date(coherenceData?.created_at || scanDate)} />
+        
+        {isLoading ? (
+          <div className="flex justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9b87f5]"></div>
+          </div>
+        ) : (
+          <TabView tabs={tabs} className="pt-2" />
+        )}
       </main>
     </div>
   );

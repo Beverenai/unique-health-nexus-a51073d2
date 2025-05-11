@@ -13,7 +13,7 @@ interface BodyBalanceRingProps {
 
 const BodyBalanceRing: React.FC<BodyBalanceRingProps> = ({ 
   score, 
-  size = 'lg', 
+  size = 'md', 
   className
 }) => {
   const bodyState = getBodyStateDescription(score);
@@ -22,8 +22,8 @@ const BodyBalanceRing: React.FC<BodyBalanceRingProps> = ({
   // Adjusted sizes for the rings
   const sizeClasses = {
     sm: 'w-20 h-20',
-    md: 'w-36 h-36',
-    lg: 'w-48 h-48'
+    md: 'w-32 h-32',
+    lg: 'w-40 h-40'
   };
   
   return (
@@ -47,12 +47,12 @@ const BodyBalanceRing: React.FC<BodyBalanceRingProps> = ({
         
         {/* Inner white circle with text */}
         <motion.div 
-          className="bg-white rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.08)] relative z-10" 
+          className="bg-white rounded-full flex items-center justify-center shadow-md relative z-10" 
           style={{width: '75%', height: '75%'}}
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           transition={{
-            delay: 0.4,
+            delay: 0.3,
             type: "spring",
             stiffness: 100
           }}
@@ -61,47 +61,27 @@ const BodyBalanceRing: React.FC<BodyBalanceRingProps> = ({
             className="text-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
+            transition={{ delay: 0.4, duration: 0.4 }}
           >
             <motion.div 
-              className={cn("font-medium text-lg mb-1", textColorClass)}
-              initial={{ opacity: 0, y: 10 }}
+              className={cn("font-medium text-base", textColorClass)}
+              initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
+              transition={{ delay: 0.5 }}
             >
               {bodyState}
             </motion.div>
             
             <motion.div
-              className="text-gray-500 text-xs px-3"
+              className="text-gray-500 text-xs mt-1"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
+              transition={{ delay: 0.6 }}
             >
-              {score < 60 ? "Følg anbefalingene" : "Oppretthold balansen"}
+              {score}%
             </motion.div>
           </motion.div>
         </motion.div>
-        
-        {/* Animated pulse rings */}
-        <div 
-          className="absolute inset-0 rounded-full animate-pulse-ring opacity-30" 
-          style={{ border: `1px solid ${getModernColor(score)}` }} 
-        />
-        
-        <motion.div 
-          className="absolute inset-0 rounded-full opacity-10" 
-          style={{ border: `4px solid ${getModernColor(score)}` }}
-          animate={{ 
-            scale: [1, 1.03, 1],
-            opacity: [0.1, 0.2, 0.1]
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
       </motion.div>
     </div>
   );
