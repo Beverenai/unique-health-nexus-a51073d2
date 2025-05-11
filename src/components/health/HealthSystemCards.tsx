@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import HealthSystemCard from './HealthSystemCard';
+import SystemCategories from './SystemCategories';
 import { HealthSystemItem } from '@/services/healthSystemService';
 
 interface HealthSystemCardsProps {
@@ -13,116 +14,71 @@ interface HealthSystemCardsProps {
   healthData: HealthSystemItem[];
 }
 
-// Function to get all unique system categories
-const getSystemCategories = (data: HealthSystemItem[]): string[] => {
-  const systemTypes = new Set<string>();
-  
-  // Add "Alle" option
-  systemTypes.add("Alle");
-  
-  // Get categories based on the first word of each area
-  data.forEach(item => {
-    const firstWord = item.area.split(' ')[0];
-    if (firstWord && firstWord.length > 2) {  // Ignore very short words
-      systemTypes.add(firstWord);
-    }
-  });
-  
-  return Array.from(systemTypes);
-};
-
 const HealthSystemCards: React.FC<HealthSystemCardsProps> = ({ 
-  title = "Detaljert helseinformasjon", 
+  title = "Kroppssystemer og balanse", 
   description,
   healthData 
 }) => {
-  const [expanded, setExpanded] = useState(false);
-  const visibleItems = expanded ? healthData : healthData.slice(0, 3);
-  const systemCategories = getSystemCategories(healthData);
-  const [activeTab, setActiveTab] = useState("Alle");
+  const [view, setView] = useState<'categories' | 'systems'>('categories');
+  const [selectedSystem, setSelectedSystem] = useState<number | null>(null);
   
-  const filteredItems = activeTab === "Alle" 
-    ? visibleItems 
-    : visibleItems.filter(item => item.area.startsWith(activeTab));
+  const handleSystemSelect = (index: number) => {
+    setSelectedSystem(index);
+    setView('systems');
+  };
   
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { 
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      } 
-    }
+  const handleBack = () => {
+    setView('categories');
+    setSelectedSystem(null);
   };
   
   return (
     <Card className="bg-gradient-to-br from-white/80 to-white/50 backdrop-blur-sm border-none shadow-lg mb-8">
       <CardHeader className="pb-2 border-b border-gray-100/40">
-        <CardTitle className="text-xl font-medium">{title}</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-xl font-medium">{title}</CardTitle>
+          
+          {view === 'systems' && (
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-xs text-[#9b87f5] flex items-center"
+              onClick={handleBack}
+            >
+              ← Tilbake til kategorier
+            </motion.button>
+          )}
+        </div>
         {description && (
           <p className="text-gray-600 text-sm">{description}</p>
         )}
       </CardHeader>
       <CardContent className="p-4">
-        {/* System filter tabs */}
-        <div className="mb-4 overflow-x-auto pb-1 scrollbar-none">
-          <Tabs defaultValue="Alle" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="bg-white/50 border border-white/60 h-9 w-full flex">
-              {systemCategories.map((category) => (
-                <TabsTrigger 
-                  key={category} 
-                  value={category}
-                  className="data-[state=active]:bg-white data-[state=active]:text-gray-800 data-[state=active]:shadow-sm px-3 py-1.5 text-sm flex-1 whitespace-normal"
-                >
-                  {category}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            
-            <TabsContent value={activeTab} className="mt-3">
-              <motion.div 
-                className="grid gap-4 sm:grid-cols-1"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                {filteredItems.map((item, index) => (
-                  <HealthSystemCard 
-                    key={`${item.area}-${index}`}
-                    area={item.area}
-                    symptoms={item.symptoms}
-                    causes={item.causes}
-                    recommendations={item.recommendations}
-                    index={index}
-                  />
-                ))}
-                
-                {filteredItems.length === 0 && (
-                  <p className="text-center py-6 text-gray-500">
-                    Ingen data tilgjengelig for denne kategorien.
-                  </p>
-                )}
-              </motion.div>
-            </TabsContent>
-          </Tabs>
-        </div>
-        
-        {/* Show more/less button */}
-        {healthData.length > 3 && (
-          <div className="flex justify-center pt-3 border-t border-gray-100/40 bg-white/30 mt-2">
-            <button 
-              onClick={() => setExpanded(!expanded)}
-              className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800 transition-colors"
-            >
-              <span>{expanded ? 'Vis mindre' : 'Vis mer'}</span>
-              <ChevronDown 
-                size={16} 
-                className={`transition-transform ${expanded ? 'rotate-180' : ''}`} 
-              />
-            </button>
-          </div>
-        )}
+        <motion.div
+          key={view}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          {view === 'categories' ? (
+            <SystemCategories 
+              healthData={healthData} 
+              onSelectSystem={handleSystemSelect} 
+            />
+          ) : (
+            <div>
+              {selectedSystem !== null && (
+                <HealthSystemCard 
+                  area={healthData[selectedSystem].area}
+                  symptoms={healthData[selectedSystem].symptoms}
+                  causes={healthData[selectedSystem].causes}
+                  recommendations={healthData[selectedSystem].recommendations}
+                  index={selectedSystem}
+                />
+              )}
+            </div>
+          )}
+        </motion.div>
       </CardContent>
     </Card>
   );

@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { getHealthIssues } from '@/services/healthIssueService';
 import { seedDemoData } from '@/services/demoDataService';
 import { mockHealthIssues } from '@/data/mockData';
-import SystemCard from '@/components/insight/SystemCard';
 import ConnectionList from '@/components/insight/ConnectionList';
 import RecommendationList from '@/components/insight/RecommendationList';
 import { getSystemConnections } from '@/utils/systemUtils';
@@ -14,6 +13,7 @@ import ConnectionChart from '@/components/insight/ConnectionChart';
 import HealthSystemGrid from '@/components/health/HealthSystemGrid';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { getHealthSystems, HealthSystemItem } from '@/services/healthSystemService';
+import InsightCard from '@/components/InsightCard';
 
 const Insights: React.FC = () => {
   // Initialize with the correct mock data that now matches the expected type
@@ -60,28 +60,18 @@ const Insights: React.FC = () => {
           
           <HealthSystemGrid 
             healthData={healthSystemData}
+            title="Kroppssystemer"
+            description="Trykk på en kategori for å se systemene innen denne kategorien"
           />
           
-          <Card className="mb-6 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium">Helsebelastninger</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ConnectionChart healthIssues={healthIssues} />
-            </CardContent>
-          </Card>
-          
-          {healthIssues.map((issue) => (
-            <div key={issue.id} className="mb-4">
-              <SystemCard name={issue.name} issue={issue} />
-            </div>
-          ))}
+          <InsightCard healthIssues={healthIssues} />
           
           <Card className="mb-6 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-medium">Sammenhenger</CardTitle>
             </CardHeader>
             <CardContent>
+              <ConnectionChart healthIssues={healthIssues} />
               <ConnectionList connections={connections} />
             </CardContent>
           </Card>

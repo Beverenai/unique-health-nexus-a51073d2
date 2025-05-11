@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import SystemIcon from './SystemIcon';
 import { HealthSystemItem } from '@/services/healthSystemService';
+import { SYSTEM_CATEGORIES, groupSystemsByCategory } from './SystemCategories';
+import { Info } from 'lucide-react';
 
 interface HealthSystemGridProps {
   title?: string;
@@ -13,42 +15,32 @@ interface HealthSystemGridProps {
 }
 
 const HealthSystemGrid: React.FC<HealthSystemGridProps> = ({
-  title = "Kroppssystemer og balanse",
-  description = "Trykk på et system for å se detaljert informasjon",
+  title = "Kroppssystemer",
+  description = "Trykk på en kategori for å se systemene innen denne kategorien",
   healthData
 }) => {
   const navigate = useNavigate();
+  const categorizedSystems = groupSystemsByCategory(healthData);
   
-  // Determine background color based on system type
-  const getBgGradient = (area: string): string => {
-    const areaLower = area.toLowerCase();
-    
-    if (areaLower.includes('tarm') || areaLower.includes('fordøyelse')) {
-      return 'from-green-50 to-green-100/50';
-    } else if (areaLower.includes('lymfe')) {
-      return 'from-blue-50 to-blue-100/50';
-    } else if (areaLower.includes('nakke') || areaLower.includes('rygg')) {
-      return 'from-amber-50 to-amber-100/50';
-    } else if (areaLower.includes('oksidativ') || areaLower.includes('stress')) {
-      return 'from-rose-50 to-rose-100/50';
-    } else if (areaLower.includes('energi') || areaLower.includes('mitokondri') || areaLower.includes('celle')) {
-      return 'from-yellow-50 to-yellow-100/50';
-    } else if (areaLower.includes('hormon')) {
-      return 'from-purple-50 to-purple-100/50';
-    } else if (areaLower.includes('immun') || areaLower.includes('blod')) {
-      return 'from-indigo-50 to-indigo-100/50';
-    } else if (areaLower.includes('hud') || areaLower.includes('bindevev')) {
-      return 'from-orange-50 to-orange-100/50';
-    } else if (areaLower.includes('avgiftning') || areaLower.includes('lever')) {
-      return 'from-emerald-50 to-emerald-100/50';
-    } else if (areaLower.includes('psykisk') || areaLower.includes('følelse')) {
-      return 'from-sky-50 to-sky-100/50';
-    } else {
-      return 'from-gray-50 to-gray-100/50';
+  // Get background color for category
+  const getCategoryGradient = (category: string): string => {
+    switch(category) {
+      case SYSTEM_CATEGORIES.DIGESTIVE:
+        return 'from-green-50 to-green-100/50';
+      case SYSTEM_CATEGORIES.NERVOUS:
+        return 'from-blue-50 to-blue-100/50';
+      case SYSTEM_CATEGORIES.HORMONAL:
+        return 'from-purple-50 to-purple-100/50';
+      case SYSTEM_CATEGORIES.MUSCULOSKELETAL:
+        return 'from-amber-50 to-amber-100/50';
+      case SYSTEM_CATEGORIES.IMMUNE:
+        return 'from-rose-50 to-rose-100/50';
+      default:
+        return 'from-gray-50 to-gray-100/50';
     }
   };
   
-  const handleCardClick = (index: number) => {
+  const handleCategoryClick = (index: number) => {
     navigate(`/health-system/${index}`);
   };
   
@@ -78,33 +70,41 @@ const HealthSystemGrid: React.FC<HealthSystemGridProps> = ({
     <Card className="bg-gradient-to-br from-white/80 to-white/50 backdrop-blur-sm border-none shadow-lg mb-8">
       <CardContent className="p-6">
         <div className="mb-4">
-          <h2 className="text-xl font-medium mb-1">{title}</h2>
+          <div className="flex items-center gap-2 mb-1">
+            <h2 className="text-xl font-medium">{title}</h2>
+            <div className="bg-[#9b87f5]/10 rounded-full p-1">
+              <Info size={14} className="text-[#9b87f5]" />
+            </div>
+          </div>
           {description && (
             <p className="text-gray-500 text-sm">{description}</p>
           )}
         </div>
         
         <motion.div 
-          className="grid grid-cols-2 gap-3 sm:grid-cols-3"
+          className="grid grid-cols-1 gap-3 sm:grid-cols-2"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
-          {healthData.map((system, index) => (
+          {Object.entries(categorizedSystems).map(([category, systems], index) => (
             <motion.div 
-              key={`${system.area}-${index}`}
+              key={`${category}-${index}`}
               variants={itemVariants}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => handleCardClick(index)}
-              className={`bg-gradient-to-br ${getBgGradient(system.area)} rounded-xl p-4 border border-white/40 shadow-sm cursor-pointer transition-all hover:shadow-md flex flex-col items-center text-center`}
+              onClick={() => handleCategoryClick(index)}
+              className={`bg-gradient-to-br ${getCategoryGradient(category)} rounded-xl p-4 border border-white/40 shadow-sm cursor-pointer transition-all hover:shadow-md flex flex-col items-center text-center`}
             >
               <div className="bg-white/80 p-2.5 rounded-full shadow-sm mb-2">
-                <SystemIcon name={system.area} size={24} />
+                <SystemIcon name={category} size={24} />
               </div>
               <h3 className="font-medium text-sm text-gray-800 break-words">
-                {system.area}
+                {category}
               </h3>
+              <p className="text-xs text-gray-500 mt-1">
+                {systems.length} systemer
+              </p>
             </motion.div>
           ))}
         </motion.div>

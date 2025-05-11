@@ -21,7 +21,20 @@ const HealthSystemCard: React.FC<HealthSystemCardProps> = ({
   recommendations, 
   index 
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<{
+    causes: boolean;
+    recommendations: boolean;
+  }>({
+    causes: false,
+    recommendations: false
+  });
+  
+  const toggleSection = (section: 'causes' | 'recommendations') => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
   
   // Determine background color based on system type
   const getBgGradient = (area: string): string => {
@@ -52,97 +65,92 @@ const HealthSystemCard: React.FC<HealthSystemCardProps> = ({
     }
   };
   
-  // Animation variants
-  const cardVariants = {
-    collapsed: { 
-      height: 'auto',
-      transition: { duration: 0.3, ease: 'easeInOut' }
-    },
-    expanded: { 
-      height: 'auto',
-      transition: { duration: 0.5, ease: 'easeInOut' }
-    }
-  };
-  
-  const contentVariants = {
-    collapsed: { 
-      opacity: 0, 
-      height: 0,
-      transition: { duration: 0.3 }
-    },
-    expanded: { 
-      opacity: 1, 
-      height: 'auto',
-      transition: { duration: 0.5, delay: 0.1 }
-    }
-  };
+  const SectionHeader = ({ 
+    title, 
+    isExpanded, 
+    onToggle 
+  }: { 
+    title: string; 
+    isExpanded: boolean;
+    onToggle: () => void;
+  }) => (
+    <div 
+      className="flex items-center justify-between cursor-pointer py-2"
+      onClick={onToggle}
+    >
+      <h3 className="text-sm font-medium text-gray-700">{title}</h3>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-6 w-6 p-0 rounded-full"
+      >
+        <ChevronDown 
+          className={cn(
+            "h-4 w-4 text-gray-500 transition-transform", 
+            isExpanded && "rotate-180"
+          )} 
+        />
+      </Button>
+    </div>
+  );
   
   return (
-    <motion.div 
+    <div 
       className={cn(
-        "bg-gradient-to-br rounded-xl border border-white/40",
+        "bg-gradient-to-br rounded-xl border border-white/40 shadow-sm p-5",
         getBgGradient(area),
         "backdrop-blur-sm"
       )}
-      initial={{ opacity: 0, y: 20 }}
-      transition={{ duration: 0.3, delay: index * 0.1 }}
-      variants={cardVariants}
-      animate={isExpanded ? "expanded" : "collapsed"}
-      layout
     >
-      <div className="p-4">
-        {/* Header section */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="bg-white p-1.5 rounded-full shadow-sm">
-              <SystemIcon name={area} />
-            </div>
-            <h3 className="font-medium text-gray-800 break-words">{area}</h3>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0 rounded-full flex-shrink-0 ml-1"
-            onClick={() => setIsExpanded(!isExpanded)}
-            aria-expanded={isExpanded}
-            aria-label={isExpanded ? `Skjul detaljer om ${area}` : `Vis detaljer om ${area}`}
-          >
-            <ChevronDown 
-              className={cn(
-                "h-4 w-4 text-gray-500 transition-transform", 
-                isExpanded && "rotate-180"
-              )} 
-            />
-          </Button>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="bg-white p-2 rounded-full shadow-sm">
+          <SystemIcon name={area} size={22} />
         </div>
+        <h2 className="font-medium text-lg text-gray-800">{area}</h2>
+      </div>
+      
+      {/* Symptoms - always visible */}
+      <div className="mb-4">
+        <h3 className="text-sm font-medium text-gray-700 mb-2">Symptomer og tegn:</h3>
+        <p className="text-sm text-gray-600 leading-relaxed bg-white/70 p-3 rounded-lg border border-gray-100/40">{symptoms}</p>
+      </div>
+      
+      {/* Causes - expandable */}
+      <div className="border-t border-gray-100/40 pt-1">
+        <SectionHeader 
+          title="Mulige årsaker" 
+          isExpanded={expandedSections.causes}
+          onToggle={() => toggleSection('causes')}
+        />
         
-        {/* Main content - always visible */}
-        <div className="mb-2">
-          <p className="text-sm text-gray-600 break-words">{symptoms}</p>
-        </div>
-        
-        {/* Expandable content */}
         <motion.div 
-          variants={contentVariants}
-          initial="collapsed"
-          animate={isExpanded ? "expanded" : "collapsed"}
+          initial={expandedSections.causes ? { height: 'auto' } : { height: 0 }}
+          animate={expandedSections.causes ? { height: 'auto' } : { height: 0 }}
+          className="overflow-hidden"
         >
-          <div className="pt-3 border-t border-gray-100/40 mt-2 space-y-3">
-            <div>
-              <h4 className="text-xs font-medium text-gray-700 mb-1">Mulige årsaker:</h4>
-              <p className="text-sm text-gray-600 break-words">{causes}</p>
-            </div>
-            
-            <div>
-              <h4 className="text-xs font-medium text-gray-700 mb-1">Anbefalte tiltak:</h4>
-              <div className="p-2 bg-white/50 rounded-lg border border-gray-100/40 shadow-sm">
-                <p className="text-sm text-gray-600 break-words">{recommendations}</p>
-              </div>
-            </div>
+          <p className="text-sm text-gray-600 leading-relaxed bg-white/70 p-3 rounded-lg border border-gray-100/40 mb-3">{causes}</p>
+        </motion.div>
+      </div>
+      
+      {/* Recommendations - expandable */}
+      <div className="border-t border-gray-100/40 pt-1">
+        <SectionHeader 
+          title="Anbefalte tiltak" 
+          isExpanded={expandedSections.recommendations}
+          onToggle={() => toggleSection('recommendations')}
+        />
+        
+        <motion.div 
+          initial={expandedSections.recommendations ? { height: 'auto' } : { height: 0 }}
+          animate={expandedSections.recommendations ? { height: 'auto' } : { height: 0 }}
+          className="overflow-hidden"
+        >
+          <div className="bg-white/70 p-3 rounded-lg border border-gray-100/40">
+            <p className="text-sm text-gray-600 leading-relaxed">{recommendations}</p>
           </div>
         </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
