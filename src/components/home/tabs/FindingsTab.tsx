@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { HealthIssue } from '@/types/supabase';
 import { HealthIssuesCarousel } from '@/components/carousel';
-import { ArrowRight, Filter, SortAscending } from 'lucide-react';
+import { ArrowRight, Filter, ArrowDownAZ } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,7 +30,7 @@ const FindingsTab: React.FC<FindingsTabProps> = ({ healthIssues }) => {
             <Filter size={14} />
           </Button>
           <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-            <SortAscending size={14} />
+            <ArrowDownAZ size={14} />
           </Button>
         </div>
       </div>
