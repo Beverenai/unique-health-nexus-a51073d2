@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Activity, Calendar, Moon, Zap, LineChart, Smile } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { tables } from '@/integrations/supabase/client-extensions';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { ResponsiveContainer, LineChart as RechartsLineChart, Line, XAxis, YAxis, Tooltip, Legend } from 'recharts';
@@ -27,8 +27,7 @@ const DailyReport = () => {
       setLoading(true);
       try {
         // Get all check-ins for the user directly from the health_checkins table
-        const { data, error } = await supabase
-          .from('health_checkins')
+        const { data, error } = await tables.healthCheckins()
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false });

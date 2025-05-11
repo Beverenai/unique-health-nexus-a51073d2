@@ -7,6 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { tables } from '@/integrations/supabase/client-extensions';
 import { useAuth } from '@/context/AuthContext';
 import { motion } from 'framer-motion';
 import { ArrowLeft, CalendarClock, Moon, Zap, SmilePlus, ThumbsUp } from 'lucide-react';
@@ -86,8 +87,7 @@ const CheckIn = () => {
         .map(symptom => symptom.name);
       
       // Insert directly into the health_checkins table
-      const { data, error } = await supabase
-        .from('health_checkins')
+      const { data, error } = await tables.healthCheckins()
         .insert({
           user_id: user.id,
           date: new Date().toISOString().split('T')[0],

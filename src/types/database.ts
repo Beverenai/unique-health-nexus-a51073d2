@@ -1,6 +1,39 @@
 
 import { Json } from "@/integrations/supabase/types";
 
+// Define interface for the Database to extend Supabase types
+export interface Database {
+  public: {
+    Tables: {
+      health_checkins: {
+        Row: HealthCheckIn;
+        Insert: Omit<HealthCheckIn, 'id' | 'created_at'> & { id?: string; created_at?: string };
+        Update: Partial<Omit<HealthCheckIn, 'id' | 'user_id'>>;
+      };
+      user_plans: {
+        Row: UserPlan;
+        Insert: Omit<UserPlan, 'id' | 'created_at'> & { id?: string; created_at?: string };
+        Update: Partial<Omit<UserPlan, 'id' | 'user_id'>>;
+      };
+      plan_recommendations: {
+        Row: PlanRecommendation;
+        Insert: Omit<PlanRecommendation, 'id' | 'created_at'> & { id?: string; created_at?: string };
+        Update: Partial<Omit<PlanRecommendation, 'id' | 'plan_id'>>;
+      };
+      user_preferences: {
+        Row: UserPreference;
+        Insert: Omit<UserPreference, 'created_at' | 'updated_at'> & { created_at?: string; updated_at?: string };
+        Update: Partial<Omit<UserPreference, 'user_id'>>;
+      };
+      user_progress: {
+        Row: UserProgress;
+        Insert: Omit<UserProgress, 'id' | 'created_at'> & { id?: string; created_at?: string };
+        Update: Partial<Omit<UserProgress, 'id' | 'user_id'>>;
+      };
+    };
+  };
+}
+
 // Define types for health check-ins
 export interface HealthCheckIn {
   id: string;
