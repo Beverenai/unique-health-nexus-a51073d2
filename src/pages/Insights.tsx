@@ -19,10 +19,25 @@ const Insights: React.FC = () => {
   // Initialize with the correct mock data that now matches the expected type
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
   const [healthSystemData, setHealthSystemData] = useState<HealthSystemItem[]>([]);
-  const [recommendations, setRecommendations] = useState<{color: string, text: string}[]>([
-    { color: "bg-blue-50", text: "Støtt nervesystemet med magnesium og B-vitaminer for å redusere overbelastning." },
-    { color: "bg-green-50", text: "Forbedre tarmfloraen med daglig inntak av fermentert mat og probiotika." },
-    { color: "bg-purple-50", text: "Prøv regelmessig yoga eller meditasjon for å balansere hormonsystemet." }
+  const [recommendations, setRecommendations] = useState<{color: string, text: string, importance?: 'high' | 'medium' | 'low', explanation?: string}[]>([
+    { 
+      color: "bg-blue-50", 
+      text: "Støtt nervesystemet med magnesium og B-vitaminer for å redusere overbelastning.", 
+      importance: "high",
+      explanation: "Magnesium og B-vitaminer er essensielle for nervefunksjon og kan hjelpe med å redusere stress og nervøsitet."
+    },
+    { 
+      color: "bg-green-50", 
+      text: "Forbedre tarmfloraen med daglig inntak av fermentert mat og probiotika.", 
+      importance: "medium",
+      explanation: "Fermentert mat inneholder levende bakteriekulturer som bidrar til å gjenopprette en sunn tarmflora."
+    },
+    { 
+      color: "bg-purple-50", 
+      text: "Prøv regelmessig yoga eller meditasjon for å balansere hormonsystemet.", 
+      importance: "low",
+      explanation: "Mindfulness-øvelser kan bidra til å redusere stresshormoner og skape bedre balanse i hormonsystemet."
+    }
   ]);
   
   useEffect(() => {
@@ -58,13 +73,13 @@ const Insights: React.FC = () => {
             <p className="text-gray-500 text-center text-sm">Sammenhengen mellom dine helseutfordringer</p>
           </div>
           
+          <InsightCard healthIssues={healthIssues} />
+          
           <HealthSystemGrid 
             healthData={healthSystemData}
             title="Kroppssystemer"
             description="Trykk på en kategori for å se systemene innen denne kategorien"
           />
-          
-          <InsightCard healthIssues={healthIssues} />
           
           <Card className="mb-6 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
             <CardHeader className="pb-2">

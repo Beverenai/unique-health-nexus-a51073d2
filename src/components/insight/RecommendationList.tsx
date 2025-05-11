@@ -1,14 +1,17 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Check, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Recommendation {
   color: string;
   text: string;
+  importance?: 'high' | 'medium' | 'low';
+  explanation?: string;
 }
 
 interface RecommendationListProps {
@@ -60,6 +63,16 @@ const RecommendationList: React.FC<RecommendationListProps> = ({ recommendations
     return completedRecommendations.includes(text);
   };
 
+  // Get importance color
+  const getImportanceColor = (importance?: 'high' | 'medium' | 'low') => {
+    switch (importance) {
+      case 'high': return 'bg-[#EA384C]';
+      case 'medium': return 'bg-[#F7D154]';
+      case 'low': return 'bg-[#77C17E]';
+      default: return 'bg-[#9b87f5]';
+    }
+  };
+
   return (
     <motion.div 
       className="pt-5 mt-5 border-t border-gray-100"
@@ -91,6 +104,7 @@ const RecommendationList: React.FC<RecommendationListProps> = ({ recommendations
       <div className="space-y-2.5">
         {recommendations.map((recommendation, index) => {
           const completed = isCompleted(recommendation.text);
+          const importanceColor = getImportanceColor(recommendation.importance);
           
           return (
             <motion.div 
@@ -101,10 +115,25 @@ const RecommendationList: React.FC<RecommendationListProps> = ({ recommendations
               className={`rounded-xl ${completed ? 'bg-green-50/40 border-green-100' : 'bg-white border-gray-100'} shadow-sm border`}
             >
               <div className="flex items-center gap-2.5 px-4 py-3">
-                <div className={`flex-shrink-0 h-2 w-2 rounded-full ${completed ? 'bg-green-500' : recommendation.color.replace('bg-', 'bg-').replace('-50', '-400')}`}></div>
+                <div className={`flex-shrink-0 h-2 w-2 rounded-full ${completed ? 'bg-green-500' : importanceColor}`}></div>
                 <span className={`text-sm ${completed ? 'text-green-700 line-through decoration-green-500/30' : 'text-gray-700'} leading-snug flex-1`}>
                   {recommendation.text}
                 </span>
+                
+                {recommendation.explanation && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 rounded-full">
+                          <Info size={14} className="text-gray-500" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p>{recommendation.explanation}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
                 
                 {!completed && (
                   <Button 

@@ -18,6 +18,9 @@ const SystemChartTooltip: React.FC<SystemChartTooltipProps> = ({ active, payload
     <div className="bg-white/95 px-3 py-2 rounded-lg border border-[#9b87f5]/20 shadow-md text-xs">
       <p className="font-medium">{data.name}</p>
       <p className="text-[#9b87f5]">{data.value}% belastning</p>
+      {data.description && (
+        <p className="mt-1 text-gray-600 max-w-[200px]">{data.description}</p>
+      )}
     </div>
   );
 };

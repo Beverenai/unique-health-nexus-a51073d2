@@ -46,15 +46,21 @@ const InsightCard: React.FC<InsightCardProps> = ({ healthIssues }) => {
   const recommendations = [
     {
       color: "bg-emerald-50",
-      text: "Fokuser på tarmhelse med prebiotika og probiotika for å påvirke både tarmflora og hormoner"
+      text: "Fokuser på tarmhelse med prebiotika og probiotika for å påvirke både tarmflora og hormoner",
+      importance: "high" as const,
+      explanation: "Tarmfloraen har en direkte påvirkning på hormonbalansen og immunforsvaret. Prebiotika og probiotika støtter en sunn bakterieflora."
     },
     {
       color: "bg-amber-50",
-      text: "Reduser stress som kan påvirke både hormonbalanse og muskelskjelettproblemer"
+      text: "Reduser stress som kan påvirke både hormonbalanse og muskelskjelettproblemer",
+      importance: "medium" as const,
+      explanation: "Kronisk stress øker kortisolnivåene, som igjen påvirker hormoner og skaper muskelspenninger. Stressreduksjon har flere helsemessige fordeler."
     },
     {
       color: "bg-blue-50",
-      text: "Vurder fysisk behandling for nakken som kan forbedre nervesignaler i hele kroppen"
+      text: "Vurder fysisk behandling for nakken som kan forbedre nervesignaler i hele kroppen",
+      importance: "medium" as const,
+      explanation: "Nakkeproblemer kan komprimere nerverøtter og påvirke nervesystemet. Fysisk behandling kan løsne opp spenninger og forbedre signaloverføring."
     }
   ];
   
