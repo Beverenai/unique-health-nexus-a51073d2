@@ -17,6 +17,7 @@ import PriorityDetail from "./pages/PriorityDetail";
 import NotFound from "./pages/NotFound";
 import Onboarding from "./components/Onboarding";
 import HealthSystemDetail from "./pages/HealthSystemDetail";
+import MyPlan from "./pages/MyPlan";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,7 @@ const App = () => {
           <Route path="/issue/:issueId" element={<IssueDetail />} />
           <Route path="/priority/:priorityId" element={<PriorityDetail />} />
           <Route path="/health-system/:systemId" element={<HealthSystemDetail />} />
+          <Route path="/my-plan" element={<MyPlan />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

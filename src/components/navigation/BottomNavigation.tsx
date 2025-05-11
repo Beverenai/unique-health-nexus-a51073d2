@@ -1,148 +1,78 @@
 
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, PieChart, Scan, User, Calendar } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Link, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Home, BarChart2, History, User, ListTodo } from 'lucide-react';
 
 const BottomNavigation = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+  const currentPath = location.pathname;
   
-  const isActive = (path: string) => location.pathname === path;
-  
-  const handleNewScan = () => {
-    toast.success('Starter ny skanning...', {
-      description: 'Dette ville starte en ny skanning i en reell applikasjon.'
-    });
-  };
-
-  const navigationItems = [
-    {
-      icon: Home,
-      label: 'Hjem',
-      path: '/',
-      action: () => navigate('/'),
+  const navItems = [
+    { 
+      path: '/', 
+      label: 'Hjem', 
+      icon: <Home size={22} />,
+      active: currentPath === '/'
     },
-    {
-      icon: PieChart,
-      label: 'Innsikter',
-      path: '/insights',
-      action: () => navigate('/insights'),
+    { 
+      path: '/insights', 
+      label: 'Innsikt', 
+      icon: <BarChart2 size={22} />,
+      active: currentPath === '/insights'
     },
-    {
-      icon: Scan,
-      label: 'Skann',
-      path: '/scan',
-      action: handleNewScan,
-      highlight: true,
+    { 
+      path: '/my-plan', 
+      label: 'Min plan', 
+      icon: <ListTodo size={22} />,
+      active: currentPath === '/my-plan'
     },
-    {
-      icon: Calendar,
-      label: 'Historikk',
-      path: '/history',
-      action: () => navigate('/history'),
+    { 
+      path: '/history', 
+      label: 'Historikk', 
+      icon: <History size={22} />,
+      active: currentPath === '/history'
     },
-    {
-      icon: User,
-      label: 'Profil',
-      path: '/profile',
-      action: () => navigate('/profile'),
-    },
-  ];
-
-  // Animation variants
-  const navVariants = {
-    hidden: { y: 100, opacity: 0 },
-    visible: { 
-      y: 0, 
-      opacity: 1,
-      transition: { 
-        type: "spring", 
-        stiffness: 300, 
-        damping: 30, 
-        mass: 0.8,
-        delay: 0.2
-      }
-    },
-    exit: { 
-      y: 100, 
-      opacity: 0,
-      transition: { 
-        duration: 0.2 
-      }
+    { 
+      path: '/profile', 
+      label: 'Profil', 
+      icon: <User size={22} />,
+      active: currentPath === '/profile'
     }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: (custom: number) => ({
-      y: 0,
-      opacity: 1,
-      transition: {
-        delay: 0.3 + custom * 0.1,
-        type: "spring",
-        stiffness: 300
-      }
-    })
-  };
-
+  ];
+  
   return (
-    <AnimatePresence>
-      <motion.div 
-        className="fixed bottom-0 left-0 right-0 z-50"
-        variants={navVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-      >
-        <div className="px-4 pb-4">
-          <div className="bg-white/80 backdrop-blur-xl border border-white/40 shadow-lg rounded-2xl overflow-hidden">
-            <div className="flex justify-around items-center h-16 px-2">
-              {navigationItems.map((item, index) => (
-                <motion.button
-                  key={item.label}
-                  custom={index}
-                  variants={itemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  onClick={item.action}
-                  className={cn(
-                    "flex flex-col items-center justify-center w-full h-full rounded-lg transition-all",
-                    isActive(item.path) ? 
-                      "text-[#9b87f5]" : "text-gray-500",
-                    item.highlight && "text-[#9b87f5]"
-                  )}
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white shadow-[0_-1px_3px_rgba(0,0,0,0.1)] border-t border-gray-200">
+      <div className="container max-w-md mx-auto">
+        <div className="flex justify-around items-center h-16">
+          {navItems.map((item) => (
+            <Link 
+              key={item.path} 
+              to={item.path} 
+              className={`flex flex-col items-center justify-center w-16 h-full ${
+                item.active ? 'text-[#9b87f5]' : 'text-gray-500'
+              }`}
+            >
+              {item.active ? (
+                <motion.div 
+                  initial={{ scale: 0.8 }} 
+                  animate={{ scale: 1 }}
+                  className="flex flex-col items-center"
                 >
-                  <motion.div
-                    className={cn(
-                      "flex items-center justify-center w-10 h-10 mb-1 rounded-full transition-all",
-                      item.highlight ? "bg-[#9b87f5]/10 scale-110" : "",
-                      isActive(item.path) && !item.highlight && "bg-[#9b87f5]/10"
-                    )}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    {/* Active indicator */}
-                    {isActive(item.path) && (
-                      <motion.div
-                        layoutId="activeIndicator"
-                        className="absolute -top-1 w-1 h-1 rounded-full bg-[#9b87f5]"
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      />
-                    )}
-                    
-                    <item.icon size={item.highlight ? 24 : 20} />
-                  </motion.div>
-                  <span className="text-xs font-medium">{item.label}</span>
-                </motion.button>
-              ))}
-            </div>
-          </div>
+                  {item.icon}
+                  <span className="text-xs mt-0.5 font-medium">{item.label}</span>
+                </motion.div>
+              ) : (
+                <div className="flex flex-col items-center">
+                  {item.icon}
+                  <span className="text-xs mt-0.5">{item.label}</span>
+                </div>
+              )}
+            </Link>
+          ))}
         </div>
-      </motion.div>
-    </AnimatePresence>
+      </div>
+    </nav>
   );
 };
 
