@@ -68,8 +68,8 @@ const MyPlan = () => {
       setLoading(true);
       try {
         // Fetch user plans directly from Supabase
-        const { data: plansData, error: plansError } = await supabase
-          .from('user_plans')
+        const { data: plansData, error: plansError } = await (supabase
+          .from('user_plans') as any)
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false });
@@ -79,8 +79,8 @@ const MyPlan = () => {
         
         // If we have plans, fetch recommendations for the first plan
         if (plansData && plansData.length > 0) {
-          const { data: recsData, error: recsError } = await supabase
-            .from('plan_recommendations')
+          const { data: recsData, error: recsError } = await (supabase
+            .from('plan_recommendations') as any)
             .select('*')
             .eq('plan_id', plansData[0].id)
             .order('created_at', { ascending: false });
@@ -136,8 +136,8 @@ const MyPlan = () => {
         completed_at: !rec.completed ? new Date().toISOString() : null
       };
       
-      const { error } = await supabase
-        .from('plan_recommendations')
+      const { error } = await (supabase
+        .from('plan_recommendations') as any)
         .update({
           completed: updatedRec.completed,
           completed_at: updatedRec.completed_at

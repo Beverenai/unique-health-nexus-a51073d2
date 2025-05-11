@@ -88,7 +88,7 @@ const CheckIn = () => {
       
       // Insert directly using the supabase client
       const { data, error } = await supabase
-        .from('health_checkins')
+        .from('health_checkins') as any
         .insert({
           user_id: user.id,
           date: new Date().toISOString().split('T')[0],

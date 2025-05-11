@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -66,28 +65,26 @@ const Dashboard = () => {
         }
         
         // Fetch recommendations directly from Supabase
-        if (user) {
-          const { data: recommendationsData } = await supabase
-            .from('plan_recommendations')
-            .select('*')
-            .eq('completed', false)
-            .limit(3);
-          
-          if (recommendationsData) {
-            setRecommendations(recommendationsData as unknown as PlanRecommendation[]);
-          }
-          
-          // Fetch check-ins directly from Supabase
-          const { data: checkInsData } = await supabase
-            .from('health_checkins')
-            .select('id, date, mood, energy_level, sleep_quality')
-            .eq('user_id', user.id)
-            .order('date', { ascending: false })
-            .limit(5);
-          
-          if (checkInsData) {
-            setCheckIns(checkInsData as unknown as CheckInSummary[]);
-          }
+        const { data: recommendationsData } = await (supabase
+          .from('plan_recommendations') as any)
+          .select('*')
+          .eq('completed', false)
+          .limit(3);
+        
+        if (recommendationsData) {
+          setRecommendations(recommendationsData as unknown as PlanRecommendation[]);
+        }
+        
+        // Fetch check-ins directly from Supabase
+        const { data: checkInsData } = await (supabase
+          .from('health_checkins') as any)
+          .select('id, date, mood, energy_level, sleep_quality')
+          .eq('user_id', user.id)
+          .order('date', { ascending: false })
+          .limit(5);
+        
+        if (checkInsData) {
+          setCheckIns(checkInsData as unknown as CheckInSummary[]);
         }
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -101,9 +98,12 @@ const Dashboard = () => {
   
   const handleMarkRecommendationComplete = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('plan_recommendations')
-        .update({ completed: true, completed_at: new Date().toISOString() })
+      const { error } = await (supabase
+        .from('plan_recommendations') as any)
+        .update({ 
+          completed: true, 
+          completed_at: new Date().toISOString() 
+        })
         .eq('id', id);
       
       if (error) throw error;

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -27,8 +26,8 @@ const DailyReport = () => {
       setLoading(true);
       try {
         // Get all check-ins for the user directly from Supabase
-        const { data, error } = await supabase
-          .from('health_checkins')
+        const { data, error } = await (supabase
+          .from('health_checkins') as any)
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false });
