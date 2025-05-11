@@ -64,7 +64,7 @@ const Dashboard = () => {
           setHistoricalData(historyResult);
         }
         
-        // Fetch recommendations directly from the table
+        // Fetch recommendations directly from the plan_recommendations table
         if (user) {
           const { data: recommendationsData } = await supabase
             .from('plan_recommendations')
@@ -73,10 +73,10 @@ const Dashboard = () => {
             .limit(3);
           
           if (recommendationsData) {
-            setRecommendations(recommendationsData);
+            setRecommendations(recommendationsData as PlanRecommendation[]);
           }
           
-          // Fetch check-ins directly from the table
+          // Fetch check-ins directly from the health_checkins table
           const { data: checkInsData } = await supabase
             .from('health_checkins')
             .select('id, date, mood, energy_level, sleep_quality')
@@ -85,7 +85,7 @@ const Dashboard = () => {
             .limit(5);
           
           if (checkInsData) {
-            setCheckIns(checkInsData);
+            setCheckIns(checkInsData as CheckInSummary[]);
           }
         }
       } catch (error) {
@@ -97,10 +97,6 @@ const Dashboard = () => {
     
     fetchData();
   }, [user]);
-  
-  const handleStartScan = () => {
-    navigate('/scan');
-  };
   
   const handleMarkRecommendationComplete = async (id: string) => {
     try {

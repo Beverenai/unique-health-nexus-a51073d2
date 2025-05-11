@@ -74,7 +74,7 @@ const MyPlan = () => {
           .order('created_at', { ascending: false });
         
         if (plansError) throw plansError;
-        setPlans(plansData || []);
+        setPlans(plansData as Plan[] || []);
         
         // If we have plans, fetch recommendations for the first plan
         if (plansData && plansData.length > 0) {
@@ -85,8 +85,8 @@ const MyPlan = () => {
             .order('created_at', { ascending: false });
           
           if (recsError) throw recsError;
-          setRecommendations(recsData || []);
-          applyFilters(recsData || [], currentTab, categoryFilter);
+          setRecommendations(recsData as Recommendation[] || []);
+          applyFilters(recsData as Recommendation[] || [], currentTab, categoryFilter);
         }
       } catch (error) {
         console.error('Error fetching plans:', error);

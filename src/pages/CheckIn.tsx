@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -84,7 +85,7 @@ const CheckIn = () => {
         .filter(symptom => symptom.selected)
         .map(symptom => symptom.name);
       
-      // Insert directly into the table without using RPC
+      // Insert directly into the health_checkins table
       const { data, error } = await supabase
         .from('health_checkins')
         .insert({

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,7 @@ const DailyReport = () => {
       
       setLoading(true);
       try {
-        // Get all check-ins for the user directly from the table
+        // Get all check-ins for the user directly from the health_checkins table
         const { data, error } = await supabase
           .from('health_checkins')
           .select('*')
@@ -34,7 +35,7 @@ const DailyReport = () => {
         
         if (error) throw error;
         
-        setCheckIns(data || []);
+        setCheckIns(data as CheckIn[] || []);
         
         // Process data for the last 7 days for the chart
         const today = new Date();
