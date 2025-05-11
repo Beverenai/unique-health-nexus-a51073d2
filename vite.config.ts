@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => ({
     componentTagger(),
     VitePWA({ 
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'robots.txt', 'icons/*.png'],
+      includeAssets: ['favicon.ico', 'robots.txt', 'icons/*.png', 'lovable-uploads/*.png'],
       manifest: {
         name: 'Unique Health Nexus',
         short_name: 'Unique',
@@ -27,17 +27,12 @@ export default defineConfig(({ mode }) => ({
         display: 'standalone',
         icons: [
           {
-            src: '/icons/icon-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: '/icons/icon-512x512.png',
+            src: '/lovable-uploads/385afec9-6f8a-4281-9fd7-527f33ad1c96.png',
             sizes: '512x512',
             type: 'image/png'
           },
           {
-            src: '/icons/icon-512x512.png',
+            src: '/lovable-uploads/385afec9-6f8a-4281-9fd7-527f33ad1c96.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
