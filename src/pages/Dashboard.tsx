@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getLatestCoherenceData, getHealthIssues, getHistoricalCoherenceData } from '@/services';
 import { useAuth } from '@/context/AuthContext';
 import { HealthIssue } from '@/types/supabase';
-import { Clock, CalendarClock, PlusCircle, LineChart, ArrowRight, Activity } from 'lucide-react';
+import { Clock, CalendarClock, PlusCircle, LineChart, ArrowRight, Activity, Check } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { toast } from 'sonner';
 import { ResponsiveContainer, LineChart as RechartLineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
@@ -15,14 +14,9 @@ import { nb } from 'date-fns/locale';
 import BodyBalanceDisplay from '@/components/balance/BodyBalanceDisplay';
 import HealthInsightSummary from '@/components/balance/HealthInsightSummary';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PlanRecommendation, HealthCheckIn } from '@/types/database';
 
-interface CheckInSummary {
-  id: string;
-  date: string;
-  mood: number;
-  energy_level: number;
-  sleep_quality: number;
-}
+interface CheckInSummary extends Pick<HealthCheckIn, 'id' | 'date' | 'mood' | 'energy_level' | 'sleep_quality'> {}
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -30,7 +24,7 @@ const Dashboard = () => {
   const [coherenceData, setCoherenceData] = useState<any>(null);
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>([]);
   const [historicalData, setHistoricalData] = useState<any[]>([]);
-  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [recommendations, setRecommendations] = useState<PlanRecommendation[]>([]);
   const [checkIns, setCheckIns] = useState<CheckInSummary[]>([]);
   const [userName, setUserName] = useState('');
   const [loading, setLoading] = useState(true);
@@ -70,36 +64,22 @@ const Dashboard = () => {
           setHistoricalData(historyResult);
         }
         
-        // Fetch recommendations
+        // Fetch recommendations using stored procedure
         if (user) {
-          const { data: planData } = await supabase
-            .from('user_plans')
-            .select('id')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1);
+          const { data: recommendationsData } = await supabase.rpc('get_user_recommendations', {
+            p_user_id: user.id,
+            p_limit: 3
+          });
           
-          if (planData && planData.length > 0) {
-            const { data: recsData } = await supabase
-              .from('plan_recommendations')
-              .select('*')
-              .eq('plan_id', planData[0].id)
-              .eq('completed', false)
-              .order('priority', { ascending: false })
-              .limit(3);
-            
-            if (recsData) {
-              setRecommendations(recsData);
-            }
+          if (recommendationsData) {
+            setRecommendations(recommendationsData);
           }
           
-          // Fetch check-ins
-          const { data: checkInsData } = await supabase
-            .from('health_checkins')
-            .select('id, date, mood, energy_level, sleep_quality')
-            .eq('user_id', user.id)
-            .order('date', { ascending: false })
-            .limit(5);
+          // Fetch check-ins using stored procedure
+          const { data: checkInsData } = await supabase.rpc('get_user_health_checkins_summary', {
+            p_user_id: user.id,
+            p_limit: 5
+          });
           
           if (checkInsData) {
             setCheckIns(checkInsData);
@@ -121,13 +101,9 @@ const Dashboard = () => {
   
   const handleMarkRecommendationComplete = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('plan_recommendations')
-        .update({ 
-          completed: true,
-          completed_at: new Date().toISOString()
-        })
-        .eq('id', id);
+      const { error } = await supabase.rpc('mark_recommendation_complete', {
+        p_recommendation_id: id
+      });
       
       if (error) throw error;
       

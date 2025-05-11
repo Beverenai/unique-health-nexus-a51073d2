@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -9,17 +8,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { ResponsiveContainer, LineChart as RechartsLineChart, Line, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import { HealthCheckIn } from '@/types/database';
 
-interface CheckIn {
-  id: string;
-  date: string;
-  mood: number;
-  energy_level: number;
-  sleep_quality: number;
-  pain_level: number;
-  symptoms: string[];
-  notes: string;
-}
+interface CheckIn extends HealthCheckIn {}
 
 const DailyReport = () => {
   const navigate = useNavigate();
@@ -34,12 +25,10 @@ const DailyReport = () => {
       
       setLoading(true);
       try {
-        // Get all check-ins for the user
-        const { data, error } = await supabase
-          .from('health_checkins')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('date', { ascending: false });
+        // Get all check-ins for the user using a stored procedure instead
+        const { data, error } = await supabase.rpc('get_user_health_checkins', {
+          p_user_id: user.id
+        });
         
         if (error) throw error;
         
@@ -57,7 +46,7 @@ const DailyReport = () => {
           const formattedDate = format(date, 'yyyy-MM-dd');
           
           // Find check-in for this date if it exists
-          const checkIn = data?.find(ci => ci.date === formattedDate) || null;
+          const checkIn = data?.find((ci: CheckIn) => ci.date === formattedDate) || null;
           
           lastWeekData.unshift({
             date: formattedDate,

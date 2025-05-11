@@ -63,18 +63,21 @@ export const getUserPreferences = async () => {
   
   if (!authData.user) return null;
   
-  const { data, error } = await supabase
-    .from('user_preferences')
-    .select('*')
-    .eq('user_id', authData.user.id)
-    .single();
-  
-  if (error) {
-    console.error('Error fetching user preferences:', error);
+  try {
+    const { data, error } = await supabase.rpc('get_user_preferences', {
+      p_user_id: authData.user.id
+    });
+    
+    if (error) {
+      console.error('Error fetching user preferences:', error);
+      return null;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error in getUserPreferences:', error);
     return null;
   }
-  
-  return data;
 };
 
 // Function to update user preferences
@@ -85,15 +88,20 @@ export const updateUserPreferences = async (updates: any) => {
     return { success: false, error: 'Not authenticated' };
   }
   
-  const { data, error } = await supabase
-    .from('user_preferences')
-    .update(updates)
-    .eq('user_id', authData.user.id);
-  
-  if (error) {
-    console.error('Error updating preferences:', error);
-    return { success: false, error: error.message };
+  try {
+    const { data, error } = await supabase.rpc('update_user_preferences', {
+      p_user_id: authData.user.id,
+      p_preferences: updates
+    });
+    
+    if (error) {
+      console.error('Error updating preferences:', error);
+      return { success: false, error: error.message };
+    }
+    
+    return { success: true, data };
+  } catch (error) {
+    console.error('Error in updateUserPreferences:', error);
+    return { success: false, error: 'An unexpected error occurred' };
   }
-  
-  return { success: true, data };
 };
