@@ -7,9 +7,9 @@ export const db = supabase;
 
 // Use type assertions to properly define tables that aren't yet in the generated types
 export const tables = {
-  healthCheckins: () => db.from('health_checkins') as any,
-  userPlans: () => db.from('user_plans') as any,
-  planRecommendations: () => db.from('plan_recommendations') as any,
+  healthCheckins: () => db.from('health_checkins') as unknown as ReturnType<typeof db.from<Database['public']['Tables']['health_checkins']['Row']>>,
+  userPlans: () => db.from('user_plans') as unknown as ReturnType<typeof db.from<Database['public']['Tables']['user_plans']['Row']>>,
+  planRecommendations: () => db.from('plan_recommendations') as unknown as ReturnType<typeof db.from<Database['public']['Tables']['plan_recommendations']['Row']>>,
   chatMessages: () => db.from('chat_messages'),
   healthIssues: () => db.from('health_issues'),
 };
