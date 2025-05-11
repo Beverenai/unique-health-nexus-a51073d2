@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { CoherenceData, HealthIssue } from '@/types/supabase';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,7 +11,7 @@ import ScanDateCard from '@/components/ScanDateCard';
 import OverviewTab from '@/components/home/tabs/OverviewTab';
 import PrioritiesTab from '@/components/home/tabs/PrioritiesTab';
 import FindingsTab from '@/components/home/tabs/FindingsTab';
-import BodyFocusSummary from '@/components/home/BodyFocusSummary';
+import { BodyFocusSummary } from '@/components/home';
 import ActionButtons from '@/components/home/ActionButtons';
 
 // Hardcoded mock data to ensure it always displays
