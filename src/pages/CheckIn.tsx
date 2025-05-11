@@ -85,7 +85,7 @@ const CheckIn = () => {
         .filter(symptom => symptom.selected)
         .map(symptom => symptom.name);
       
-      // Fix: Use proper TypeScript casting syntax with parentheses
+      // Fix: Properly use type assertion with parentheses
       const { data, error } = await (supabase
         .from('health_checkins') as any)
         .insert({

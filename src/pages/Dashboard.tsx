@@ -1,339 +1,277 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getLatestCoherenceData, getHealthIssues, getHistoricalCoherenceData } from '@/services';
-import { useAuth } from '@/context/AuthContext';
-import { HealthIssue } from '@/types/supabase';
-import { Clock, CalendarClock, PlusCircle, LineChart, ArrowRight, Activity, Check } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CalendarIcon, CheckCircle2, Circle, Flame, Heart, ListChecks, LucideIcon, Sparkles, Star } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import { ResponsiveContainer, LineChart as RechartLineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Badge } from "@/components/ui/badge"
+import { Calendar } from "@/components/ui/calendar"
+import { format } from 'date-fns'
+import { nb } from 'date-fns/locale'
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { cn } from "@/lib/utils";
 import { supabase } from '@/integrations/supabase/client';
-import { format } from 'date-fns';
-import { nb } from 'date-fns/locale';
-import BodyBalanceDisplay from '@/components/balance/BodyBalanceDisplay';
-import HealthInsightSummary from '@/components/balance/HealthInsightSummary';
-import { motion, AnimatePresence } from 'framer-motion';
 import { PlanRecommendation, HealthCheckIn } from '@/types/database';
 
-interface CheckInSummary extends Pick<HealthCheckIn, 'id' | 'date' | 'mood' | 'energy_level' | 'sleep_quality'> {}
+interface Recommendation extends PlanRecommendation {}
+
+interface Checkin extends HealthCheckIn {}
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [coherenceData, setCoherenceData] = useState<any>(null);
-  const [healthIssues, setHealthIssues] = useState<HealthIssue[]>([]);
-  const [historicalData, setHistoricalData] = useState<any[]>([]);
-  const [recommendations, setRecommendations] = useState<PlanRecommendation[]>([]);
-  const [checkIns, setCheckIns] = useState<CheckInSummary[]>([]);
-  const [userName, setUserName] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [latestCheckin, setLatestCheckin] = useState<Checkin | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [date, setDate] = React.useState<Date | undefined>(new Date())
   
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        // Fetch user profile
-        if (user) {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('first_name')
-            .eq('id', user.id)
-            .single();
-          
-          if (profileData?.first_name) {
-            setUserName(profileData.first_name);
-          }
-        }
-        
-        // Fetch coherence data
-        const coherenceResult = await getLatestCoherenceData();
-        if (coherenceResult) {
-          setCoherenceData(coherenceResult);
-        }
-        
-        // Fetch health issues
-        const issuesResult = await getHealthIssues();
-        if (issuesResult && issuesResult.length > 0) {
-          setHealthIssues(issuesResult);
-        }
-        
-        // Fetch historical data
-        const historyResult = await getHistoricalCoherenceData();
-        if (historyResult) {
-          setHistoricalData(historyResult);
-        }
-        
-        // Fetch recommendations directly from Supabase
-        const { data: recommendationsData } = await (supabase
-          .from('plan_recommendations') as any)
-          .select('*')
-          .eq('completed', false)
-          .limit(3);
-        
-        if (recommendationsData) {
-          setRecommendations(recommendationsData as unknown as PlanRecommendation[]);
-        }
-        
-        // Fetch check-ins directly from Supabase
-        const { data: checkInsData } = await (supabase
-          .from('health_checkins') as any)
-          .select('id, date, mood, energy_level, sleep_quality')
-          .eq('user_id', user.id)
-          .order('date', { ascending: false })
-          .limit(5);
-        
-        if (checkInsData) {
-          setCheckIns(checkInsData as unknown as CheckInSummary[]);
-        }
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchData();
+    if (user) {
+      setUserId(user.id);
+      fetchRecommendations();
+    }
   }, [user]);
   
-  const handleMarkRecommendationComplete = async (id: string) => {
+  // Fix Supabase queries with proper type assertions
+  const fetchRecommendations = async () => {
+    if (!userId) return;
+    
+    setIsLoading(true);
+    try {
+      const { data, error } = await (supabase
+        .from('plan_recommendations') as any)
+        .select('*')
+        .eq('completed', false)
+        .order('priority', { ascending: false })
+        .limit(3);
+        
+      if (error) throw error;
+      setRecommendations(data as any);
+      
+      // Also fetch the latest checkin
+      const { data: checkinData, error: checkinError } = await (supabase
+        .from('health_checkins') as any)
+        .select('*')
+        .eq('user_id', userId)
+        .order('date', { ascending: false })
+        .limit(1);
+        
+      if (checkinError) {
+        console.error('Error fetching checkin:', checkinError);
+      } else if (checkinData && checkinData.length > 0) {
+        setLatestCheckin(checkinData[0]);
+      }
+    } catch (error) {
+      console.error('Error fetching recommendations:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCompleteRecommendation = async (id: string) => {
     try {
       const { error } = await (supabase
         .from('plan_recommendations') as any)
         .update({ 
-          completed: true, 
-          completed_at: new Date().toISOString() 
+          completed: true,
+          completed_at: new Date().toISOString()
         })
         .eq('id', id);
-      
+        
       if (error) throw error;
       
-      setRecommendations(prev => prev.filter(rec => rec.id !== id));
-      toast.success('Anbefaling markert som utført');
+      setRecommendations(recommendations.filter(rec => rec.id !== id));
+      toast.success('Anbefaling markert som fullført!');
     } catch (error) {
-      console.error('Error marking recommendation as complete:', error);
+      console.error('Error completing recommendation:', error);
       toast.error('Kunne ikke oppdatere anbefalingen');
     }
   };
   
-  if (loading) {
+  const getPriorityIcon = (priority: string): LucideIcon => {
+    switch (priority) {
+      case 'high':
+        return Flame;
+      case 'medium':
+        return Heart;
+      case 'low':
+      default:
+        return Sparkles;
+    }
+  };
+  
+  const formatDate = (dateString: string): string => {
+    try {
+      return format(new Date(dateString), 'PPP', { locale: nb });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Ukjent dato';
+    }
+  };
+  
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9b87f5]"></div>
       </div>
     );
   }
   
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), 'PPP', { locale: nb });
-  };
-  
   return (
     <div className="min-h-screen pb-20">
-      <div className="container max-w-md mx-auto px-4 pt-6">
+      <div className="container max-w-3xl mx-auto px-4 pt-6">
         <header className="mb-6">
           <h1 className="text-2xl font-semibold">
-            Hei, {userName || 'der'}!
+            Dashboard
           </h1>
-          <p className="text-gray-600">
-            Velkommen til din personlige helsedashboard
+          <p className="text-gray-500">
+            Velkommen tilbake! Her er en oversikt over din helse.
           </p>
         </header>
         
-        <motion.div 
-          className="mb-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <BodyBalanceDisplay coherenceData={coherenceData} />
-        </motion.div>
-        
-        {/* Recommendations section */}
-        <section className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-lg font-medium">Anbefalte tiltak</h2>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => navigate('/my-plan')}
-              className="text-xs text-[#9b87f5]"
-            >
-              Se alle <ArrowRight size={14} className="ml-1" />
-            </Button>
-          </div>
-          
-          <AnimatePresence>
-            {recommendations.length > 0 ? (
-              <div className="space-y-3">
-                {recommendations.map((recommendation, index) => (
-                  <motion.div
-                    key={recommendation.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                  >
-                    <Card className="overflow-hidden">
-                      <CardContent className="p-0">
-                        <div className="p-3 flex items-center gap-3">
-                          <div className="flex-shrink-0 h-10 w-10 rounded-full bg-[#9b87f5]/10 flex items-center justify-center">
-                            <Activity size={20} className="text-[#9b87f5]" />
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium">{recommendation.text}</p>
-                            <p className="text-xs text-gray-500">{recommendation.category}</p>
-                          </div>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="text-[#9b87f5] hover:text-[#7a69c8] h-8 w-8 p-0 rounded-full"
-                            onClick={() => handleMarkRecommendationComplete(recommendation.id)}
-                          >
-                            <Check size={18} />
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            ) : (
-              <Card className="bg-gray-50">
-                <CardContent className="p-4 text-center">
-                  <p className="text-gray-500">Ingen anbefalinger å vise</p>
-                </CardContent>
-              </Card>
-            )}
-          </AnimatePresence>
-        </section>
-        
-        {/* Health trends section */}
-        <section className="mb-6">
-          <h2 className="text-lg font-medium mb-2">Din helseutvikling</h2>
-          <Card>
-            <CardContent className="p-4">
-              {historicalData.length > 0 ? (
-                <div className="h-60">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <RechartLineChart data={historicalData.map(d => ({
-                      date: new Date(d.date).toLocaleDateString('nb-NO'),
-                      score: d.score
-                    }))}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                      <XAxis 
-                        dataKey="date" 
-                        tick={{ fontSize: 12 }}
-                        tickLine={false}
-                        axisLine={{ stroke: '#e0e0e0' }}
-                      />
-                      <YAxis 
-                        domain={[0, 100]}
-                        tickCount={5}
-                        tick={{ fontSize: 12 }}
-                        tickLine={false}
-                        axisLine={{ stroke: '#e0e0e0' }}
-                      />
-                      <Tooltip />
-                      <Line 
-                        type="monotone" 
-                        dataKey="score" 
-                        stroke="#9b87f5" 
-                        strokeWidth={2}
-                        dot={{ r: 4, fill: '#9b87f5' }}
-                        activeDot={{ r: 6, fill: '#7a69c8' }}
-                      />
-                    </RechartLineChart>
-                  </ResponsiveContainer>
-                </div>
-              ) : (
-                <div className="h-60 flex items-center justify-center">
-                  <p className="text-gray-500">Ingen historiske data å vise</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </section>
-        
-        {/* Quick actions */}
-        <section className="mb-6">
-          <h2 className="text-lg font-medium mb-2">Hurtighandlinger</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <Card className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => navigate('/scan')}>
-              <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                <div className="h-12 w-12 rounded-full bg-[#9b87f5]/10 flex items-center justify-center mb-2">
-                  <PlusCircle size={24} className="text-[#9b87f5]" />
-                </div>
-                <h3 className="font-medium">Ny skanning</h3>
-              </CardContent>
-            </Card>
-            
-            <Card className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => navigate('/checkin')}>
-              <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center mb-2">
-                  <CalendarClock size={24} className="text-green-600" />
-                </div>
-                <h3 className="font-medium">Dagslogg</h3>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-        
-        {/* Recent check-ins */}
-        <section className="mb-6">
-          <h2 className="text-lg font-medium mb-2">Nylige dagslogger</h2>
-          {checkIns.length > 0 ? (
-            <div className="space-y-3">
-              {checkIns.map((checkIn) => (
-                <Card key={checkIn.id} className="overflow-hidden">
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-medium">{format(new Date(checkIn.date), 'dd. MMMM', { locale: nb })}</h3>
-                      <div className="flex">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-50 text-blue-600 mr-1">
-                          Søvn: {checkIn.sleep_quality}/10
-                        </span>
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-50 text-yellow-600">
-                          Energi: {checkIn.energy_level}/10
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <Clock size={14} className="text-gray-400 mr-1" />
-                      </div>
-                      <span className="text-xs text-gray-500">Humør: {checkIn.mood}/10</span>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <Card className="bg-gray-50">
-              <CardContent className="p-4 text-center">
-                <p className="text-gray-500">Ingen dagslogger registrert</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column */}
+          <div className="space-y-6">
+            {/* Quick Actions */}
+            <Card className="bg-white/70 backdrop-blur border-gray-100/20 shadow-sm">
+              <CardHeader>
+                <CardTitle>Hurtighandlinger</CardTitle>
+                <CardDescription>Kom raskt i gang med disse handlingene.</CardDescription>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="mt-2"
+                  className="w-full justify-start bg-[#9b87f5] hover:bg-[#8a76e5]"
                   onClick={() => navigate('/checkin')}
                 >
-                  Opprett første dagslogg
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  Dagslogg
+                </Button>
+                <Button 
+                  className="w-full justify-start bg-[#9b87f5] hover:bg-[#8a76e5]"
+                  onClick={() => navigate('/scan')}
+                >
+                  <ListChecks className="mr-2 h-4 w-4" />
+                  Helsesjekk
                 </Button>
               </CardContent>
             </Card>
-          )}
-        </section>
-        
-        {/* Health insights */}
-        <section className="mb-10">
-          <h2 className="text-lg font-medium mb-2">Helseprioriteringer</h2>
-          {healthIssues.length > 0 && (
-            <HealthInsightSummary 
-              healthIssues={healthIssues.sort((a, b) => b.load - a.load).slice(0, 3)} 
-            />
-          )}
-        </section>
+            
+            {/* Today's Recommendations */}
+            <Card className="bg-white/70 backdrop-blur border-gray-100/20 shadow-sm">
+              <CardHeader>
+                <CardTitle>Dagens anbefalinger</CardTitle>
+                <CardDescription>Her er dine anbefalinger for i dag.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ScrollArea className="h-[300px] w-full rounded-md border">
+                  <div className="space-y-3 p-3">
+                    {recommendations.length > 0 ? (
+                      recommendations.map(rec => (
+                        <div key={rec.id} className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <getPriorityIcon className="mr-2 h-4 w-4 text-gray-500" />
+                            <span className="text-sm">{rec.text}</span>
+                          </div>
+                          <Button 
+                            variant="outline" 
+                            size="icon"
+                            onClick={() => handleCompleteRecommendation(rec.id)}
+                          >
+                            <CheckCircle2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-4">
+                        Ingen anbefalinger for i dag!
+                      </div>
+                    )}
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Calendar */}
+            <Card className="bg-white/70 backdrop-blur border-gray-100/20 shadow-sm">
+              <CardHeader>
+                <CardTitle>Kalender</CardTitle>
+                <CardDescription>Se dine dagslogger og avtaler.</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-6">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !date && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {date ? formatDate(date.toISOString()) : <span>Velg en dato</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={setDate}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("2023-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </CardContent>
+            </Card>
+            
+            {/* Latest Check-in */}
+            <Card className="bg-white/70 backdrop-blur border-gray-100/20 shadow-sm">
+              <CardHeader>
+                <CardTitle>Siste dagslogg</CardTitle>
+                <CardDescription>Siste registrerte dagslogg.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {latestCheckin ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Humør:</span>
+                      <span className="text-sm">{latestCheckin.mood}/10</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Energi:</span>
+                      <span className="text-sm">{latestCheckin.energy_level}/10</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Søvn:</span>
+                      <span className="text-sm">{latestCheckin.sleep_quality}/10</span>
+                    </div>
+                    <Button 
+                      variant="secondary"
+                      className="w-full"
+                      onClick={() => navigate('/daily-report')}
+                    >
+                      Se full rapport
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    Ingen dagslogger registrert ennå.
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

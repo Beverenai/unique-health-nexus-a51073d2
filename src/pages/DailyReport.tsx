@@ -25,7 +25,7 @@ const DailyReport = () => {
       
       setLoading(true);
       try {
-        // Get all check-ins for the user directly from Supabase
+        // Get all check-ins for the user directly from Supabase with type assertion
         const { data, error } = await (supabase
           .from('health_checkins') as any)
           .select('*')

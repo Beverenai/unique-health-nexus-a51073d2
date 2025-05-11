@@ -7,7 +7,7 @@ export const db = supabase;
 
 // Type-safe table accessors with proper type casting
 export const tables = {
-  healthCheckins: () => supabase.from('health_checkins'),
-  userPlans: () => supabase.from('user_plans'),
-  planRecommendations: () => supabase.from('plan_recommendations'),
+  healthCheckins: () => supabase.from('health_checkins') as any,
+  userPlans: () => supabase.from('user_plans') as any,
+  planRecommendations: () => supabase.from('plan_recommendations') as any,
 };
