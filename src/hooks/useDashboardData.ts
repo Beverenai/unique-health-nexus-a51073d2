@@ -51,7 +51,7 @@ export const useDashboardData = () => {
         .limit(3);
         
       if (recommendationError) throw recommendationError;
-      setRecommendations(recommendationData as any);
+      setRecommendations(recommendationData as unknown as Recommendation[]);
       
       // Fetch the latest checkin
       const { data: checkinData, error: checkinError } = await tables.healthCheckins()
@@ -79,7 +79,7 @@ export const useDashboardData = () => {
         .update({ 
           completed: true,
           completed_at: new Date().toISOString()
-        })
+        } as any)
         .eq('id', id);
         
       if (error) throw error;

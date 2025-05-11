@@ -58,7 +58,7 @@ export const useCheckIn = () => {
           pain_level: painLevel > 0 ? painLevel : null,
           symptoms: selectedSymptoms.length > 0 ? selectedSymptoms : null,
           notes: notes || null
-        });
+        } as any);
         
       if (error) throw error;
       
