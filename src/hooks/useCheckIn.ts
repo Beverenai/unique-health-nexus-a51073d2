@@ -1,10 +1,10 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { Symptom } from '@/components/check-in/SymptomsSection';
+import { tables } from '@/integrations/supabase/client-extensions';
 
 const commonSymptoms: Symptom[] = [
   { id: '1', name: 'Hodepine', selected: false },
@@ -48,8 +48,7 @@ export const useCheckIn = () => {
         .filter(symptom => symptom.selected)
         .map(symptom => symptom.name);
       
-      const { data, error } = await supabase
-        .from('health_checkins')
+      const { data, error } = await tables.healthCheckins()
         .insert({
           user_id: user.id,
           date: new Date().toISOString().split('T')[0],
@@ -59,7 +58,7 @@ export const useCheckIn = () => {
           pain_level: painLevel > 0 ? painLevel : null,
           symptoms: selectedSymptoms.length > 0 ? selectedSymptoms : null,
           notes: notes || null
-        }) as any;
+        });
         
       if (error) throw error;
       
