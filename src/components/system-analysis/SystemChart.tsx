@@ -8,13 +8,26 @@ import SystemChartTooltip from './SystemChartTooltip';
 
 interface SystemChartProps {
   data: ChartData[];
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
 }
 
 /**
  * A pie chart component that displays system load data
  */
-const SystemChart: React.FC<SystemChartProps> = ({ data }) => {
+const SystemChart: React.FC<SystemChartProps> = ({ data, size = 'md', className = '' }) => {
   const { containerVariants } = useChartAnimation();
+  
+  // Determine chart dimensions based on size prop
+  const getDimensions = () => {
+    switch (size) {
+      case 'sm': return { width: 'w-24', height: 'h-24', inner: 20, outer: 30 };
+      case 'lg': return { width: 'w-40', height: 'h-40', inner: 30, outer: 50 };
+      default: return { width: 'w-32', height: 'h-32', inner: 25, outer: 40 };
+    }
+  };
+  
+  const { width, height, inner, outer } = getDimensions();
 
   // Custom tooltip renderer
   const renderTooltip = (props: any) => {
@@ -23,7 +36,7 @@ const SystemChart: React.FC<SystemChartProps> = ({ data }) => {
 
   return (
     <motion.div
-      className="w-32 h-32"
+      className={`${width} ${height} ${className}`}
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -34,8 +47,8 @@ const SystemChart: React.FC<SystemChartProps> = ({ data }) => {
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius={25}
-            outerRadius={40}
+            innerRadius={inner}
+            outerRadius={outer}
             paddingAngle={2}
             dataKey="value"
             animationBegin={300}

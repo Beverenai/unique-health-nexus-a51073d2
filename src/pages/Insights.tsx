@@ -1,42 +1,69 @@
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useEffect, useState } from 'react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { HealthIssue } from '@/types/supabase';
-import { useEffect, useState } from 'react';
 import { getHealthIssues } from '@/services/healthIssueService';
+import { getHealthSystems, HealthSystemItem } from '@/services/healthSystemService';
 import { seedDemoData } from '@/services/demoDataService';
 import { mockHealthIssues } from '@/data/mockData';
-import ConnectionList from '@/components/insight/ConnectionList';
-import RecommendationList from '@/components/insight/RecommendationList';
 import { getSystemConnections } from '@/utils/systemUtils';
-import ConnectionChart from '@/components/insight/ConnectionChart';
+import InsightsSummaryCard from '@/components/insight/InsightsSummaryCard';
+import SystemConnectionsCard from '@/components/insight/SystemConnectionsCard';
+import RecommendedActionsCard from '@/components/insight/RecommendedActionsCard';
 import HealthSystemGrid from '@/components/health/HealthSystemGrid';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { getHealthSystems, HealthSystemItem } from '@/services/healthSystemService';
-import InsightCard from '@/components/InsightCard';
 
 const Insights: React.FC = () => {
   // Initialize with the correct mock data that now matches the expected type
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
   const [healthSystemData, setHealthSystemData] = useState<HealthSystemItem[]>([]);
-  const [recommendations, setRecommendations] = useState<{color: string, text: string, importance?: 'high' | 'medium' | 'low', explanation?: string}[]>([
+  const [recommendations, setRecommendations] = useState<{
+    color: string; 
+    text: string; 
+    importance?: 'high' | 'medium' | 'low'; 
+    explanation?: string;
+    category?: string;
+  }[]>([
     { 
       color: "bg-blue-50", 
       text: "Støtt nervesystemet med magnesium og B-vitaminer for å redusere overbelastning.", 
       importance: "high",
-      explanation: "Magnesium og B-vitaminer er essensielle for nervefunksjon og kan hjelpe med å redusere stress og nervøsitet."
+      explanation: "Magnesium og B-vitaminer er essensielle for nervefunksjon og kan hjelpe med å redusere stress og nervøsitet.",
+      category: "Tilskudd"
     },
     { 
       color: "bg-green-50", 
       text: "Forbedre tarmfloraen med daglig inntak av fermentert mat og probiotika.", 
       importance: "medium",
-      explanation: "Fermentert mat inneholder levende bakteriekulturer som bidrar til å gjenopprette en sunn tarmflora."
+      explanation: "Fermentert mat inneholder levende bakteriekulturer som bidrar til å gjenopprette en sunn tarmflora.",
+      category: "Kosthold"
     },
     { 
       color: "bg-purple-50", 
       text: "Prøv regelmessig yoga eller meditasjon for å balansere hormonsystemet.", 
       importance: "low",
-      explanation: "Mindfulness-øvelser kan bidra til å redusere stresshormoner og skape bedre balanse i hormonsystemet."
+      explanation: "Mindfulness-øvelser kan bidra til å redusere stresshormoner og skape bedre balanse i hormonsystemet.",
+      category: "Stress"
+    },
+    { 
+      color: "bg-amber-50", 
+      text: "Reduser inntak av prosessert mat og sukker i 2 uker.",
+      importance: "high",
+      explanation: "Prosessert mat og sukker kan bidra til betennelse i kroppen og forverre tarmfloraproblemer.",
+      category: "Kosthold"
+    },
+    { 
+      color: "bg-red-50", 
+      text: "Ta 15 minutters gåtur etter hvert måltid for å støtte fordøyelsen.",
+      importance: "medium",
+      explanation: "Lett fysisk aktivitet etter måltider kan forbedre blodsirkulasjonen og støtte fordøyelsesprosessen.",
+      category: "Bevegelse"
+    },
+    { 
+      color: "bg-indigo-50", 
+      text: "Sørg for 7-8 timer kvalitetssøvn hver natt for nervesystemet.",
+      importance: "high",
+      explanation: "Søvn er avgjørende for nervesystemets restitusjon og kroppens generelle helbredelsesprosesser.",
+      category: "Søvn"
     }
   ]);
   
@@ -73,32 +100,23 @@ const Insights: React.FC = () => {
             <p className="text-gray-500 text-center text-sm">Sammenhengen mellom dine helseutfordringer</p>
           </div>
           
-          <InsightCard healthIssues={healthIssues} />
+          {/* Main insights summary */}
+          <InsightsSummaryCard healthIssues={healthIssues} />
           
-          <HealthSystemGrid 
-            healthData={healthSystemData}
-            title="Kroppssystemer"
-            description="Trykk på en kategori for å se systemene innen denne kategorien"
-          />
+          {/* System connections */}
+          <SystemConnectionsCard connections={connections} />
           
-          <Card className="mb-6 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium">Sammenhenger</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ConnectionChart healthIssues={healthIssues} />
-              <ConnectionList connections={connections} />
-            </CardContent>
-          </Card>
+          {/* Recommended actions */}
+          <RecommendedActionsCard recommendations={recommendations} />
           
-          <Card className="mb-6 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium">Anbefalte tiltak</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RecommendationList recommendations={recommendations} />
-            </CardContent>
-          </Card>
+          {/* Health systems grid */}
+          <div className="mb-6">
+            <HealthSystemGrid 
+              healthData={healthSystemData}
+              title="Kroppssystemer"
+              description="Trykk på en kategori for å se systemene innen denne kategorien"
+            />
+          </div>
         </main>
       </ScrollArea>
     </div>
