@@ -1,0 +1,37 @@
+
+import React, { useRef } from 'react';
+import { motion } from 'framer-motion';
+import { usePullToRefresh } from './usePullToRefresh';
+import { PullIndicator } from './PullIndicator';
+import { PullToRefreshProps } from './types';
+
+export const PullToRefresh: React.FC<PullToRefreshProps> = ({ 
+  onRefresh, 
+  children, 
+  pullDistance = 80,
+  className = ''
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const {
+    refreshing,
+    springY,
+    rotate,
+  } = usePullToRefresh(onRefresh, pullDistance, containerRef);
+  
+  return (
+    <div ref={containerRef} className={`relative overflow-hidden ${className}`}>
+      {/* Pull indicator */}
+      <PullIndicator 
+        springY={springY} 
+        rotate={rotate} 
+        refreshing={refreshing} 
+      />
+      
+      {/* Content */}
+      <motion.div style={{ y: springY }}>
+        {children}
+      </motion.div>
+    </div>
+  );
+};
