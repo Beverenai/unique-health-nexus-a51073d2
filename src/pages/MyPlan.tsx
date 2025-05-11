@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarClock, CheckCircle2, Flame, ListChecks, Plus, ThumbsUp } from 'lucide-react';
+import { ArrowLeft, CalendarClock, CheckCircle2, Flame, ListChecks, Plus, ThumbsUp } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { format, isPast, parseISO } from 'date-fns';
@@ -36,12 +36,12 @@ const MyPlan = () => {
     
     setIsLoading(true);
     try {
-      const { data, error } = await (supabase
-        .from('user_plans') as any)
+      const { data, error } = await supabase
+        .from('user_plans')
         .select('*')
         .eq('user_id', user.id)
         .eq('status', 'active')
-        .single();
+        .single() as any;
         
       if (error && error.code !== 'PGRST116') { // PGRST116 is the "no rows returned" error code
         throw error;
@@ -64,11 +64,11 @@ const MyPlan = () => {
   
   const fetchRecommendations = async (planId: string) => {
     try {
-      const { data, error } = await (supabase
-        .from('plan_recommendations') as any)
+      const { data, error } = await supabase
+        .from('plan_recommendations')
         .select('*')
         .eq('plan_id', planId)
-        .order('priority', { ascending: false });
+        .order('priority', { ascending: false }) as any;
         
       if (error) throw error;
       setRecommendations(data);
@@ -87,8 +87,8 @@ const MyPlan = () => {
       const endDate = new Date();
       endDate.setDate(startDate.getDate() + 30); // Default plan duration: 30 days
       
-      const { data, error } = await (supabase
-        .from('user_plans') as any)
+      const { data, error } = await supabase
+        .from('user_plans')
         .insert({
           user_id: user.id,
           title: 'Standard helseplan',
@@ -98,7 +98,7 @@ const MyPlan = () => {
           status: 'active'
         })
         .select()
-        .single();
+        .single() as any;
         
       if (error) throw error;
       

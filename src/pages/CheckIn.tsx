@@ -85,9 +85,9 @@ const CheckIn = () => {
         .filter(symptom => symptom.selected)
         .map(symptom => symptom.name);
       
-      // Fix: Properly use type assertion with parentheses
-      const { data, error } = await (supabase
-        .from('health_checkins') as any)
+      // Add proper parentheses around the type assertion
+      const { data, error } = await supabase
+        .from('health_checkins')
         .insert({
           user_id: user.id,
           date: new Date().toISOString().split('T')[0],
@@ -97,8 +97,7 @@ const CheckIn = () => {
           pain_level: painLevel > 0 ? painLevel : null,
           symptoms: selectedSymptoms.length > 0 ? selectedSymptoms : null,
           notes: notes || null
-        })
-        .select();
+        }) as any;
         
       if (error) throw error;
       

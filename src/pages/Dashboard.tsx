@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarIcon, CheckCircle2, Circle, Flame, Heart, ListChecks, LucideIcon, Sparkles, Star } from 'lucide-react';
+import { CalendarIcon, CheckCircle2, Circle, Flame, Heart, ListChecks, Sparkles, Star } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { Progress } from "@/components/ui/progress";
@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { supabase } from '@/integrations/supabase/client';
 import { PlanRecommendation, HealthCheckIn } from '@/types/database';
+import { LucideIcon } from 'lucide-react';
 
 interface Recommendation extends PlanRecommendation {}
 
@@ -37,14 +38,13 @@ const Dashboard = () => {
     }
   }, [user]);
   
-  // Fix Supabase queries with proper type assertions
   const fetchRecommendations = async () => {
     if (!userId) return;
     
     setIsLoading(true);
     try {
-      const { data, error } = await (supabase
-        .from('plan_recommendations') as any)
+      const { data, error } = await supabase
+        .from('plan_recommendations')
         .select('*')
         .eq('completed', false)
         .order('priority', { ascending: false })
@@ -54,8 +54,8 @@ const Dashboard = () => {
       setRecommendations(data as any);
       
       // Also fetch the latest checkin
-      const { data: checkinData, error: checkinError } = await (supabase
-        .from('health_checkins') as any)
+      const { data: checkinData, error: checkinError } = await supabase
+        .from('health_checkins')
         .select('*')
         .eq('user_id', userId)
         .order('date', { ascending: false })
@@ -64,7 +64,7 @@ const Dashboard = () => {
       if (checkinError) {
         console.error('Error fetching checkin:', checkinError);
       } else if (checkinData && checkinData.length > 0) {
-        setLatestCheckin(checkinData[0]);
+        setLatestCheckin(checkinData[0] as any);
       }
     } catch (error) {
       console.error('Error fetching recommendations:', error);
@@ -75,8 +75,8 @@ const Dashboard = () => {
 
   const handleCompleteRecommendation = async (id: string) => {
     try {
-      const { error } = await (supabase
-        .from('plan_recommendations') as any)
+      const { error } = await supabase
+        .from('plan_recommendations')
         .update({ 
           completed: true,
           completed_at: new Date().toISOString()
@@ -174,7 +174,7 @@ const Dashboard = () => {
                       recommendations.map(rec => (
                         <div key={rec.id} className="flex items-center justify-between">
                           <div className="flex items-center">
-                            <getPriorityIcon className="mr-2 h-4 w-4 text-gray-500" />
+                            {React.createElement(getPriorityIcon(rec.priority), { className: "mr-2 h-4 w-4 text-gray-500" })}
                             <span className="text-sm">{rec.text}</span>
                           </div>
                           <Button 

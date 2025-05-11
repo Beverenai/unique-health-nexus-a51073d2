@@ -25,12 +25,12 @@ const DailyReport = () => {
       
       setLoading(true);
       try {
-        // Get all check-ins for the user directly from Supabase with type assertion
-        const { data, error } = await (supabase
-          .from('health_checkins') as any)
+        // Get all check-ins for the user with proper type assertion
+        const { data, error } = await supabase
+          .from('health_checkins')
           .select('*')
           .eq('user_id', user.id)
-          .order('date', { ascending: false });
+          .order('date', { ascending: false }) as any;
         
         if (error) throw error;
         
