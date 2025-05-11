@@ -56,16 +56,18 @@ const RecommendationList: React.FC<RecommendationListProps> = ({ recommendations
         {recommendations.map((recommendation, index) => (
           <motion.div 
             key={index}
-            className={`flex items-start backdrop-blur-sm ${recommendation.color} p-4 rounded-xl shadow-sm border border-gray-50/20`}
             variants={itemVariants}
             whileHover={{ 
               scale: 1.01, 
               boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" 
             }}
             transition={{ type: "spring", stiffness: 400 }}
+            className="group rounded-xl bg-gradient-to-r from-[#f8f8f8] to-[#f1f1f5] p-[1px] shadow-sm"
           >
-            <div className={`flex-shrink-0 w-1.5 h-1.5 rounded-full ${recommendation.color.replace('bg-', '').replace('-50', '-400')} mt-1.5 mr-2`}></div>
-            <span className="text-gray-700 text-sm">{recommendation.text}</span>
+            <div className={`flex items-center gap-2.5 rounded-xl bg-white px-3 py-3`}>
+              <div className={`flex-shrink-0 h-2 w-2 rounded-full ${recommendation.color.replace('bg-', 'bg-').replace('-50', '-400')} mt-0.5`}></div>
+              <span className="text-sm text-gray-700 leading-tight">{recommendation.text}</span>
+            </div>
           </motion.div>
         ))}
       </div>

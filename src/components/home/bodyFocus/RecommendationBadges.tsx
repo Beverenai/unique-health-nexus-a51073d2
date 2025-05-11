@@ -2,7 +2,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Brain } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { HealthIssue } from '@/types/supabase';
 import { getMainRecommendation, getSecondaryRecommendation } from './utils';
 
@@ -25,25 +24,34 @@ const RecommendationBadges: React.FC<RecommendationBadgesProps> = ({
       <div className="text-xs font-medium uppercase text-gray-500 mb-2">
         Anbefalinger
       </div>
-      <Badge 
-        variant="outline" 
-        className="mb-2 block bg-[#9b87f5]/10 text-[#9b87f5] hover:bg-[#9b87f5]/20 border-[#9b87f5]/20 text-sm py-1.5 px-3"
+      
+      <motion.div 
+        className="group mb-2 rounded-xl bg-gradient-to-r from-[#f2f2f7] to-[#f5f5fa] p-[1px] shadow-sm"
+        whileHover={{ scale: 1.01 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
       >
-        <Heart size={14} className="mr-1" /> {mainRecommendation}
-      </Badge>
+        <div className="flex items-center gap-2.5 rounded-xl bg-white px-3 py-2.5">
+          <div className="flex-shrink-0 h-6 w-6 rounded-full bg-[#9b87f5]/10 flex items-center justify-center">
+            <Heart size={14} className="text-[#9b87f5]" />
+          </div>
+          <span className="text-sm text-gray-700 font-medium leading-tight">{mainRecommendation}</span>
+        </div>
+      </motion.div>
       
       {secondaryRecommendation && isExpanded && (
         <motion.div
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
+          className="group rounded-xl bg-gradient-to-r from-[#f8f8f8] to-[#f1f1f5] p-[1px] shadow-sm"
+          whileHover={{ scale: 1.01 }}
         >
-          <Badge 
-            variant="outline" 
-            className="block bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-200 text-sm py-1.5 px-3"
-          >
-            <Brain size={14} className="mr-1" /> {secondaryRecommendation}
-          </Badge>
+          <div className="flex items-center gap-2.5 rounded-xl bg-white px-3 py-2.5">
+            <div className="flex-shrink-0 h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center">
+              <Brain size={14} className="text-gray-500" />
+            </div>
+            <span className="text-sm text-gray-600 font-medium leading-tight">{secondaryRecommendation}</span>
+          </div>
         </motion.div>
       )}
     </motion.div>
