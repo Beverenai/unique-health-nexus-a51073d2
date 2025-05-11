@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, BarChart2, History, User, ListTodo } from 'lucide-react';
+import { Home, BarChart2, History, User, ListTodo, CalendarClock, LayoutDashboard } from 'lucide-react';
 
 const BottomNavigation = () => {
   const location = useLocation();
@@ -16,22 +16,22 @@ const BottomNavigation = () => {
       active: currentPath === '/'
     },
     { 
+      path: '/dashboard', 
+      label: 'Dashboard', 
+      icon: <LayoutDashboard size={22} />,
+      active: currentPath === '/dashboard'
+    },
+    { 
       path: '/insights', 
       label: 'Innsikt', 
       icon: <BarChart2 size={22} />,
       active: currentPath === '/insights'
     },
     { 
-      path: '/my-plan', 
-      label: 'Min plan', 
-      icon: <ListTodo size={22} />,
-      active: currentPath === '/my-plan'
-    },
-    { 
-      path: '/history', 
-      label: 'Historikk', 
-      icon: <History size={22} />,
-      active: currentPath === '/history'
+      path: '/checkin', 
+      label: 'Dagslogg', 
+      icon: <CalendarClock size={22} />,
+      active: currentPath === '/checkin'
     },
     { 
       path: '/profile', 

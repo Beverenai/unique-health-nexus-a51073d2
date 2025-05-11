@@ -1,9 +1,10 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useState, useEffect, createContext } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { seedHistoricalData } from '@/services/supabaseService';
 import BottomNavigation from "./components/navigation/BottomNavigation";
@@ -18,14 +19,32 @@ import NotFound from "./pages/NotFound";
 import Onboarding from "./components/Onboarding";
 import HealthSystemDetail from "./pages/HealthSystemDetail";
 import MyPlan from "./pages/MyPlan";
+import CheckIn from "./pages/CheckIn";
+import DailyReport from "./pages/DailyReport";
+import ScanProcess from "./pages/ScanProcess";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
 const queryClient = new QueryClient();
 
-const App = () => {
-  const [session, setSession] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+// Protected route component that redirects to login if not authenticated
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { session, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="flex items-center justify-center h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+    </div>;
+  }
+  
+  return session ? <>{children}</> : <Navigate to="/login" />;
+};
+
+const AppContent = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const isMobile = useIsMobile();
+  const { session } = useAuth();
   
   useEffect(() => {
     // Check if onboarding has been completed
@@ -38,56 +57,56 @@ const App = () => {
       // Also seed historical data for the demo
       seedHistoricalData();
     }
-    
-    // Still check auth just to have the session if the user is logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setLoading(false);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
   }, []);
 
   const renderContent = () => (
     <div className="min-h-screen flex flex-col">
       <div className="flex-grow pb-16">
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/insights" element={<Insights />} />
-          <Route path="/issue/:issueId" element={<IssueDetail />} />
-          <Route path="/priority/:priorityId" element={<PriorityDetail />} />
-          <Route path="/health-system/:systemId" element={<HealthSystemDetail />} />
-          <Route path="/my-plan" element={<MyPlan />} />
+          <Route path="/login" element={<Login />} />
+          
+          {/* Protected routes */}
+          <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/insights" element={<ProtectedRoute><Insights /></ProtectedRoute>} />
+          <Route path="/issue/:issueId" element={<ProtectedRoute><IssueDetail /></ProtectedRoute>} />
+          <Route path="/priority/:priorityId" element={<ProtectedRoute><PriorityDetail /></ProtectedRoute>} />
+          <Route path="/health-system/:systemId" element={<ProtectedRoute><HealthSystemDetail /></ProtectedRoute>} />
+          <Route path="/my-plan" element={<ProtectedRoute><MyPlan /></ProtectedRoute>} />
+          <Route path="/checkin" element={<ProtectedRoute><CheckIn /></ProtectedRoute>} />
+          <Route path="/daily-report" element={<ProtectedRoute><DailyReport /></ProtectedRoute>} />
+          <Route path="/scan" element={<ProtectedRoute><ScanProcess /></ProtectedRoute>} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
-      <BottomNavigation />
+      {session && <BottomNavigation />}
     </div>
   );
 
   return (
+    <div className="font-sans bg-gradient-to-b from-white to-[#F8F8FC]">
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        {showOnboarding && (
+          <Onboarding onComplete={() => setShowOnboarding(false)} />
+        )}
+        {renderContent()}
+      </BrowserRouter>
+    </div>
+  );
+};
+
+const App = () => {
+  return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="font-sans bg-gradient-to-b from-white to-[#F8F8FC]">
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            {showOnboarding && (
-              <Onboarding onComplete={() => setShowOnboarding(false)} />
-            )}
-            {renderContent()}
-          </BrowserRouter>
-        </div>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

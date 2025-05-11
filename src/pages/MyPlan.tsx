@@ -1,356 +1,463 @@
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  CheckCircle, 
-  Calendar, 
-  ListTodo, 
-  ChevronRight, 
-  MoreHorizontal,
-  Heart,
-  Brain
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { HealthIssue } from '@/types/supabase';
-import { getHealthIssues } from '@/services';
-import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Check, ArrowLeft, Plus, Clock, Calendar, ListChecks, Filter } from 'lucide-react';
+import { toast } from 'sonner';
+import { motion } from 'framer-motion';
+import { Badge } from "@/components/ui/badge";
+import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { format } from 'date-fns';
+import { nb } from 'date-fns/locale';
 
-// Types for recommendations
-interface PlanItem {
+interface Plan {
+  id: string;
+  title: string;
+  description: string | null;
+  created_at: string;
+}
+
+interface Recommendation {
   id: string;
   text: string;
-  category: 'daily' | 'weekly' | 'longTerm';
-  priority: 'high' | 'medium' | 'low';
+  category: string;
+  priority: string;
   completed: boolean;
-  source?: string;
-  dueDate?: string;
+  completed_at: string | null;
+  due_date: string | null;
+  created_at: string;
+  issue_id: string | null;
 }
+
+const getIconForCategory = (category: string) => {
+  const categoryIconMap: Record<string, React.ReactNode> = {
+    'Kosthold': <div className="bg-green-100 p-2 rounded-full"><Utensils size={16} className="text-green-600" /></div>,
+    'Mosjon': <div className="bg-blue-100 p-2 rounded-full"><Activity size={16} className="text-blue-600" /></div>,
+    'Søvn': <div className="bg-purple-100 p-2 rounded-full"><Moon size={16} className="text-purple-600" /></div>,
+    'Stress': <div className="bg-amber-100 p-2 rounded-full"><Wind size={16} className="text-amber-600" /></div>,
+    'Tilskudd': <div className="bg-red-100 p-2 rounded-full"><Pills size={16} className="text-red-600" /></div>,
+    'Hydration': <div className="bg-cyan-100 p-2 rounded-full"><Droplets size={16} className="text-cyan-600" /></div>,
+    'Healing': <div className="bg-pink-100 p-2 rounded-full"><Heart size={16} className="text-pink-600" /></div>,
+  };
+  
+  return categoryIconMap[category] || <div className="bg-gray-100 p-2 rounded-full"><ListChecks size={16} className="text-gray-600" /></div>;
+};
+
+const PriorityBadge = ({ priority }: { priority: string }) => {
+  const colorMap: Record<string, string> = {
+    'high': 'bg-red-100 text-red-700',
+    'medium': 'bg-amber-100 text-amber-700',
+    'low': 'bg-green-100 text-green-700'
+  };
+  
+  return (
+    <Badge variant="outline" className={`${colorMap[priority] || 'bg-gray-100 text-gray-700'}`}>
+      {priority === 'high' ? 'Høy' : priority === 'medium' ? 'Middels' : 'Lav'}
+    </Badge>
+  );
+};
 
 const MyPlan = () => {
   const navigate = useNavigate();
-  const [healthIssues, setHealthIssues] = useState<HealthIssue[]>([]);
-  const [planItems, setPlanItems] = useState<PlanItem[]>([]);
-  const [activeFilter, setActiveFilter] = useState<'all' | 'daily' | 'weekly' | 'longTerm'>('all');
+  const { user } = useAuth();
+  const [currentTab, setCurrentTab] = useState('all');
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [filteredRecommendations, setFilteredRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  
   useEffect(() => {
-    const loadHealthData = async () => {
+    const fetchPlans = async () => {
+      if (!user) return;
+      
+      setLoading(true);
       try {
-        const issues = await getHealthIssues();
-        setHealthIssues(issues);
+        // Fetch user plans
+        const { data: plansData, error: plansError } = await supabase
+          .from('user_plans')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
         
-        // Generate plan items from health issues
-        const generatedItems: PlanItem[] = [];
+        if (plansError) throw plansError;
+        setPlans(plansData || []);
         
-        // Process recommendations from health issues
-        issues.forEach(issue => {
-          if (issue.recommendations) {
-            issue.recommendations.forEach((rec, index) => {
-              generatedItems.push({
-                id: `${issue.id}-rec-${index}`,
-                text: rec,
-                category: index % 3 === 0 ? 'daily' : index % 3 === 1 ? 'weekly' : 'longTerm',
-                priority: issue.load > 60 ? 'high' : issue.load > 30 ? 'medium' : 'low',
-                completed: false,
-                source: issue.name
-              });
-            });
-          }
-        });
-        
-        // Add some general health recommendations
-        generatedItems.push({
-          id: 'general-1',
-          text: 'Drikk minst 2 liter vann daglig',
-          category: 'daily',
-          priority: 'medium',
-          completed: false
-        });
-        
-        generatedItems.push({
-          id: 'general-2', 
-          text: 'Få 20 minutter med dagslys om morgenen',
-          category: 'daily',
-          priority: 'medium',
-          completed: false
-        });
-        
-        generatedItems.push({
-          id: 'general-3',
-          text: 'Praktiser pusteøvelser i 5 minutter før leggetid',
-          category: 'daily',
-          priority: 'low',
-          completed: false
-        });
-        
-        setPlanItems(generatedItems);
+        // If we have plans, fetch recommendations for the first plan
+        if (plansData && plansData.length > 0) {
+          const { data: recsData, error: recsError } = await supabase
+            .from('plan_recommendations')
+            .select('*')
+            .eq('plan_id', plansData[0].id)
+            .order('created_at', { ascending: false });
+          
+          if (recsError) throw recsError;
+          setRecommendations(recsData || []);
+          applyFilters(recsData || [], currentTab, categoryFilter);
+        }
       } catch (error) {
-        console.error('Error loading health data:', error);
+        console.error('Error fetching plans:', error);
+        toast.error('Kunne ikke hente planer');
       } finally {
         setLoading(false);
       }
     };
     
-    loadHealthData();
-  }, []);
+    fetchPlans();
+  }, [user, currentTab, categoryFilter]);
   
-  const toggleItemCompletion = (itemId: string) => {
-    setPlanItems(prevItems => 
-      prevItems.map(item => 
-        item.id === itemId ? { ...item, completed: !item.completed } : item
-      )
-    );
-  };
-  
-  const getCompletionPercentage = () => {
-    if (planItems.length === 0) return 0;
-    const completed = planItems.filter(item => item.completed).length;
-    return Math.round((completed / planItems.length) * 100);
-  };
-  
-  const getFilteredItems = () => {
-    if (activeFilter === 'all') return planItems;
-    return planItems.filter(item => item.category === activeFilter);
-  };
-  
-  const getWeekRange = () => {
-    const now = new Date();
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay());
+  const applyFilters = (recs: Recommendation[], tab: string, category: string | null) => {
+    let filtered = [...recs];
     
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    // Apply tab filter
+    if (tab === 'active') {
+      filtered = filtered.filter(rec => !rec.completed);
+    } else if (tab === 'completed') {
+      filtered = filtered.filter(rec => rec.completed);
+    }
     
-    return {
-      start: startOfWeek.toLocaleDateString('no-NO', { day: 'numeric', month: 'short' }),
-      end: endOfWeek.toLocaleDateString('no-NO', { day: 'numeric', month: 'short' })
-    };
+    // Apply category filter if selected
+    if (category) {
+      filtered = filtered.filter(rec => rec.category === category);
+    }
+    
+    setFilteredRecommendations(filtered);
   };
   
-  const weekRange = getWeekRange();
-  const filteredItems = getFilteredItems();
+  const handleTabChange = (value: string) => {
+    setCurrentTab(value);
+    applyFilters(recommendations, value, categoryFilter);
+  };
   
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: {
-        when: "beforeChildren",
-        staggerChildren: 0.1
-      }
+  const handleCategoryFilter = (category: string | null) => {
+    setCategoryFilter(category);
+    applyFilters(recommendations, currentTab, category);
+  };
+  
+  const toggleRecommendation = async (rec: Recommendation) => {
+    try {
+      const updatedRec = {
+        ...rec,
+        completed: !rec.completed,
+        completed_at: !rec.completed ? new Date().toISOString() : null
+      };
+      
+      const { error } = await supabase
+        .from('plan_recommendations')
+        .update({
+          completed: updatedRec.completed,
+          completed_at: updatedRec.completed_at
+        })
+        .eq('id', rec.id);
+      
+      if (error) throw error;
+      
+      // Update local state
+      const updatedRecs = recommendations.map(r => 
+        r.id === rec.id ? updatedRec : r
+      );
+      setRecommendations(updatedRecs);
+      applyFilters(updatedRecs, currentTab, categoryFilter);
+      
+      toast.success(
+        updatedRec.completed 
+          ? 'Markert som fullført!' 
+          : 'Markert som ikke fullført'
+      );
+    } catch (error) {
+      console.error('Error toggling recommendation:', error);
+      toast.error('Kunne ikke oppdatere anbefalingen');
     }
   };
   
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
+  // Extract unique categories for filter
+  const uniqueCategories = [...new Set(recommendations.map(rec => rec.category))];
+  
+  // Get completed percentage
+  const totalCount = recommendations.length;
+  const completedCount = recommendations.filter(rec => rec.completed).length;
+  const completedPercentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
   
   if (loading) {
     return (
-      <div className="container max-w-md mx-auto px-4 pt-10 pb-20">
-        <div className="flex items-center justify-center min-h-[50vh]">
-          <div className="animate-pulse text-gray-500">Laster din plan...</div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9b87f5]"></div>
+      </div>
+    );
+  }
+  
+  if (plans.length === 0) {
+    return (
+      <div className="min-h-screen p-4 flex flex-col items-center justify-center">
+        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+          <Calendar size={30} className="text-gray-500" />
         </div>
+        <h2 className="text-xl font-medium mb-2">Ingen helseplan</h2>
+        <p className="text-gray-500 text-center mb-6">
+          Det ser ut til at du ikke har en aktiv helseplan enda.
+        </p>
+        <Button className="bg-[#9b87f5] hover:bg-[#8a76e5]" onClick={() => navigate('/')}>
+          Gå til dashboard
+        </Button>
       </div>
     );
   }
   
   return (
-    <div className="container max-w-md mx-auto px-4 pt-4 pb-20 bg-gradient-to-b from-white to-[#F8F8FC]">
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="space-y-6"
-      >
-        {/* Header */}
-        <motion.div variants={itemVariants} className="flex items-center justify-between">
-          <button 
-            onClick={() => navigate(-1)} 
-            className="p-2 -ml-2 text-gray-600"
-            aria-label="Gå tilbake"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-          <h1 className="text-xl font-medium text-gray-800">Min helseplan</h1>
-          <div className="w-6"></div> {/* Spacer for alignment */}
-        </motion.div>
+    <div className="min-h-screen pb-20">
+      <div className="container max-w-md mx-auto px-4 pt-6">
+        <header className="mb-6">
+          <div className="flex items-center mb-2">
+            <button 
+              onClick={() => navigate(-1)}
+              className="mr-2 p-1 rounded-full hover:bg-gray-100"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <h1 className="text-xl font-semibold">Min helseplan</h1>
+          </div>
+          <p className="text-gray-500">
+            Dine personlige helseanbefalinger
+          </p>
+        </header>
         
-        {/* Progress overview */}
-        <motion.div variants={itemVariants}>
-          <Card className="bg-white border border-gray-100 shadow-sm">
+        <div className="space-y-6">
+          {/* Plan overview card */}
+          <Card className="bg-white/70 backdrop-blur border-gray-100/20 shadow-sm">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="font-medium text-gray-800">Total fremgang</h2>
-                <div className="text-sm font-medium text-[#9b87f5]">{getCompletionPercentage()}%</div>
+                <div>
+                  <h2 className="font-semibold">{plans[0]?.title || 'Min helseplan'}</h2>
+                  <p className="text-sm text-gray-500">
+                    Opprettet {format(new Date(plans[0]?.created_at || new Date()), 'PPP', { locale: nb })}
+                  </p>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-[#9b87f5]/10 flex items-center justify-center">
+                  <Calendar size={20} className="text-[#9b87f5]" />
+                </div>
               </div>
               
-              <Progress value={getCompletionPercentage()} className="h-2 mb-4" />
-              
-              <div className="text-sm text-gray-600">
-                {planItems.filter(item => item.completed).length} av {planItems.length} anbefalinger utført
+              <div className="bg-gray-50 p-3 rounded-md mt-2">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium">Fullført</span>
+                  <span className="text-sm font-medium">{completedPercentage}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-[#9b87f5] h-2 rounded-full"
+                    style={{ width: `${completedPercentage}%` }}
+                  ></div>
+                </div>
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-xs text-gray-500">{completedCount} av {totalCount} anbefalinger</span>
+                  <span className="text-xs text-gray-500">
+                    Sist oppdatert {format(new Date(), 'd. MMM', { locale: nb })}
+                  </span>
+                </div>
               </div>
             </CardContent>
           </Card>
-        </motion.div>
-        
-        {/* Filters */}
-        <motion.div 
-          variants={itemVariants}
-          className="flex items-center space-x-2 pb-1 overflow-x-auto scrollbar-hide"
-        >
-          <Button 
-            variant={activeFilter === 'all' ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setActiveFilter('all')}
-            className={activeFilter === 'all' ? "bg-[#9b87f5] hover:bg-[#8a75e3]" : ""}
-          >
-            Alle
-          </Button>
-          <Button 
-            variant={activeFilter === 'daily' ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setActiveFilter('daily')}
-            className={activeFilter === 'daily' ? "bg-[#9b87f5] hover:bg-[#8a75e3]" : ""}
-          >
-            <Calendar size={14} className="mr-1" />
-            Daglige
-          </Button>
-          <Button 
-            variant={activeFilter === 'weekly' ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setActiveFilter('weekly')}
-            className={activeFilter === 'weekly' ? "bg-[#9b87f5] hover:bg-[#8a75e3]" : ""}
-          >
-            <ListTodo size={14} className="mr-1" />
-            Ukentlige
-          </Button>
-          <Button 
-            variant={activeFilter === 'longTerm' ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setActiveFilter('longTerm')}
-            className={activeFilter === 'longTerm' ? "bg-[#9b87f5] hover:bg-[#8a75e3]" : ""}
-          >
-            <Heart size={14} className="mr-1" />
-            Langsiktige
-          </Button>
-        </motion.div>
-        
-        {/* Week range if showing weekly items */}
-        {activeFilter === 'weekly' && (
-          <motion.div 
-            variants={itemVariants}
-            className="flex items-center justify-between"
-          >
-            <div className="text-sm text-gray-500">
-              {weekRange.start} - {weekRange.end}
+          
+          {/* Recommendation tabs */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Tabs value={currentTab} onValueChange={handleTabChange}>
+                <TabsList>
+                  <TabsTrigger value="all">Alle</TabsTrigger>
+                  <TabsTrigger value="active">Aktive</TabsTrigger>
+                  <TabsTrigger value="completed">Fullført</TabsTrigger>
+                </TabsList>
+              </Tabs>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Filter size={16} className="mr-2" /> Filter
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => handleCategoryFilter(null)}>
+                    Alle kategorier
+                  </DropdownMenuItem>
+                  {uniqueCategories.map((category) => (
+                    <DropdownMenuItem 
+                      key={category}
+                      onClick={() => handleCategoryFilter(category)}
+                    >
+                      {category}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-            <Button variant="ghost" size="sm" className="text-[#9b87f5] p-0 h-auto">
-              Se kalender
-              <ChevronRight size={14} className="ml-0.5" />
-            </Button>
-          </motion.div>
-        )}
-        
-        {/* Tasks list */}
-        <motion.div variants={itemVariants} className="space-y-3">
-          {filteredItems.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              Ingen anbefalinger funnet for dette filteret
-            </div>
-          ) : (
-            filteredItems.map(item => (
-              <div 
-                key={item.id}
-                className={`bg-white border ${item.completed ? 'border-green-100 bg-green-50/40' : 'border-gray-100'} shadow-sm rounded-lg p-4`}
-              >
-                <div className="flex items-center mb-1">
-                  <button
-                    onClick={() => toggleItemCompletion(item.id)}
-                    className={`flex-shrink-0 h-5 w-5 rounded-full ${
-                      item.completed ? 'bg-green-500 text-white' : 'bg-gray-100'
-                    } flex items-center justify-center mr-3`}
-                  >
-                    {item.completed && <CheckCircle size={14} />}
-                  </button>
-                  
-                  <span 
-                    className={`flex-1 font-medium ${
-                      item.completed ? 'text-green-700 line-through decoration-green-500/30' : 'text-gray-800'
-                    }`}
-                  >
-                    {item.text}
-                  </span>
-                  
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreHorizontal size={16} />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => toggleItemCompletion(item.id)}>
-                        {item.completed ? 'Merk som ikke fullført' : 'Merk som fullført'}
-                      </DropdownMenuItem>
-                      {item.source && (
-                        <DropdownMenuItem onClick={() => navigate(`/issue/${item.source}`)}>
-                          Se relatert helseproblem
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem>Sett påminnelse</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                
-                {item.source && (
-                  <div className="ml-8 text-xs text-gray-500">
-                    Relatert til: <span className="text-[#9b87f5]">{item.source}</span>
-                  </div>
-                )}
-                
-                {item.category !== 'daily' && (
-                  <div className="ml-8 mt-1 flex items-center">
-                    <div className={`px-2 py-0.5 text-xs rounded-full ${
-                      item.priority === 'high' 
-                        ? 'bg-red-50 text-red-600 border border-red-100' 
-                        : item.priority === 'medium'
-                        ? 'bg-amber-50 text-amber-600 border border-amber-100'
-                        : 'bg-green-50 text-green-600 border border-green-100'
-                    }`}>
-                      {item.priority === 'high' ? 'Høy prioritet' : item.priority === 'medium' ? 'Medium prioritet' : 'Lav prioritet'}
+            
+            <div className="space-y-3">
+              {filteredRecommendations.length > 0 ? (
+                filteredRecommendations.map((rec) => (
+                  <RecommendationCard 
+                    key={rec.id} 
+                    recommendation={rec} 
+                    toggleComplete={() => toggleRecommendation(rec)} 
+                  />
+                ))
+              ) : (
+                <Card className="bg-gray-50">
+                  <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                    <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-2">
+                      <ListChecks size={20} className="text-gray-400" />
                     </div>
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-        </motion.div>
-        
-        {/* Add new recommendation button */}
-        <motion.div 
-          variants={itemVariants}
-          className="fixed bottom-20 right-6"
-        >
-          <Button className="rounded-full h-12 w-12 bg-[#9b87f5] hover:bg-[#8a75e3] shadow-md">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 5V19M5 12H19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </Button>
-        </motion.div>
-      </motion.div>
+                    <p className="text-gray-500 mb-2">
+                      {categoryFilter 
+                        ? `Ingen anbefalinger i kategorien "${categoryFilter}"` 
+                        : currentTab === 'active' 
+                          ? 'Ingen aktive anbefalinger' 
+                          : currentTab === 'completed' 
+                            ? 'Ingen fullførte anbefalinger' 
+                            : 'Ingen anbefalinger å vise'}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
+          
+          {/* Add recommendation button */}
+          <div className="flex justify-center">
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => toast.info('Denne funksjonen kommer snart!')}
+            >
+              <Plus size={16} />
+              Legg til egen anbefaling
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
+
+interface RecommendationCardProps {
+  recommendation: Recommendation;
+  toggleComplete: () => void;
+}
+
+const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation, toggleComplete }) => {
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className="bg-white/80 backdrop-blur border-gray-100/20 shadow-sm">
+        <CardContent className="p-0">
+          <div className="p-4">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 mt-1">
+                {getIconForCategory(recommendation.category)}
+              </div>
+              
+              <div className="flex-1">
+                <div className="flex items-start justify-between">
+                  <h3 className={`font-medium ${recommendation.completed ? 'line-through text-gray-400' : ''}`}>
+                    {recommendation.text}
+                  </h3>
+                  <button
+                    className={`flex-shrink-0 h-6 w-6 rounded-full border ${
+                      recommendation.completed 
+                        ? 'bg-[#9b87f5] border-[#9b87f5] text-white' 
+                        : 'border-gray-300 bg-white'
+                    } flex items-center justify-center transition-colors`}
+                    onClick={toggleComplete}
+                  >
+                    {recommendation.completed && <Check size={14} />}
+                  </button>
+                </div>
+                
+                <div className="flex flex-wrap items-center gap-2 mt-2">
+                  <Badge variant="outline" className="bg-gray-100 text-gray-700">
+                    {recommendation.category}
+                  </Badge>
+                  <PriorityBadge priority={recommendation.priority} />
+                  
+                  {recommendation.due_date && (
+                    <div className="flex items-center text-xs text-gray-500">
+                      <Clock size={12} className="mr-1" />
+                      {format(new Date(recommendation.due_date), 'dd.MM.yyyy')}
+                    </div>
+                  )}
+                </div>
+                
+                {recommendation.completed && recommendation.completed_at && (
+                  <div className="text-xs text-gray-500 mt-1">
+                    Fullført {format(new Date(recommendation.completed_at), 'PPP', { locale: nb })}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+};
+
+// Add missing icon components
+const Activity = ({ size = 24, className = "" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+  </svg>
+);
+
+const Moon = ({ size = 24, className = "" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  </svg>
+);
+
+const Wind = ({ size = 24, className = "" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path>
+  </svg>
+);
+
+const Utensils = ({ size = 24, className = "" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path>
+    <path d="M7 2v20"></path>
+    <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
+  </svg>
+);
+
+const Pills = ({ size = 24, className = "" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle cx="9" cy="9" r="7"></circle>
+    <path d="m15 15 6 6"></path>
+  </svg>
+);
+
+const Droplets = ({ size = 24, className = "" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"></path>
+    <path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"></path>
+  </svg>
+);
+
+const Heart = ({ size = 24, className = "" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+  </svg>
+);
 
 export default MyPlan;
