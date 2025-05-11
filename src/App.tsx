@@ -8,6 +8,7 @@ import { useState, useEffect, createContext } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { seedHistoricalData } from '@/services/supabaseService';
 import BottomNavigation from "./components/navigation/BottomNavigation";
+import ScrollToTop from "./components/navigation/ScrollToTop";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Index from "./pages/Index";
 import History from "./pages/History";
@@ -91,6 +92,7 @@ const AppContent = () => {
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         {showOnboarding && (
           <Onboarding onComplete={() => setShowOnboarding(false)} />
         )}
