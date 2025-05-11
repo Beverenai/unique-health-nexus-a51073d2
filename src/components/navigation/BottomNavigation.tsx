@@ -4,11 +4,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Home, BarChart2, History, User, CalendarClock, LayoutDashboard } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
 
 const BottomNavigation = () => {
   const location = useLocation();
   const currentPath = location.pathname;
   const isMobile = useIsMobile();
+  const { trigger } = useHapticFeedback();
   
   const navItems = [
     { 
@@ -43,6 +45,13 @@ const BottomNavigation = () => {
     }
   ];
   
+  const handleNavPress = (path: string) => {
+    // Only trigger haptic feedback if navigating to a different page
+    if (path !== currentPath) {
+      trigger('selection');
+    }
+  };
+  
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white shadow-[0_-1px_3px_rgba(0,0,0,0.1)] border-t border-gray-200">
       <div className="container max-w-md mx-auto">
@@ -54,6 +63,7 @@ const BottomNavigation = () => {
               className={`flex flex-col items-center justify-center ${isMobile ? 'w-14' : 'w-16'} h-full ${
                 item.active ? 'text-[#9b87f5]' : 'text-gray-500'
               }`}
+              onClick={() => handleNavPress(item.path)}
             >
               {item.active ? (
                 <motion.div 

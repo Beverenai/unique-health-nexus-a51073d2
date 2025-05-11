@@ -1,17 +1,35 @@
+
 import * as React from "react"
 import { Drawer as DrawerPrimitive } from "vaul"
 
 import { cn } from "@/lib/utils"
+import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 
 const Drawer = ({
   shouldScaleBackground = true,
+  onOpenChange,
   ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
-  <DrawerPrimitive.Root
-    shouldScaleBackground={shouldScaleBackground}
-    {...props}
-  />
-)
+}: React.ComponentProps<typeof DrawerPrimitive.Root>) => {
+  const { trigger } = useHapticFeedback();
+  
+  const handleOpenChange = (open: boolean) => {
+    // Provide haptic feedback
+    trigger(open ? "medium" : "light");
+    
+    // Call the original onOpenChange if provided
+    if (onOpenChange) {
+      onOpenChange(open);
+    }
+  };
+  
+  return (
+    <DrawerPrimitive.Root
+      shouldScaleBackground={shouldScaleBackground}
+      onOpenChange={handleOpenChange}
+      {...props}
+    />
+  );
+}
 Drawer.displayName = "Drawer"
 
 const DrawerTrigger = DrawerPrimitive.Trigger

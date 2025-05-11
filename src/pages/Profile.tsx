@@ -5,13 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Profile as ProfileType } from '@/types/supabase';
-import { Scan, Settings, ChevronRight } from 'lucide-react';
+import { Scan, Settings, ChevronRight, Smartphone, Bell } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
 
 const Profile: React.FC = () => {
   const [profile, setProfile] = useState<ProfileType | null>(null);
   const [loading, setLoading] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
+  const { isEnabled, toggleHapticFeedback, trigger } = useHapticFeedback();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -56,6 +59,7 @@ const Profile: React.FC = () => {
   }, []);
 
   const handleNewScan = () => {
+    trigger('impact');
     toast.success('Starter ny skanning...', {
       description: 'Dette ville starte en ny skanning i en reell applikasjon.'
     });
@@ -63,16 +67,19 @@ const Profile: React.FC = () => {
 
   const handleLogout = async () => {
     try {
+      trigger('heavy');
       await supabase.auth.signOut();
       window.location.href = '/';
     } catch (error) {
       console.error('Error signing out:', error);
+      trigger('error');
       toast.error('Det oppsto en feil ved utlogging');
     }
   };
 
   const handleLogin = async () => {
     try {
+      trigger('medium');
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -83,13 +90,23 @@ const Profile: React.FC = () => {
       if (error) throw error;
     } catch (error) {
       console.error('Error logging in:', error);
+      trigger('error');
       toast.error('Det oppsto en feil ved innlogging');
     }
   };
 
   const handleUpgrade = () => {
+    trigger('success');
     toast.success('Takk! Du er nå oppgradert til Unique+');
     setIsPremium(true);
+  };
+
+  const handleToggleHaptic = () => {
+    toggleHapticFeedback();
+    toast.success(
+      isEnabled ? 'Haptisk tilbakemelding deaktivert' : 'Haptisk tilbakemelding aktivert',
+      { duration: 2000 }
+    );
   };
 
   if (loading) {
@@ -112,6 +129,7 @@ const Profile: React.FC = () => {
         </p>
       </header>
 
+      {/* Profile Card */}
       <Card className="mb-8 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
         <CardContent className="pt-6">
           <div className="flex items-center">
@@ -168,6 +186,7 @@ const Profile: React.FC = () => {
               <Button 
                 onClick={handleNewScan} 
                 className="mt-2 bg-[#9b87f5] hover:bg-[#7E69AB] w-full"
+                hapticPattern="impact"
               >
                 <Scan size={16} className="mr-2" />
                 Start ny skanning
@@ -177,6 +196,7 @@ const Profile: React.FC = () => {
         </CardContent>
       </Card>
 
+      {/* Membership Card */}
       <Card className="mb-8 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
         <CardHeader className="pb-2">
           <CardTitle className="text-lg font-medium">Medlemskap</CardTitle>
@@ -192,10 +212,64 @@ const Profile: React.FC = () => {
               </p>
             </div>
             {!isPremium && (
-              <Button onClick={handleUpgrade}>
+              <Button 
+                onClick={handleUpgrade}
+                hapticPattern="success"
+              >
                 Oppgrader
               </Button>
             )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* App Settings Card */}
+      <Card className="mb-8 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-medium">App-innstillinger</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {/* Haptic feedback toggle */}
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <Smartphone className="h-5 w-5 text-gray-500" />
+                <div>
+                  <p className="font-medium">Haptisk tilbakemelding</p>
+                  <p className="text-xs text-gray-500">
+                    {isEnabled ? 'Aktivert - Du vil føle vibrasjon ved interaksjon' : 'Deaktivert - Ingen vibrasjon ved interaksjon'}
+                  </p>
+                </div>
+              </div>
+              <Switch
+                checked={isEnabled}
+                onCheckedChange={handleToggleHaptic}
+              />
+            </div>
+            
+            {/* Notification Settings - placeholder for future implementation */}
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <Bell className="h-5 w-5 text-gray-500" />
+                <div>
+                  <p className="font-medium">Varsler</p>
+                  <p className="text-xs text-gray-500">
+                    Administrer push-varsler og påminnelser
+                  </p>
+                </div>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="h-8"
+                onClick={() => {
+                  trigger('light');
+                  toast.info('Varslingsinnstillinger vil åpnes her');
+                }}
+              >
+                Konfigurer
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -206,7 +280,11 @@ const Profile: React.FC = () => {
           <Button 
             variant="ghost" 
             className="w-full flex justify-between items-center p-4 h-auto"
-            onClick={() => toast.info('Innstillinger ville åpnes her')}
+            onClick={() => {
+              trigger('light');
+              toast.info('Innstillinger ville åpnes her');
+            }}
+            hapticPattern="light"
           >
             <div className="flex items-center">
               <Settings size={20} className="text-gray-500 mr-3" />
@@ -219,11 +297,19 @@ const Profile: React.FC = () => {
 
       <div className="text-center mb-10">
         {isDemo ? (
-          <Button onClick={handleLogin} className="bg-[#9b87f5] hover:bg-[#7E69AB]">
+          <Button 
+            onClick={handleLogin} 
+            className="bg-[#9b87f5] hover:bg-[#7E69AB]"
+            hapticPattern="medium"
+          >
             Logg inn med Google
           </Button>
         ) : (
-          <Button variant="outline" onClick={handleLogout}>
+          <Button 
+            variant="outline" 
+            onClick={handleLogout}
+            hapticPattern="heavy"
+          >
             Logg ut
           </Button>
         )}

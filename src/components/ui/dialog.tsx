@@ -1,10 +1,28 @@
+
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 
-const Dialog = DialogPrimitive.Root
+const Dialog = ({ onOpenChange, ...props }: DialogPrimitive.DialogProps) => {
+  const { trigger } = useHapticFeedback();
+  
+  const handleOpenChange = (open: boolean) => {
+    // Provide haptic feedback
+    trigger(open ? "medium" : "light");
+    
+    // Call the original onOpenChange if provided
+    if (onOpenChange) {
+      onOpenChange(open);
+    }
+  };
+  
+  return (
+    <DialogPrimitive.Root onOpenChange={handleOpenChange} {...props} />
+  );
+};
 
 const DialogTrigger = DialogPrimitive.Trigger
 
