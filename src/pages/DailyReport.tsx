@@ -11,7 +11,7 @@ import { nb } from 'date-fns/locale';
 import { ResponsiveContainer, LineChart as RechartsLineChart, Line, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { HealthCheckIn } from '@/types/database';
 
-interface CheckIn extends HealthCheckIn {}
+type CheckIn = HealthCheckIn;
 
 const DailyReport = () => {
   const navigate = useNavigate();
@@ -36,7 +36,8 @@ const DailyReport = () => {
         if (error) throw error;
         
         // Type assertion to ensure data is treated as CheckIn[]
-        setCheckIns((data || []) as CheckIn[]);
+        const typedData = data as unknown as CheckIn[];
+        setCheckIns(typedData);
         
         // Process data for the last 7 days for the chart
         const today = new Date();
@@ -50,7 +51,7 @@ const DailyReport = () => {
           const formattedDate = format(date, 'yyyy-MM-dd');
           
           // Find check-in for this date if it exists
-          const checkIn = data?.find((ci: any) => ci.date === formattedDate) as CheckIn | undefined;
+          const checkIn = typedData.find(ci => ci.date === formattedDate);
           
           lastWeekData.unshift({
             date: formattedDate,

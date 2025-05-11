@@ -7,12 +7,12 @@ import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { tables } from '@/integrations/supabase/client-extensions';
 import { useAuth } from '@/context/AuthContext';
 import { motion } from 'framer-motion';
 import { ArrowLeft, CalendarClock, Moon, Zap, SmilePlus, ThumbsUp } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Check } from 'lucide-react';
+import { HealthCheckIn } from '@/types/database';
 
 type Symptom = {
   id: string;

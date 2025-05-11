@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -73,7 +74,7 @@ const Dashboard = () => {
             .limit(3);
           
           if (recommendationsData) {
-            setRecommendations(recommendationsData as PlanRecommendation[]);
+            setRecommendations(recommendationsData as unknown as PlanRecommendation[]);
           }
           
           // Fetch check-ins directly from Supabase
@@ -85,7 +86,7 @@ const Dashboard = () => {
             .limit(5);
           
           if (checkInsData) {
-            setCheckIns(checkInsData as CheckInSummary[]);
+            setCheckIns(checkInsData as unknown as CheckInSummary[]);
           }
         }
       } catch (error) {
