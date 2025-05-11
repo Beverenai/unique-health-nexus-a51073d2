@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send } from 'lucide-react';
+import { Send, Loader2 } from 'lucide-react';
 
 interface ChatInputProps {
   inputValue: string;
@@ -37,7 +37,11 @@ const ChatInput: React.FC<ChatInputProps> = ({
           disabled={loading || !inputValue.trim()}
           className="absolute right-0 top-0 h-full rounded-l-none text-primary hover:text-primary hover:bg-transparent"
         >
-          <Send size={18} className={loading ? 'opacity-50' : 'opacity-100'} />
+          {loading ? (
+            <Loader2 size={18} className="animate-spin" />
+          ) : (
+            <Send size={18} />
+          )}
         </Button>
       </div>
     </form>

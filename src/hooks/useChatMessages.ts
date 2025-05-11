@@ -32,6 +32,7 @@ export const useChatMessages = (isOpen: boolean) => {
     setLoading(true);
     
     try {
+      console.log('Sending message with context:', inputValue, contextData);
       // Send user message with context data
       const userMessage = inputValue;
       setInputValue('');
@@ -41,13 +42,14 @@ export const useChatMessages = (isOpen: boolean) => {
       
       // Get AI response
       const aiResponse = await sendMessageToAI(userMessage, contextData);
+      console.log('Received AI response:', aiResponse);
       
       // Fetch all messages again to update UI with AI's response
       await fetchMessages();
       
     } catch (error) {
       console.error('Error sending message:', error);
-      toast.error('Det oppsto en feil ved sending av meldingen');
+      toast.error('Det oppsto en feil ved sending av meldingen. Prøv igjen senere.');
     } finally {
       setLoading(false);
     }

@@ -70,7 +70,7 @@ export const sendMessageToAI = async (message: string, context: any = null): Pro
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`
+        'Authorization': `Bearer ${supabase.supabaseKey}`
       },
       body: JSON.stringify({
         message,

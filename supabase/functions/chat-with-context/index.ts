@@ -50,6 +50,9 @@ serve(async (req) => {
     
     systemMessage += " Provide helpful, accurate information in Norwegian. Be concise yet informative.";
 
+    console.log("System message:", systemMessage);
+    console.log("User message:", message);
+
     // Generate response from OpenAI
     const response = await openai.createChatCompletion({
       model: "gpt-4o-mini",
@@ -62,6 +65,7 @@ serve(async (req) => {
     });
 
     const aiResponse = response.data.choices[0]?.message?.content || "Beklager, jeg kunne ikke generere et svar.";
+    console.log("AI response:", aiResponse);
 
     return new Response(
       JSON.stringify({
