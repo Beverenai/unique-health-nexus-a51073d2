@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowDownIcon, RefreshCcw } from 'lucide-react';
-import { motion, useSpring, useMotionValue } from 'framer-motion';
+import { motion, useSpring, useMotionValue, useTransform } from 'framer-motion';
 import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
 
 interface PullToRefreshProps {
@@ -23,6 +23,9 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
   const currentY = useMotionValue(0);
   const springY = useSpring(0, { stiffness: 400, damping: 30 });
   const { trigger } = useHapticFeedback();
+  
+  // Create a transform for rotation based on the springY value
+  const rotate = useTransform(springY, [0, pullDistance], [0, 180]);
   
   const isPulling = useRef(false);
   const thresholdReached = useRef(false);
@@ -120,7 +123,7 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
             <RefreshCcw className="animate-spin h-6 w-6 text-primary" />
           ) : (
             <motion.div
-              style={{ rotate: springY.to([0, pullDistance], [0, 180]) }}
+              style={{ rotate }}
             >
               <ArrowDownIcon className="h-6 w-6 text-primary" />
             </motion.div>
