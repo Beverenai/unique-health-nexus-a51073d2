@@ -65,6 +65,45 @@ export type Database = {
           },
         ]
       }
+      health_checkins: {
+        Row: {
+          created_at: string
+          date: string
+          energy_level: number
+          id: string
+          mood: number
+          notes: string | null
+          pain_level: number | null
+          sleep_quality: number
+          symptoms: string[] | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          energy_level: number
+          id?: string
+          mood: number
+          notes?: string | null
+          pain_level?: number | null
+          sleep_quality: number
+          symptoms?: string[] | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          energy_level?: number
+          id?: string
+          mood?: number
+          notes?: string | null
+          pain_level?: number | null
+          sleep_quality?: number
+          symptoms?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       health_issues: {
         Row: {
           created_at: string
@@ -194,6 +233,63 @@ export type Database = {
           },
         ]
       }
+      plan_recommendations: {
+        Row: {
+          category: string
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          due_date: string | null
+          id: string
+          issue_id: string | null
+          plan_id: string
+          priority: string
+          source: string | null
+          text: string
+        }
+        Insert: {
+          category: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          issue_id?: string | null
+          plan_id: string
+          priority: string
+          source?: string | null
+          text: string
+        }
+        Update: {
+          category?: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          issue_id?: string | null
+          plan_id?: string
+          priority?: string
+          source?: string | null
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_recommendations_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "health_issues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_recommendations_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "user_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -276,6 +372,39 @@ export type Database = {
           created_at?: string
           id?: string
           status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_plans: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          start_date: string
+          status: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          start_date?: string
+          status?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          start_date?: string
+          status?: string
+          title?: string
           user_id?: string
         }
         Relationships: []

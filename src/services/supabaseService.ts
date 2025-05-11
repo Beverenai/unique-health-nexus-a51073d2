@@ -387,81 +387,85 @@ export const seedHistoricalData = async (): Promise<void> => {
       return;
     }
 
-    // Create historical scans (past 4 weeks) with the specified scores
+    // Check if there are already health check-ins
+    const { data: existingCheckins, error: checkinsError } = await supabase
+      .from('health_checkins')
+      .select('id')
+      .eq('user_id', userId);
+      
+    if (!checkinsError && existingCheckins && existingCheckins.length > 0) {
+      console.log('User already has health check-ins, skipping seed');
+      return;
+    }
+
+    // Create historical health check-ins (past 7 days)
     const today = new Date();
-    const pastDates = [
-      new Date(today.getTime() - (28 * 24 * 60 * 60 * 1000)), // 4 weeks ago
-      new Date(today.getTime() - (21 * 24 * 60 * 60 * 1000)), // 3 weeks ago
-      new Date(today.getTime() - (14 * 24 * 60 * 60 * 1000)), // 2 weeks ago
-      new Date(today.getTime() - (7 * 24 * 60 * 60 * 1000)),  // 1 week ago
-    ];
+    const pastDates = Array.from({length: 7}, (_, i) => {
+      const date = new Date();
+      date.setDate(today.getDate() - (6 - i));
+      return date;
+    });
 
-    // Specified scores for historical data
-    const scores = [49, 55, 61, 63];
+    // Random data for check-ins
+    const randomCheckIns = pastDates.map((date, index) => ({
+      user_id: userId,
+      date: date.toISOString().split('T')[0],
+      mood: Math.floor(Math.random() * 4) + 5, // 5-8 range
+      energy_level: Math.floor(Math.random() * 5) + 4, // 4-8 range
+      sleep_quality: Math.floor(Math.random() * 4) + 6, // 6-9 range
+      pain_level: Math.floor(Math.random() * 3) + 1, // 1-3 range
+      notes: index % 2 === 0 ? 'Følte meg bra i dag' : 'Litt sliten, men ellers ok'
+    }));
 
-    for (let i = 0; i < pastDates.length; i++) {
-      // Create a scan
-      const { data: scan, error: scanError } = await supabase
-        .from('scans')
-        .insert({ 
-          user_id: userId, 
-          status: 'completed',
-          created_at: pastDates[i].toISOString()
+    // Insert check-ins
+    for (const checkIn of randomCheckIns) {
+      await supabase.from('health_checkins').insert(checkIn);
+    }
+
+    // Create user plan if none exists
+    const { data: existingPlans, error: plansError } = await supabase
+      .from('user_plans')
+      .select('id')
+      .eq('user_id', userId);
+      
+    if (plansError || !existingPlans || existingPlans.length === 0) {
+      // Create a plan
+      const { data: planData, error: planError } = await supabase
+        .from('user_plans')
+        .insert({
+          user_id: userId,
+          title: 'Min Helseplan',
+          description: 'Tilpasset helseplan basert på din siste skanning',
+          status: 'active'
         })
         .select();
 
-      if (scanError || !scan || scan.length === 0) {
-        console.error(`Error creating historical scan ${i}:`, scanError);
-        continue;
-      }
-
-      const scanId = scan[0].id;
-
-      // Add coherence data
-      await supabase
-        .from('coherence_data')
-        .insert({
-          scan_id: scanId,
-          score: scores[i]
-        });
-
-      // Add one health issue for this historical scan
-      if (i === 0) {
-        // 4 weeks ago - mainly stress and severe toxin issues
-        await supabase
-          .from('health_issues')
-          .insert({
-            scan_id: scanId,
-            name: 'Tungmetaller (Miljøgiftbelastning)',
-            description: 'Betydelig tungmetallbelastning i vev og organer.',
-            load: 38
-          });
-      } else if (i === 1) {
-        // 3 weeks ago - improving but still significant issues
-        await supabase
-          .from('health_issues')
-          .insert({
-            scan_id: scanId,
-            name: 'Tungmetaller (Miljøgiftbelastning)',
-            description: 'Moderat tungmetallbelastning under gradvis bedring.',
-            load: 32
-          });
-      } else if (i === 2) {
-        // 2 weeks ago - continued improvement
-        await supabase
-          .from('health_issues')
-          .insert({
-            scan_id: scanId,
-            name: 'Tarmflora (Parasittbelastning)',
-            description: 'Tegn på lett parasittbelastning og tarmflora i ubalanse.',
-            load: 28
-          });
+      if (planError || !planData || planData.length === 0) {
+        console.error('Error creating user plan:', planError);
+      } else {
+        // Add recommendations to the plan
+        const planId = planData[0].id;
+        const recommendations = [
+          { text: 'Drikk mer vann', category: 'Hydrasjon', priority: 'high' },
+          { text: 'Ta en 20-minutters gåtur hver dag', category: 'Aktivitet', priority: 'medium' },
+          { text: 'Meditere i 10 minutter', category: 'Mental Helse', priority: 'medium' },
+          { text: 'Spis mer fermentert mat', category: 'Fordøyelse', priority: 'low' }
+        ];
+        
+        for (const rec of recommendations) {
+          await supabase
+            .from('plan_recommendations')
+            .insert({
+              plan_id: planId,
+              ...rec
+            });
+        }
       }
     }
 
-    console.log('Historical data seeded successfully');
+    console.log('Dashboard demo data seeded successfully');
   } catch (error) {
-    console.error('Error in seedHistoricalData:', error);
+    console.error('Error in seedDashboardData:', error);
   }
 };
 

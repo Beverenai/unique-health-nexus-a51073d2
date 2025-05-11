@@ -1,9 +1,10 @@
-
 import React from 'react';
 import HomeContent from '@/components/home/HomeContent';
 import HomeLoading from '@/components/home/HomeLoading';
 import BackgroundDecorations from '@/components/home/BackgroundDecorations';
 import HomeDataProvider from '@/components/home/HomeDataProvider';
+import { seedHistoricalData } from '@/services/supabaseService';
+import { useEffect } from 'react';
 
 const Home = () => {
   return (
@@ -33,5 +34,11 @@ const Home = () => {
     </div>
   );
 };
+
+// Seed dashboard data when the home page loads
+useEffect(() => {
+  // Seed health check-ins and recommendations data
+  seedHistoricalData();
+}, []);
 
 export default Home;

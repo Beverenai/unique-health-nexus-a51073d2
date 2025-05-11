@@ -35,6 +35,10 @@ export const useDashboardData = () => {
     if (user) {
       setUserId(user.id);
       fetchData();
+    } else {
+      // If no user, try to use demo data
+      setUserId('00000000-0000-0000-0000-000000000000');
+      fetchData();
     }
   }, [user]);
   
@@ -50,8 +54,11 @@ export const useDashboardData = () => {
         .order('priority', { ascending: false })
         .limit(3);
         
-      if (recommendationError) throw recommendationError;
-      setRecommendations(recommendationData as unknown as Recommendation[]);
+      if (recommendationError) {
+        console.error('Error fetching recommendations:', recommendationError);
+      } else if (recommendationData) {
+        setRecommendations(recommendationData as unknown as Recommendation[]);
+      }
       
       // Fetch the latest checkin
       const { data: checkinData, error: checkinError } = await tables.healthCheckins()
@@ -63,7 +70,7 @@ export const useDashboardData = () => {
       if (checkinError) {
         console.error('Error fetching checkin:', checkinError);
       } else if (checkinData && checkinData.length > 0) {
-        setLatestCheckin(checkinData[0] as any);
+        setLatestCheckin(checkinData[0] as unknown as Checkin);
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
