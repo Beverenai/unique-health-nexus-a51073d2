@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, Info, CircleInfo } from 'lucide-react';
+import { Check, Info, CircleHelp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -122,7 +122,7 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <CircleInfo className="h-4 w-4 text-gray-400" />
+                    <CircleHelp className="h-4 w-4 text-gray-400" />
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
                     <p className="text-sm">Tiltak som er tilpasset din situasjon basert på skanningen</p>
@@ -176,9 +176,9 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
                     <div className={`h-px flex-1 ${openCategories.includes(category) ? 'bg-[#9b87f5]/20' : 'bg-gray-200'}`}></div>
                     <div className={`rounded-full p-0.5 ${openCategories.includes(category) ? 'bg-[#9b87f5]/10' : 'bg-gray-100'}`}>
                       {openCategories.includes(category) ? (
-                        <CircleInfo className="h-4 w-4 text-[#9b87f5]" />
+                        <CircleHelp className="h-4 w-4 text-[#9b87f5]" />
                       ) : (
-                        <CircleInfo className="h-4 w-4 text-gray-400" />
+                        <CircleHelp className="h-4 w-4 text-gray-400" />
                       )}
                     </div>
                   </motion.div>

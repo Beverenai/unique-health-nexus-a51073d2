@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Connection } from './ConnectionList';
-import { CircleInfo } from 'lucide-react';
+import { CircleHelp } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface SystemConnectionsCardProps {
@@ -48,7 +48,7 @@ const SystemConnectionsCard: React.FC<SystemConnectionsCardProps> = ({ connectio
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <CircleInfo className="h-4 w-4 text-gray-400" />
+                  <CircleHelp className="h-4 w-4 text-gray-400" />
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs">
                   <p className="text-sm">Sammenhenger mellom ulike systemer i kroppen din basert på skanningen</p>
