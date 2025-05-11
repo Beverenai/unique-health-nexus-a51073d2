@@ -8,16 +8,16 @@ export const db = supabase;
 // Use type assertions to properly define tables that aren't yet in the generated types
 export const tables = {
   healthCheckins: () => {
-    // Cast the entire result to any to bypass type checking
-    return db.from('health_checkins') as unknown as any;
+    // We need to cast using any at the function call level
+    return db.from('health_checkins' as any);
   },
   userPlans: () => {
-    // Cast the entire result to any to bypass type checking
-    return db.from('user_plans') as unknown as any;
+    // We need to cast using any at the function call level
+    return db.from('user_plans' as any);
   },
   planRecommendations: () => {
-    // Cast the entire result to any to bypass type checking
-    return db.from('plan_recommendations') as unknown as any;
+    // We need to cast using any at the function call level
+    return db.from('plan_recommendations' as any);
   },
   chatMessages: () => db.from('chat_messages'),
   healthIssues: () => db.from('health_issues'),
