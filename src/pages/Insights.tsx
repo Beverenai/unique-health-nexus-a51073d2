@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { HealthIssue } from '@/types/supabase';
@@ -95,7 +94,7 @@ const Insights: React.FC = () => {
 
   return (
     <div className="h-[calc(100vh-4rem)] overflow-hidden">
-      <ScrollArea className="h-full pb-20">
+      <ScrollArea className="h-full pb-16">
         <main className={`container mx-auto px-3 py-3 ${isMobile ? 'max-w-[100%]' : 'max-w-lg'}`}>
           <div className="mb-5">
             <h1 className="text-xl sm:text-2xl font-semibold mb-1.5 text-center">Innsikter</h1>
@@ -116,7 +115,7 @@ const Insights: React.FC = () => {
             <HealthSystemGrid 
               healthData={healthSystemData}
               title="Kroppssystemer"
-              description="Trykk på en kategori for å se systemene innen denne kategorien"
+              description="Trykk på en kategori for å se systemene innen denne kategori"
             />
           </div>
         </main>
