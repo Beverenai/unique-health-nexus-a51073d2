@@ -30,23 +30,40 @@ export const useDashboardData = () => {
   const [latestCheckin, setLatestCheckin] = useState<Checkin | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
+    // Set a timeout to prevent infinite loading state
+    const loadingTimeout = setTimeout(() => {
+      if (isLoading) {
+        setIsLoading(false);
+        setError('Det tok for lang tid å laste data. Prøv å laste siden på nytt.');
+        toast.error('Timeout når data skulle lastes');
+      }
+    }, 10000); // 10 seconds timeout
+
     if (user) {
       setUserId(user.id);
-      fetchData();
+      fetchData(user.id);
     } else {
       // If no user, try to use demo data
-      setUserId('00000000-0000-0000-0000-000000000000');
-      fetchData();
+      const demoUserId = '00000000-0000-0000-0000-000000000000';
+      setUserId(demoUserId);
+      fetchData(demoUserId);
     }
+    
+    return () => clearTimeout(loadingTimeout);
   }, [user]);
   
-  const fetchData = async () => {
-    if (!userId) return;
+  const fetchData = async (currentUserId: string) => {
+    if (!currentUserId) return;
     
     setIsLoading(true);
+    setError(null);
+    
     try {
+      console.log('Fetching dashboard data for user:', currentUserId);
+      
       // Fetch recommendations
       const { data: recommendationData, error: recommendationError } = await tables.planRecommendations()
         .select('*')
@@ -56,24 +73,31 @@ export const useDashboardData = () => {
         
       if (recommendationError) {
         console.error('Error fetching recommendations:', recommendationError);
+        toast.error('Kunne ikke hente anbefalinger');
       } else if (recommendationData) {
+        console.log('Recommendations loaded:', recommendationData.length);
         setRecommendations(recommendationData as unknown as Recommendation[]);
       }
       
       // Fetch the latest checkin
       const { data: checkinData, error: checkinError } = await tables.healthCheckins()
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', currentUserId)
         .order('date', { ascending: false })
         .limit(1);
         
       if (checkinError) {
         console.error('Error fetching checkin:', checkinError);
+        toast.error('Kunne ikke hente siste dagslogg');
       } else if (checkinData && checkinData.length > 0) {
+        console.log('Latest checkin loaded:', checkinData[0]);
         setLatestCheckin(checkinData[0] as unknown as Checkin);
+      } else {
+        console.log('No checkins found for user:', currentUserId);
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+      setError('Det oppstod en feil ved henting av data');
       toast.error('Kunne ikke hente dashboard data');
     } finally {
       setIsLoading(false);
@@ -103,7 +127,9 @@ export const useDashboardData = () => {
     recommendations,
     latestCheckin,
     isLoading,
-    handleCompleteRecommendation
+    error,
+    handleCompleteRecommendation,
+    refetch: () => fetchData(userId || '00000000-0000-0000-0000-000000000000')
   };
 };
 

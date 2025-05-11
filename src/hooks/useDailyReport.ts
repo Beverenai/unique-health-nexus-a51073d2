@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
+import { nb } from 'date-fns/locale'; // Fixed import for Norwegian locale
 import { useAuth } from '@/context/AuthContext';
 import { tables } from '@/integrations/supabase/client-extensions';
 import { HealthCheckIn } from '@/types/database';
@@ -50,7 +51,7 @@ export const useDailyReport = () => {
             mood: checkIn?.mood || 0,
             energy: checkIn?.energy_level || 0,
             sleep: checkIn?.sleep_quality || 0,
-            label: format(date, 'EEE', { locale: require('date-fns/locale/nb') })
+            label: format(date, 'EEE', { locale: nb }) // Using imported nb locale
           });
         }
         
