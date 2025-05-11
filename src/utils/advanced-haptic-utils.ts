@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { HapticPattern } from '@/hooks/use-haptic-feedback';
 
 // Progressive haptic patterns for multi-step processes
@@ -103,6 +104,3 @@ export function useGestureHaptics(
     };
   }, [elementRef, trigger]);
 }
-
-// Add missing React import
-import React from 'react';
