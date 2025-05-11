@@ -141,7 +141,8 @@ const History: React.FC = () => {
           // Timeline with multiple scans
           <Card className="overflow-hidden border-gray-100">
             <CardContent className="p-0">
-              <ScrollArea className="pb-4 pt-4" orientation="horizontal">
+              {/* Fixed: Removed the orientation prop which was causing the TypeScript error */}
+              <ScrollArea className="pb-4 pt-4">
                 <div className="flex space-x-6 px-6 pb-2 min-w-max">
                   {historicalData.map((scan, index) => (
                     <ScanTimelineItem 
