@@ -89,17 +89,15 @@ const AppContent = () => {
 
   return (
     <div className="font-sans bg-gradient-to-b from-white to-[#F8F8FC]">
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          {showOnboarding && (
-            <Onboarding onComplete={() => setShowOnboarding(false)} />
-          )}
-          {renderContent()}
-        </BrowserRouter>
-      </TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <ScrollToTop />
+        {showOnboarding && (
+          <Onboarding onComplete={() => setShowOnboarding(false)} />
+        )}
+        {renderContent()}
+      </BrowserRouter>
     </div>
   );
 };
@@ -108,7 +106,9 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <AppContent />
+        <TooltipProvider>
+          <AppContent />
+        </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
