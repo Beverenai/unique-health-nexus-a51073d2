@@ -2,9 +2,10 @@
 import React from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp } from 'lucide-react';
+import { ThumbsUp, ChevronRight } from 'lucide-react';
 import { isPast, parseISO, format } from 'date-fns';
 import { nb } from 'date-fns/locale';
+import { useNavigate } from 'react-router-dom';
 import {
   Accordion,
   AccordionContent,
@@ -19,6 +20,8 @@ interface CategoryAccordionProps {
 }
 
 const CategoryAccordion: React.FC<CategoryAccordionProps> = ({ categories, recommendations }) => {
+  const navigate = useNavigate();
+  
   const formatDate = (dateString: string) => {
     const date = parseISO(dateString);
     return format(date, 'PPP', { locale: nb });
@@ -46,21 +49,32 @@ const CategoryAccordion: React.FC<CategoryAccordionProps> = ({ categories, recom
     );
   }
   
+  const handleSeeAll = (category: string) => {
+    navigate(`/category/${category.toLowerCase()}`);
+  };
+  
   return (
     <Accordion type="multiple" className="w-full" defaultValue={['kosthold', 'tilskudd']}>
-      {categoriesWithRecommendations.map(([category, icon]) => (
-        <AccordionItem key={category} value={category.toLowerCase()}>
-          <AccordionTrigger className="text-lg font-semibold">
-            <div className="flex items-center">
-              {icon}
-              <span className="ml-2">{category}</span>
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <div className="grid gap-4 p-2">
-              {recommendations
-                .filter(rec => rec.category?.toLowerCase() === category.toLowerCase())
-                .map(recommendation => (
+      {categoriesWithRecommendations.map(([category, icon]) => {
+        // Get recommendations for this category
+        const categoryRecommendations = recommendations
+          .filter(rec => rec.category?.toLowerCase() === category.toLowerCase());
+        
+        // Show only top 3 recommendations in the accordion
+        const topRecommendations = categoryRecommendations.slice(0, 3);
+        const hasMoreRecommendations = categoryRecommendations.length > 3;
+        
+        return (
+          <AccordionItem key={category} value={category.toLowerCase()}>
+            <AccordionTrigger className="text-lg font-semibold">
+              <div className="flex items-center">
+                {icon}
+                <span className="ml-2">{category}</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="grid gap-4 p-2">
+                {topRecommendations.map(recommendation => (
                   <div 
                     key={recommendation.id}
                     className="flex items-center justify-between bg-white p-3 rounded-lg shadow-sm"
@@ -96,10 +110,24 @@ const CategoryAccordion: React.FC<CategoryAccordionProps> = ({ categories, recom
                     </Button>
                   </div>
                 ))}
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      ))}
+                
+                {hasMoreRecommendations && (
+                  <div className="flex justify-center mt-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleSeeAll(category)}
+                      className="text-sm text-[#9b87f5] border-[#9b87f5]/30 hover:bg-[#9b87f5]/10 hover:text-[#9b87f5] hover:border-[#9b87f5]/50 w-full"
+                    >
+                      Se alle
+                      <ChevronRight size={16} className="ml-1" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        );
+      })}
     </Accordion>
   );
 };
