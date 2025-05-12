@@ -36,7 +36,7 @@ export const getSystemConnections = (issues: HealthIssue[]): Connection[] => {
     connections.push({
       from: "Fordøyelsessystem",
       to: "Hormonsystem",
-      description: "Din tarmflora påvirker hormonbalansen"
+      description: "Tarmmikrobiota påvirker produksjonen og reguleringen av flere hormoner, inkludert stresshormonet kortisol"
     });
   }
   
@@ -44,7 +44,7 @@ export const getSystemConnections = (issues: HealthIssue[]): Connection[] => {
     connections.push({
       from: "Muskelsystem", 
       to: "Nervesystem",
-      description: "Muskelproblemer påvirker nervesystemet"
+      description: "Spenninger i muskulaturen kan skape press på nerverøtter og forårsake smerte og dysfunksjon"
     });
   }
 
@@ -52,7 +52,7 @@ export const getSystemConnections = (issues: HealthIssue[]): Connection[] => {
     connections.push({
       from: "Hormonsystem",
       to: "Nervesystem",
-      description: "Hormonell ubalanse påvirker nervesystemet"
+      description: "Hormoner som kortisol og adrenalin påvirker nervesystemets funksjon og stressrespons"
     });
   }
   
@@ -61,7 +61,7 @@ export const getSystemConnections = (issues: HealthIssue[]): Connection[] => {
     connections.push({
       from: "Fordøyelsessystem",
       to: "Immunsystem",
-      description: "Bakteriell ubalanse påvirker immunforsvaret"
+      description: "Over 70% av immunsystemet er lokalisert i tarmveggen, og tarmfloraen spiller en nøkkelrolle i immunregulering"
     });
   }
   
@@ -69,7 +69,7 @@ export const getSystemConnections = (issues: HealthIssue[]): Connection[] => {
     connections.push({
       from: "Nervesystem",
       to: "Immunsystem",
-      description: "Miljøgifter påvirker immunforsvarets funksjon"
+      description: "Nervesystemet kommuniserer med immunsystemet via nevroimmunologiske forbindelser og påvirker immunresponsen"
     });
   }
   
@@ -82,7 +82,7 @@ export const getSystemConnections = (issues: HealthIssue[]): Connection[] => {
     connections.push({
       from: "Fordøyelsessystem",
       to: "Detox-system",
-      description: "Bakteriell ubalanse reduserer kroppens evne til å håndtere miljøgifter"
+      description: "Bakteriell ubalanse reduserer kroppens evne til å håndtere og eliminere miljøgifter"
     });
   }
   
@@ -90,7 +90,25 @@ export const getSystemConnections = (issues: HealthIssue[]): Connection[] => {
     connections.push({
       from: "Immunsystem",
       to: "Fordøyelsessystem",
-      description: "Soppbelastning og bakteriell ubalanse påvirker hverandre negativt"
+      description: "Soppbelastning og bakteriell ubalanse skaper en negativ feedback-loop som svekker begge systemer"
+    });
+  }
+  
+  // Add a connection between digestive and nervous system
+  if (tarmIssue && nervesystemIssue) {
+    connections.push({
+      from: "Fordøyelsessystem", 
+      to: "Nervesystem",
+      description: "Tarmen produserer over 90% av kroppens serotonin, en nevrotransmitter som påvirker humør og nervefunksjon"
+    });
+  }
+
+  // Make sure we always have at least one connection for demonstration purposes
+  if (connections.length === 0) {
+    connections.push({
+      from: "Nervesystem", 
+      to: "Fordøyelsessystem",
+      description: "Vagusnerven fra nervesystemet kommuniserer direkte med mage-tarmkanalen og påvirker fordøyelsen"
     });
   }
   

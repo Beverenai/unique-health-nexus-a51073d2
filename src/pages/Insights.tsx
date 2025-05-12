@@ -15,7 +15,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { History } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { SystemAnalysisSection } from '@/components/system-analysis';
+import SystemConnectionsCard from '@/components/insight/SystemConnectionsCard';
 
 const Insights: React.FC = () => {
   const navigate = useNavigate();
@@ -116,10 +116,8 @@ const Insights: React.FC = () => {
     fetchData();
   }, []);
 
-  // Get components from the health issues to pass to SystemAnalysisSection
-  const scannerComponents = healthIssues.flatMap(issue => 
-    (issue as any).components || []
-  );
+  // Get system connections based on health issues
+  const systemConnections = getSystemConnections(healthIssues);
 
   return (
     <div className="h-[calc(100vh-4rem)] overflow-hidden">
@@ -152,8 +150,10 @@ const Insights: React.FC = () => {
           {/* Enhanced Recommendations */}
           <EnhancedRecommendationsCard recommendations={recommendations} />
           
-          {/* System Analysis Section with improved connections visualization */}
-          <SystemAnalysisSection components={scannerComponents} />
+          {/* System Connections Card - replaces SystemAnalysisSection */}
+          {systemConnections.length > 0 && (
+            <SystemConnectionsCard connections={systemConnections} />
+          )}
           
           {/* Health systems grid */}
           <div className="mb-0 sm:mb-6">

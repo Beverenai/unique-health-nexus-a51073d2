@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Connection } from './ConnectionList';
-import { CircleHelp } from 'lucide-react';
+import { CircleHelp, Network } from 'lucide-react';
 import { CustomTooltip } from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -47,8 +47,11 @@ const SystemConnectionsCard: React.FC<SystemConnectionsCardProps> = ({ connectio
       <Card className="bg-white/80 backdrop-blur-xl border-white/20 shadow-lg rounded-2xl overflow-hidden">
         <CardHeader className={`${isMobile ? 'pb-0 p-4' : 'pb-0'}`}>
           <CardTitle className={`${isMobile ? 'text-base' : 'text-lg'} font-medium flex items-center gap-2`}>
+            <div className="bg-[#9b87f5]/10 p-1.5 rounded-full">
+              <Network className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-[#9b87f5]`} />
+            </div>
             <span>Systemsammenhenger</span>
-            <CustomTooltip content={<p className="text-sm">Sammenhenger mellom ulike systemer i kroppen din basert på skanningen</p>} side={isMobile ? "bottom" : "top"}>
+            <CustomTooltip content={<p className="text-sm">Slik påvirker ulike systemer i kroppen din hverandre</p>} side={isMobile ? "bottom" : "top"}>
               <CircleHelp className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-gray-400`} />
             </CustomTooltip>
           </CardTitle>

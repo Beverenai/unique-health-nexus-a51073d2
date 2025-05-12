@@ -10,83 +10,41 @@ export interface Connection {
 
 interface ConnectionListProps {
   connections: Connection[];
+  className?: string;
 }
 
-const ConnectionList: React.FC<ConnectionListProps> = ({ connections }) => {
-  if (connections.length === 0) return null;
-  
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: {
-        when: "beforeChildren",
-        staggerChildren: 0.1
-      }
-    }
-  };
-  
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 24
-      } 
-    }
-  };
-  
-  return (
-    <motion.div 
-      className="pt-4 border-t border-gray-100"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <motion.h4 
-        className="text-sm font-semibold mb-4 text-gray-800 flex items-center"
-        variants={itemVariants}
-      >
-        <span className="w-1 h-4 bg-[#9b87f5] rounded-full mr-2"></span>
-        Systemforbindelser
-      </motion.h4>
-      
-      <div className="space-y-3">
-        {connections.map((connection, idx) => (
-          <motion.div 
-            key={idx} 
-            className="flex items-start p-3.5 bg-white/80 rounded-lg shadow-sm border border-gray-50 hover:shadow-md transition-all"
-            variants={itemVariants}
-            whileHover={{ scale: 1.01, backgroundColor: "rgba(255, 255, 255, 0.9)" }}
-          >
-            <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 mr-2"></div>
-            <div className="flex-1 min-w-0"> {/* Added flex-1 and min-width-0 to make text wrap properly */}
-              <span className="text-gray-800 break-words"> {/* Added break-words to prevent overflow */}
-                <span className="font-medium text-[#9b87f5] break-all">{connection.from}</span>
-                <span className="mx-1.5 text-gray-400">→</span>
-                <span className="font-medium text-[#9b87f5] break-all">{connection.to}:</span> 
-                <span className="ml-1">{connection.description}</span>
-              </span>
-            </div>
-          </motion.div>
-        ))}
+const ConnectionList: React.FC<ConnectionListProps> = ({ connections, className = '' }) => {
+  if (connections.length === 0) {
+    return (
+      <div className={`text-center py-4 ${className}`}>
+        <p className="text-gray-500 text-sm">Ingen systemsammenhenger funnet.</p>
       </div>
-      
-      <motion.div 
-        className="mt-4 text-center" 
-        variants={itemVariants}
-      >
-        <motion.button 
-          className="text-xs text-[#9b87f5] font-medium hover:underline"
-          whileHover={{ y: -2 }}
+    );
+  }
+
+  return (
+    <div className={`space-y-3 ${className}`}>
+      {connections.map((connection, index) => (
+        <motion.div
+          key={index}
+          className="flex flex-col p-3 bg-white rounded-lg shadow-sm border border-gray-100"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1 }}
         >
-          Lær mer om systemforbindelsene
-        </motion.button>
-      </motion.div>
-    </motion.div>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="bg-[#9b87f5]/10 text-[#9b87f5] px-2 py-1 rounded text-xs font-medium">
+              {connection.from}
+            </div>
+            <div className="text-gray-400">→</div>
+            <div className="bg-green-50 text-green-700 px-2 py-1 rounded text-xs font-medium">
+              {connection.to}
+            </div>
+          </div>
+          <p className="text-sm text-gray-700">{connection.description}</p>
+        </motion.div>
+      ))}
+    </div>
   );
 };
 
