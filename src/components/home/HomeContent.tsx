@@ -72,7 +72,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
       animate="visible"
     >
       {/* Integrated header with scan date */}
-      <motion.div variants={itemVariants} className="pt-4 pb-2 bg-gray-50 z-10">
+      <motion.div variants={itemVariants} className="pt-4 pb-2 bg-white z-10">
         <HomeHeader 
           userName={userName} 
           scanDate={new Date(coherenceData?.created_at || scanDate)} 
@@ -80,7 +80,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
       </motion.div>
       
       {/* Main content sections using Accordion for collapsible behavior */}
-      <Accordion type="multiple" defaultValue={['body-balance', 'body-focus']} className="space-y-5">
+      <Accordion type="multiple" defaultValue={['body-balance', 'body-focus', 'details']} className="space-y-5">
         {/* Body Balance - Hero Section */}
         <AccordionItem value="body-balance" className="border-none">
           <AccordionTrigger className="py-2 hover:no-underline">
@@ -123,12 +123,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
           </AccordionContent>
         </AccordionItem>
         
-        {/* Action buttons section */}
-        <motion.div variants={itemVariants} className="py-2">
-          <ActionButtons />
-        </motion.div>
-        
-        {/* Tab view moved below the main content */}
+        {/* Tab view moved above the action buttons */}
         <AccordionItem value="details" className="border-none">
           <AccordionTrigger className="py-2 hover:no-underline">
             <h2 className="text-base font-medium text-gray-700">Detaljert informasjon</h2>
@@ -139,6 +134,11 @@ const HomeContent: React.FC<HomeContentProps> = ({
             </motion.div>
           </AccordionContent>
         </AccordionItem>
+        
+        {/* Action buttons section moved below details */}
+        <motion.div variants={itemVariants} className="py-2">
+          <ActionButtons />
+        </motion.div>
       </Accordion>
     </motion.div>
   );
