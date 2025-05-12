@@ -11,7 +11,7 @@ export function SidebarTooltip({ children, content }: SidebarTooltipProps) {
   const { isMobile, state } = useSidebar()
   const [show, setShow] = React.useState(false)
   
-  // If no tooltip content or on mobile, just return children
+  // If no tooltip content or on mobile or sidebar is expanded, just return children
   if (!content || isMobile || state !== "collapsed") {
     return <>{children}</>
   }
