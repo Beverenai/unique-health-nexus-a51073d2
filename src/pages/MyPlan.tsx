@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, CalendarClock, CheckCircle2, Flame, ListChecks, Plus, ThumbsUp } from 'lucide-react';
+import { ArrowLeft, CalendarClock, CheckCircle2, Flame, ListChecks, Plus, ThumbsUp, Apple, Dumbbell, Sparkles, Brain, Coffee, Heart, BarChart2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { format, isPast, parseISO } from 'date-fns';
@@ -27,6 +26,16 @@ const MyPlan = () => {
   const [plan, setPlan] = useState<UserPlan | null>(null);
   const [recommendations, setRecommendations] = useState<PlanRecommendation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Add categories with icons for different health recommendations
+  const categories = {
+    'Kosthold': <Apple className="text-green-500" />,
+    'Bevegelse': <Dumbbell className="text-blue-500" />,
+    'Tilskudd': <Sparkles className="text-purple-500" />,
+    'Mental helse': <Brain className="text-amber-500" />,
+    'Søvn': <Coffee className="text-indigo-500" />,
+    'Stress': <Flame className="text-red-500" />
+  };
   
   useEffect(() => {
     fetchPlans();
@@ -130,6 +139,11 @@ const MyPlan = () => {
     return isPast(dueDate);
   };
   
+  // Icon for category
+  const getCategoryIcon = (category: string) => {
+    return categories[category as keyof typeof categories] || <CheckCircle2 className="text-gray-500" />;
+  };
+  
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -149,10 +163,10 @@ const MyPlan = () => {
             >
               <ArrowLeft size={20} />
             </button>
-            <h1 className="text-xl font-semibold">Min helseplan</h1>
+            <h1 className="text-xl font-semibold">Min helse</h1>
           </div>
           <p className="text-gray-500">
-            Oversikt over din personlige helseplan
+            Anbefalinger og helseplan basert på dine resultater
           </p>
         </header>
         
@@ -162,11 +176,11 @@ const MyPlan = () => {
             <Card className="bg-white/70 backdrop-blur border-gray-100/20 shadow-sm">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg font-semibold flex items-center">
-                  <ListChecks size={20} className="mr-2 text-[#9b87f5]" />
+                  <Heart size={20} className="mr-2 text-[#9b87f5]" />
                   {plan.title}
                 </CardTitle>
                 <CardDescription className="text-gray-500">
-                  {plan.description || 'Ingen beskrivelse tilgjengelig'}
+                  {plan.description || 'Personlig helseplan basert på din analyse'}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -196,21 +210,24 @@ const MyPlan = () => {
               </CardContent>
             </Card>
             
-            {/* Recommendations Accordion */}
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="recommendations">
-                <AccordionTrigger className="text-lg font-semibold">
-                  <Flame size={20} className="mr-2 text-red-500" />
-                  Anbefalinger
-                </AccordionTrigger>
-                <AccordionContent>
-                  <ScrollArea className="rounded-md border p-4">
-                    <div className="grid gap-4">
-                      {recommendations.length > 0 ? (
-                        recommendations.map(recommendation => (
+            {/* Categories Accordion */}
+            <Accordion type="multiple" collapsible className="w-full" defaultValue={['kosthold', 'tilskudd']}>
+              {Object.entries(categories).map(([category, icon]) => (
+                <AccordionItem key={category} value={category.toLowerCase()}>
+                  <AccordionTrigger className="text-lg font-semibold">
+                    <div className="flex items-center">
+                      {icon}
+                      <span className="ml-2">{category}</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid gap-4 p-2">
+                      {recommendations
+                        .filter(rec => rec.category?.toLowerCase() === category.toLowerCase())
+                        .map(recommendation => (
                           <div 
                             key={recommendation.id}
-                            className="flex items-center justify-between"
+                            className="flex items-center justify-between bg-white p-3 rounded-lg shadow-sm"
                           >
                             <div className="space-y-1">
                               <div className="flex items-center">
@@ -228,30 +245,33 @@ const MyPlan = () => {
                                   </Badge>
                                 )}
                               </div>
-                              <p className="text-xs text-gray-500">
-                                Kategori: {recommendation.category}
-                              </p>
+                              {recommendation.explanation && (
+                                <p className="text-xs text-gray-500">
+                                  {recommendation.explanation}
+                                </p>
+                              )}
                             </div>
                             <Button 
                               variant="outline"
                               size="icon"
                               className="h-8 w-8"
                             >
-                              <ThumbsUp size={16} className="mr-2" />
+                              <ThumbsUp size={16} />
                             </Button>
                           </div>
-                        ))
-                      ) : (
+                        ))}
+                        
+                      {recommendations.filter(rec => rec.category?.toLowerCase() === category.toLowerCase()).length === 0 && (
                         <div className="text-center py-4">
                           <p className="text-sm text-gray-500">
-                            Ingen anbefalinger funnet for denne planen.
+                            Ingen anbefalinger i denne kategorien.
                           </p>
                         </div>
                       )}
                     </div>
-                  </ScrollArea>
-                </AccordionContent>
-              </AccordionItem>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
             </Accordion>
             
             <div className="flex justify-center">
@@ -259,17 +279,17 @@ const MyPlan = () => {
                 onClick={() => navigate('/insights')}
                 className="bg-[#9b87f5] hover:bg-[#8a76e5]"
               >
-                <CheckCircle2 size={16} className="mr-2" />
-                Se dine innsikter
+                <BarChart2 size={16} className="mr-2" />
+                Se dine Unique+ innsikter
               </Button>
             </div>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-64">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-              <CalendarClock size={24} className="text-gray-500" />
+              <Heart size={24} className="text-[#9b87f5]" />
             </div>
-            <h2 className="text-lg font-medium mb-2">Ingen aktiv plan</h2>
+            <h2 className="text-lg font-medium mb-2">Ingen helseplan</h2>
             <p className="text-gray-500 text-center mb-6">
               Du har ingen aktiv helseplan for øyeblikket.
             </p>
@@ -278,7 +298,7 @@ const MyPlan = () => {
               className="bg-[#9b87f5] hover:bg-[#8a76e5]"
             >
               <Plus size={16} className="mr-2" />
-              Opprett standard plan
+              Opprett personlig helseplan
             </Button>
           </div>
         )}

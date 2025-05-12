@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, BarChart2, History, User, CalendarClock, LayoutDashboard } from 'lucide-react';
+import { Home, BarChart2, Heart } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
 
@@ -16,32 +16,20 @@ const BottomNavigation = () => {
     { 
       path: '/', 
       label: 'Hjem', 
-      icon: <Home size={isMobile ? 20 : 22} />,
+      icon: <Home size={isMobile ? 24 : 26} />,
       active: currentPath === '/'
     },
     { 
-      path: '/dashboard', 
-      label: 'Oversikt', 
-      icon: <LayoutDashboard size={isMobile ? 20 : 22} />,
-      active: currentPath === '/dashboard'
-    },
-    { 
       path: '/insights', 
-      label: 'Innsikt', 
-      icon: <BarChart2 size={isMobile ? 20 : 22} />,
+      label: 'Unique+', 
+      icon: <BarChart2 size={isMobile ? 24 : 26} />,
       active: currentPath === '/insights'
     },
     { 
-      path: '/history', 
-      label: 'Historikk', 
-      icon: <History size={isMobile ? 20 : 22} />,
-      active: currentPath === '/history'
-    },
-    { 
-      path: '/profile', 
-      label: 'Profil', 
-      icon: <User size={isMobile ? 20 : 22} />,
-      active: currentPath === '/profile'
+      path: '/my-plan', 
+      label: 'Min Helse', 
+      icon: <Heart size={isMobile ? 24 : 26} />,
+      active: currentPath === '/my-plan'
     }
   ];
   
@@ -60,7 +48,7 @@ const BottomNavigation = () => {
             <Link 
               key={item.path} 
               to={item.path} 
-              className={`flex flex-col items-center justify-center ${isMobile ? 'w-14' : 'w-16'} h-full ${
+              className={`flex flex-col items-center justify-center w-1/3 h-full ${
                 item.active ? 'text-[#9b87f5]' : 'text-gray-500'
               }`}
               onClick={() => handleNavPress(item.path)}
@@ -72,12 +60,12 @@ const BottomNavigation = () => {
                   className="flex flex-col items-center"
                 >
                   {item.icon}
-                  <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} mt-0.5 font-medium`}>{item.label}</span>
+                  <span className={`${isMobile ? 'text-[11px]' : 'text-sm'} mt-1 font-medium`}>{item.label}</span>
                 </motion.div>
               ) : (
                 <div className="flex flex-col items-center">
                   {item.icon}
-                  <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} mt-0.5`}>{item.label}</span>
+                  <span className={`${isMobile ? 'text-[11px]' : 'text-sm'} mt-1`}>{item.label}</span>
                 </div>
               )}
             </Link>

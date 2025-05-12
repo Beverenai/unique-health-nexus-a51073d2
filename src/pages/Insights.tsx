@@ -12,8 +12,12 @@ import SystemConnectionsCard from '@/components/insight/SystemConnectionsCard';
 import RecommendedActionsCard from '@/components/insight/RecommendedActionsCard';
 import HealthSystemGrid from '@/components/health/HealthSystemGrid';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
+import { History } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Insights: React.FC = () => {
+  const navigate = useNavigate();
   // Initialize with the correct mock data that now matches the expected type
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
   const [healthSystemData, setHealthSystemData] = useState<HealthSystemItem[]>([]);
@@ -104,9 +108,20 @@ const Insights: React.FC = () => {
       <ScrollArea className="h-full pb-0 insights-scroll-area">
         <main className={`container mx-auto px-3 py-3 ${isMobile ? 'max-w-[100%]' : 'max-w-lg'}`}>
           <div className="mb-5">
-            <h1 className="text-xl sm:text-2xl font-semibold mb-1.5 text-center">Innsikter</h1>
+            <div className="flex justify-between items-center mb-1.5">
+              <h1 className="text-xl sm:text-2xl font-semibold text-center flex-1">Unique+</h1>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-gray-600 hover:text-[#9b87f5]"
+                onClick={() => navigate('/history')}
+              >
+                <History size={18} className="mr-1" />
+                Historikk
+              </Button>
+            </div>
             <p className="text-gray-500 text-center text-xs sm:text-sm">
-              Basert på din skanning {lastScanDate ? `fra ${lastScanDate.toLocaleDateString('nb-NO', {day: 'numeric', month: 'long'})}` : ''}
+              Avansert analyse basert på din skanning {lastScanDate ? `fra ${lastScanDate.toLocaleDateString('nb-NO', {day: 'numeric', month: 'long'})}` : ''}
             </p>
           </div>
           
