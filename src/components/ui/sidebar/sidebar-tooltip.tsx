@@ -20,11 +20,15 @@ export function SidebarTooltip({ children, content }: SidebarTooltipProps) {
   const handleMouseLeave = () => setShow(false)
   
   return (
-    <div className="relative inline-flex" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div 
+      className="relative inline-flex" 
+      onMouseEnter={handleMouseEnter} 
+      onMouseLeave={handleMouseLeave}
+    >
       {children}
       {show && (
         <div 
-          className="absolute left-full ml-2 z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95"
+          className="absolute left-full ml-2 z-50 overflow-hidden rounded-md border bg-white px-3 py-1.5 text-sm text-slate-950 shadow-md animate-in fade-in-0 zoom-in-95"
           style={{ top: '50%', transform: 'translateY(-50%)' }}
         >
           {content}
