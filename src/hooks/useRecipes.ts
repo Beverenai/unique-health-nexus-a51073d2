@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { Recipe, RecipeIngredient } from '@/types/nutrition';
+import { Recipe, RecipeIngredient, RecipeInstruction } from '@/types/nutrition';
 
 interface RecipeWithIngredients extends Recipe {
   ingredients: RecipeIngredient[];
@@ -39,7 +39,7 @@ export const useRecipes = (healthIssueId?: string): UseRecipesResult => {
       if (recipesError) throw recipesError;
       
       // Fetch all ingredients for these recipes
-      const recipeIds = recipesData.map(recipe => recipe.id);
+      const recipeIds = recipesData.map((recipe: any) => recipe.id);
       
       const { data: ingredientsData, error: ingredientsError } = await supabase
         .from('recipe_ingredients')
@@ -57,11 +57,34 @@ export const useRecipes = (healthIssueId?: string): UseRecipesResult => {
         ingredientsByRecipe[ingredient.recipe_id].push(ingredient);
       });
       
-      // Combine recipes with their ingredients
-      const recipesWithIngredients: RecipeWithIngredients[] = recipesData.map((recipe: Recipe) => ({
-        ...recipe,
-        ingredients: ingredientsByRecipe[recipe.id] || []
-      }));
+      // Combine recipes with their ingredients and process JSON data
+      const recipesWithIngredients: RecipeWithIngredients[] = recipesData.map((recipe: any) => {
+        // Parse JSON fields if they are strings
+        let parsedInstructions = recipe.instructions;
+        if (typeof parsedInstructions === 'string') {
+          try {
+            parsedInstructions = JSON.parse(parsedInstructions);
+          } catch (e) {
+            console.error('Failed to parse instructions JSON:', e);
+          }
+        }
+        
+        let parsedNutritionalInfo = recipe.nutritional_info;
+        if (typeof parsedNutritionalInfo === 'string') {
+          try {
+            parsedNutritionalInfo = JSON.parse(parsedNutritionalInfo);
+          } catch (e) {
+            console.error('Failed to parse nutritional_info JSON:', e);
+          }
+        }
+        
+        return {
+          ...recipe,
+          instructions: parsedInstructions,
+          nutritional_info: parsedNutritionalInfo,
+          ingredients: ingredientsByRecipe[recipe.id] || []
+        };
+      });
       
       setRecipes(recipesWithIngredients);
       

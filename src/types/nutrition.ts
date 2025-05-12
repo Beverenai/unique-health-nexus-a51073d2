@@ -33,8 +33,8 @@ export interface Recipe {
   servings?: number;
   difficulty_level?: string;
   image_url?: string;
-  instructions?: RecipeInstruction[];
-  nutritional_info?: RecipeNutrition;
+  instructions?: RecipeInstruction[] | any; // Updated to handle Json type from Supabase
+  nutritional_info?: RecipeNutrition | any; // Updated to handle Json type from Supabase
   tags?: string[];
   health_benefits?: string[];
   user_id?: string;

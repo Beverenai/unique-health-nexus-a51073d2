@@ -114,7 +114,7 @@ export const useNutritionRecommendations = () => {
         if (recipesError) throw recipesError;
         
         // Fetch ingredients for each recipe
-        const recipeIds = recipes.map((recipe: Recipe) => recipe.id);
+        const recipeIds = recipes.map((r: any) => r.id);
         
         const { data: recipeIngredients, error: ingredientsError } = await supabase
           .from('recipe_ingredients')
@@ -132,11 +132,34 @@ export const useNutritionRecommendations = () => {
           ingredientsByRecipeId[ingredient.recipe_id].push(ingredient);
         });
         
-        // Add ingredients to each recipe
-        const recipesWithIngredients = recipes.map((recipe: Recipe) => ({
-          ...recipe,
-          ingredients: ingredientsByRecipeId[recipe.id] || []
-        }));
+        // Add ingredients to each recipe and parse JSON data
+        const recipesWithIngredients = recipes.map((r: any) => {
+          // Parse JSON fields if they are strings
+          let parsedInstructions = r.instructions;
+          if (typeof parsedInstructions === 'string') {
+            try {
+              parsedInstructions = JSON.parse(parsedInstructions);
+            } catch (e) {
+              console.error('Failed to parse instructions JSON:', e);
+            }
+          }
+          
+          let parsedNutritionalInfo = r.nutritional_info;
+          if (typeof parsedNutritionalInfo === 'string') {
+            try {
+              parsedNutritionalInfo = JSON.parse(parsedNutritionalInfo);
+            } catch (e) {
+              console.error('Failed to parse nutritional_info JSON:', e);
+            }
+          }
+          
+          return {
+            ...r,
+            instructions: parsedInstructions,
+            nutritional_info: parsedNutritionalInfo,
+            ingredients: ingredientsByRecipeId[r.id] || []
+          };
+        });
         
         setData({
           ingredients: mockIngredients,

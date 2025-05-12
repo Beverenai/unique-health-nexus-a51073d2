@@ -53,11 +53,37 @@ const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, isOpen, o
     }
   };
 
-  const instructions = recipe.instructions 
-    ? Array.isArray(recipe.instructions) 
-      ? recipe.instructions 
-      : JSON.parse(recipe.instructions as unknown as string)
-    : [];
+  // Ensure instructions are properly parsed from JSON if needed
+  const getProcessedInstructions = (): RecipeInstruction[] => {
+    if (!recipe.instructions) return [];
+    
+    // If already an array, return it directly
+    if (Array.isArray(recipe.instructions)) {
+      return recipe.instructions;
+    }
+    
+    // If it's a string (JSON), try to parse it
+    if (typeof recipe.instructions === 'string') {
+      try {
+        return JSON.parse(recipe.instructions);
+      } catch (e) {
+        console.error('Failed to parse instructions:', e);
+        return [];
+      }
+    }
+    
+    // If it's already a parsed object but not an array
+    if (typeof recipe.instructions === 'object') {
+      // Try to convert it to array if possible
+      if (Array.isArray(Object.values(recipe.instructions))) {
+        return Object.values(recipe.instructions);
+      }
+    }
+    
+    return [];
+  };
+  
+  const instructions = getProcessedInstructions();
     
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
