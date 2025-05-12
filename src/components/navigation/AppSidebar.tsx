@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, History, User, Menu, Scan } from 'lucide-react';
@@ -20,7 +21,12 @@ import {
   SidebarProvider,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger 
+} from '@/components/ui/tooltip';
 
 // Menu items
 const menuItems = [
