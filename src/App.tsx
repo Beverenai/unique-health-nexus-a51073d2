@@ -27,6 +27,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
+// Create a new QueryClient instance outside of component
 const queryClient = new QueryClient();
 
 // Protected route component that redirects to login if not authenticated
@@ -42,6 +43,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return session ? <>{children}</> : <Navigate to="/login" />;
 };
 
+// App routes component
 const AppRoutes = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const { session } = useAuth();
@@ -94,18 +96,21 @@ const AppRoutes = () => {
   );
 };
 
+// Main App component with all providers properly nested
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <BrowserRouter>
-          <ScrollToTop />
-          <TooltipProvider>
-            <AppRoutes />
-          </TooltipProvider>
-        </BrowserRouter>
-      </AuthProvider>
-    </QueryClientProvider>
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <TooltipProvider>
+              <AppRoutes />
+            </TooltipProvider>
+          </BrowserRouter>
+        </AuthProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
   );
 };
 
