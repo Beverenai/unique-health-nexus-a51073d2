@@ -10,6 +10,7 @@ interface CollapsibleSectionProps {
   onToggle: () => void;
   children: React.ReactNode;
   icon?: React.ReactNode;
+  badge?: React.ReactNode;
 }
 
 const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ 
@@ -17,7 +18,8 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   isOpen, 
   onToggle, 
   children, 
-  icon 
+  icon,
+  badge
 }) => {
   return (
     <div className="mb-6 bg-white/70 backdrop-blur shadow-sm rounded-xl border border-gray-100/40 overflow-hidden">
@@ -32,6 +34,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
             </div>
           )}
           <h2 className="text-lg font-medium">{title}</h2>
+          {badge && <div className="ml-2">{badge}</div>}
         </div>
         <ChevronDown
           size={18}

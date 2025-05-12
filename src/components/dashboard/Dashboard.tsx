@@ -1,25 +1,50 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import DashboardHeader from './DashboardHeader';
+import DashboardSummary from './DashboardSummary';
+import QuickActions from './QuickActions';
+import LatestCheckinCard from './LatestCheckinCard';
+import RecommendationsCard from './RecommendationsCard';
+import CalendarCard from './CalendarCard';
+import LoadingState from './LoadingState';
+import ErrorState from './ErrorState';
+import CollapsibleSection from './CollapsibleSection';
+import { Apple, Badge, Calendar, CalendarDays } from 'lucide-react';
 import { useDashboardData } from '@/hooks/useDashboardData';
-import DashboardHeader from '@/components/dashboard/DashboardHeader';
-import LoadingState from '@/components/dashboard/LoadingState';
-import ErrorState from '@/components/dashboard/ErrorState';
-import AccordionSection from '@/components/dashboard/AccordionSection';
-import { format } from 'date-fns';
-import { nb } from 'date-fns/locale';
-import { Check, CalendarDays, ListChecks, Activity } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useNutritionRecommendations } from '@/hooks/useNutritionRecommendations';
+import NutritionRecommendationsSection from '@/components/nutrition/NutritionRecommendationsSection';
 
-const Dashboard: React.FC = () => {
-  const { recommendations, latestCheckin, isLoading, error, handleCompleteRecommendation, refetch } = useDashboardData();
+const Dashboard = () => {
+  const navigate = useNavigate();
+  const { isLoading, error, stats, latestCheckin, recommendations, completeRecommendation } = useDashboardData();
+  const [scanDate, setScanDate] = useState<Date | undefined>(undefined);
   
-  // State for accordion sections
-  const [openSection, setOpenSection] = useState<string | null>('checkup');
+  // Add state for collapsible sections
+  const [openSections, setOpenSections] = useState({
+    recommendations: true,
+    history: false,
+    checkin: true,
+    nutrition: true, // New nutrition section
+  });
   
-  const handleSectionToggle = (section: string) => {
-    setOpenSection(openSection === section ? null : section);
+  // Get nutrition recommendations
+  const { ingredients, supplements, isLoading: nutritionLoading } = useNutritionRecommendations();
+  
+  // Handle toggle sections
+  const toggleSection = (section: keyof typeof openSections) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+  
+  // Handle scan date change
+  const handleDateChange = (date: Date | undefined) => {
+    setScanDate(date);
+    // Here you could fetch data for this specific date
+    console.log("Selected date:", date);
   };
   
   if (isLoading) {
@@ -27,182 +52,87 @@ const Dashboard: React.FC = () => {
   }
   
   if (error) {
-    return <ErrorState error={error} refetch={refetch} />;
+    return <ErrorState message={error.message} />;
   }
   
   return (
-    <div className="min-h-screen pb-20">
-      <div className="container max-w-md mx-auto px-4 pt-6">
-        <DashboardHeader />
-        
-        {/* Latest Health Check-up Results */}
-        <AccordionSection 
-          title="Siste helsesjekk" 
-          value="checkup" 
-          isOpen={openSection === 'checkup'}
-          onToggle={handleSectionToggle}
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 pb-20">
+      <div className="container px-4 py-6 max-w-4xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
         >
-          {latestCheckin ? (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <CalendarDays size={16} className="text-gray-500" />
-                  <span className="text-sm text-gray-700">
-                    {format(new Date(latestCheckin.date), 'PPP', { locale: nb })}
-                  </span>
-                </div>
-                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                  Fullført
-                </Badge>
-              </div>
-              
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium">Humør</span>
-                    <span className="text-sm text-gray-600">{latestCheckin.mood}/10</span>
-                  </div>
-                  <Progress value={latestCheckin.mood * 10} className="h-2 bg-gray-100" />
-                </div>
-                
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium">Energinivå</span>
-                    <span className="text-sm text-gray-600">{latestCheckin.energy_level}/10</span>
-                  </div>
-                  <Progress value={latestCheckin.energy_level * 10} className="h-2 bg-gray-100" />
-                </div>
-                
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium">Søvnkvalitet</span>
-                    <span className="text-sm text-gray-600">{latestCheckin.sleep_quality}/10</span>
-                  </div>
-                  <Progress value={latestCheckin.sleep_quality * 10} className="h-2 bg-gray-100" />
-                </div>
-                
-                {latestCheckin.notes && (
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm text-gray-700">{latestCheckin.notes}</p>
-                  </div>
-                )}
-              </div>
-              
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => window.location.href = '/check-in'}
-              >
-                Ny helsesjekk
-              </Button>
-            </div>
-          ) : (
-            <div className="text-center py-4">
-              <p className="text-gray-600 mb-4">Du har ikke gjennomført noen helsesjekk ennå.</p>
-              <Button 
-                onClick={() => window.location.href = '/check-in'}
-              >
-                Gjennomfør helsesjekk
-              </Button>
-            </div>
-          )}
-        </AccordionSection>
-        
-        {/* Recommended Actions */}
-        <AccordionSection 
-          title="Anbefalte tiltak" 
-          value="recommendations" 
-          isOpen={openSection === 'recommendations'}
-          onToggle={handleSectionToggle}
-        >
-          {recommendations && recommendations.length > 0 ? (
-            <div className="space-y-3">
-              {recommendations.map((recommendation) => (
-                <div 
-                  key={recommendation.id}
-                  className="bg-white rounded-lg p-4 border border-gray-200 flex items-start gap-4"
-                >
-                  <div className="flex-1">
-                    <p className="text-sm">{recommendation.text}</p>
-                    
-                    <div className="flex items-center mt-2">
-                      <Badge variant={recommendation.priority === 'high' ? 'destructive' : 'outline'} className="text-xs">
-                        {recommendation.priority === 'high' ? 'Høy prioritet' : 'Normal prioritet'}
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-8 w-8 p-0 text-green-600"
-                    onClick={() => handleCompleteRecommendation(recommendation.id)}
-                  >
-                    <Check size={16} />
-                  </Button>
-                </div>
-              ))}
-              
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => window.location.href = '/my-plan'}
-              >
-                Se full helseplan
-              </Button>
-            </div>
-          ) : (
-            <div className="text-center py-4">
-              <p className="text-gray-600 mb-4">Ingen aktive anbefalinger for øyeblikket.</p>
-              <Button 
-                onClick={() => window.location.href = '/my-plan'}
-              >
-                Se helseplan
-              </Button>
-            </div>
-          )}
-        </AccordionSection>
-        
-        {/* Activity Overview (Simplified) */}
-        <AccordionSection 
-          title="Aktivitetsoversikt" 
-          value="activity" 
-          isOpen={openSection === 'activity'}
-          onToggle={handleSectionToggle}
-        >
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-purple-50 flex items-center justify-center">
-                <Activity size={18} className="text-purple-600" />
-              </div>
-              <div>
-                <h4 className="text-sm font-medium">Registrer aktivitet</h4>
-                <p className="text-xs text-gray-500">
-                  Hold oversikt over trening og daglig aktivitet
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center">
-                <ListChecks size={18} className="text-blue-600" />
-              </div>
-              <div>
-                <h4 className="text-sm font-medium">Fullfør tiltak</h4>
-                <p className="text-xs text-gray-500">
-                  Gjennomfør anbefalte tiltak fra helseplanen din
-                </p>
-              </div>
-            </div>
-            
-            <Button 
-              variant="outline" 
-              className="w-full"
-            >
-              Se aktivitetslogg
-            </Button>
+          <DashboardHeader />
+          
+          <div className="mb-6">
+            <DashboardSummary stats={stats} />
           </div>
-        </AccordionSection>
+          
+          <div className="mb-6">
+            <QuickActions />
+          </div>
+          
+          {/* Nutrition Section */}
+          <CollapsibleSection 
+            title="Ernæringsanbefalinger" 
+            isOpen={openSections.nutrition}
+            onToggle={() => toggleSection('nutrition')}
+            icon={<Apple size={18} />}
+            badge={
+              <span className="bg-green-50 text-green-700 text-xs px-2 py-0.5 rounded">
+                Ny
+              </span>
+            }
+          >
+            {nutritionLoading ? (
+              <div className="py-10 text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#9b87f5] mx-auto"></div>
+                <p className="mt-2 text-gray-500">Laster ernæringsinformasjon...</p>
+              </div>
+            ) : (
+              <NutritionRecommendationsSection
+                ingredients={ingredients.slice(0, 2)} // Show limited items on dashboard
+                supplements={supplements.slice(0, 2)} // Show limited items on dashboard
+              />
+            )}
+          </CollapsibleSection>
+          
+          <CollapsibleSection 
+            title="Anbefalte tiltak" 
+            isOpen={openSections.recommendations}
+            onToggle={() => toggleSection('recommendations')}
+            icon={<Badge size={18} />}
+          >
+            <RecommendationsCard 
+              recommendations={recommendations} 
+              onComplete={completeRecommendation} 
+            />
+          </CollapsibleSection>
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            <CollapsibleSection 
+              title="Siste sjekk inn" 
+              isOpen={openSections.checkin}
+              onToggle={() => toggleSection('checkin')}
+              icon={<CalendarDays size={18} />}
+            >
+              <LatestCheckinCard checkin={latestCheckin} />
+            </CollapsibleSection>
+            
+            <CollapsibleSection 
+              title="Scan historikk" 
+              isOpen={openSections.history}
+              onToggle={() => toggleSection('history')}
+              icon={<Calendar size={18} />}
+            >
+              <CalendarCard 
+                date={scanDate}
+                onDateChange={handleDateChange}
+              />
+            </CollapsibleSection>
+          </div>
+        </motion.div>
       </div>
     </div>
   );

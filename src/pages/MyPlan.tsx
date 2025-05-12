@@ -7,12 +7,15 @@ import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { tables } from '@/integrations/supabase/client-extensions';
 import { UserPlan, PlanRecommendation } from '@/types/database';
+import { Badge } from '@/components/ui/badge';
 
 // Import the refactored components
 import PlanHeader from '@/components/my-plan/PlanHeader';
 import PlanSummaryCard from '@/components/my-plan/PlanSummaryCard';
 import CategoryAccordion from '@/components/my-plan/CategoryAccordion';
 import EmptyPlanState from '@/components/my-plan/EmptyPlanState';
+import NutritionRecommendationsSection from '@/components/nutrition/NutritionRecommendationsSection';
+import { useNutritionRecommendations } from '@/hooks/useNutritionRecommendations';
 
 const MyPlan = () => {
   const navigate = useNavigate();
@@ -20,6 +23,10 @@ const MyPlan = () => {
   const [plan, setPlan] = useState<UserPlan | null>(null);
   const [recommendations, setRecommendations] = useState<PlanRecommendation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState<string | null>("nutrition");
+  
+  // Get nutrition recommendations
+  const { ingredients, supplements, explanations, isLoading: nutritionLoading } = useNutritionRecommendations();
   
   // Add categories with icons for different health recommendations
   const categories = {
@@ -113,6 +120,14 @@ const MyPlan = () => {
     }
   };
   
+  const toggleSection = (sectionName: string) => {
+    if (activeSection === sectionName) {
+      setActiveSection(null);
+    } else {
+      setActiveSection(sectionName);
+    }
+  };
+  
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -130,6 +145,34 @@ const MyPlan = () => {
           <div className="space-y-6">
             {/* Plan Summary */}
             <PlanSummaryCard plan={plan} recommendations={recommendations} />
+            
+            {/* Nutrition Section */}
+            <div className="mb-6">
+              <div onClick={() => toggleSection("nutrition")}>
+                <Button 
+                  variant="ghost"
+                  className="w-full flex items-center justify-between p-2 text-left"
+                >
+                  <div className="flex items-center gap-2">
+                    <Apple className="text-green-500" />
+                    <span className="text-lg font-medium">Ernæring</span>
+                    <Badge variant="outline" className="ml-2 bg-green-50 text-green-700">
+                      Ny
+                    </Badge>
+                  </div>
+                </Button>
+              </div>
+              
+              {activeSection === "nutrition" && (
+                <div className="mt-2 bg-white/70 backdrop-blur shadow-sm rounded-xl border border-gray-100/40 p-4">
+                  <NutritionRecommendationsSection 
+                    ingredients={ingredients} 
+                    supplements={supplements} 
+                    explanations={explanations}
+                  />
+                </div>
+              )}
+            </div>
             
             {/* Categories Accordion */}
             <CategoryAccordion categories={categories} recommendations={recommendations} />
