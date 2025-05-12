@@ -30,9 +30,25 @@ const CategoryAccordion: React.FC<CategoryAccordionProps> = ({ categories, recom
     return isPast(dueDate);
   };
   
+  // Filter categories to only include those that have matching recommendations
+  const categoriesWithRecommendations = Object.entries(categories).filter(([category]) => 
+    recommendations.some(rec => rec.category?.toLowerCase() === category.toLowerCase())
+  );
+  
+  // If there are no categories with recommendations, don't render the accordion
+  if (categoriesWithRecommendations.length === 0) {
+    return (
+      <div className="text-center py-4 bg-white/70 backdrop-blur shadow-sm rounded-xl border border-gray-100/40 p-6">
+        <p className="text-gray-500">
+          Ingen kategorier har anbefalinger for øyeblikket.
+        </p>
+      </div>
+    );
+  }
+  
   return (
     <Accordion type="multiple" className="w-full" defaultValue={['kosthold', 'tilskudd']}>
-      {Object.entries(categories).map(([category, icon]) => (
+      {categoriesWithRecommendations.map(([category, icon]) => (
         <AccordionItem key={category} value={category.toLowerCase()}>
           <AccordionTrigger className="text-lg font-semibold">
             <div className="flex items-center">
@@ -80,14 +96,6 @@ const CategoryAccordion: React.FC<CategoryAccordionProps> = ({ categories, recom
                     </Button>
                   </div>
                 ))}
-                
-              {recommendations.filter(rec => rec.category?.toLowerCase() === category.toLowerCase()).length === 0 && (
-                <div className="text-center py-4">
-                  <p className="text-sm text-gray-500">
-                    Ingen anbefalinger i denne kategorien.
-                  </p>
-                </div>
-              )}
             </div>
           </AccordionContent>
         </AccordionItem>
