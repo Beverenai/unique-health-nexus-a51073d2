@@ -14,9 +14,11 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { History } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@/context/ThemeContext';
 
 const Insights: React.FC = () => {
   const navigate = useNavigate();
+  const { updateStatusBarColor } = useTheme();
   // Initialize with the correct mock data that now matches the expected type
   const [healthIssues, setHealthIssues] = useState<HealthIssue[]>(mockHealthIssues);
   const [healthSystemData, setHealthSystemData] = useState<HealthSystemItem[]>([]);
@@ -86,6 +88,16 @@ const Insights: React.FC = () => {
       category: "Tilskudd"
     }
   ]);
+  
+  useEffect(() => {
+    // Set purple theme color for this page
+    updateStatusBarColor('#9b87f5');
+    
+    // Clean up when component unmounts
+    return () => {
+      updateStatusBarColor('#FFFFFF');
+    };
+  }, [updateStatusBarColor]);
   
   useEffect(() => {
     const fetchData = async () => {

@@ -30,6 +30,8 @@ import RecipeDetail from "./pages/RecipeDetail";
 import FindingsPage from "./pages/FindingsPage";
 import CategoryDetail from "./pages/CategoryDetail";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import ThemeProvider from "./context/ThemeContext";
+import StatusBar from "./components/ui/status-bar";
 
 // Add debugging log
 console.log('App loaded - using CustomTooltip for tooltips');
@@ -70,6 +72,7 @@ const AppRoutes = () => {
 
   return (
     <>
+      <StatusBar />
       <Toaster />
       <Sonner />
       {showOnboarding && (
@@ -117,8 +120,10 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          <ScrollToTop />
-          <AppRoutes />
+          <ThemeProvider>
+            <ScrollToTop />
+            <AppRoutes />
+          </ThemeProvider>
         </BrowserRouter>
       </AuthProvider>
     </QueryClientProvider>

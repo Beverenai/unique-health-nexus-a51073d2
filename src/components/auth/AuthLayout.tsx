@@ -1,11 +1,21 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useTheme } from '@/context/ThemeContext';
 
 type AuthLayoutProps = {
   children: React.ReactNode;
 };
 
 const AuthLayout = ({ children }: AuthLayoutProps) => {
+  const { updateStatusBarColor } = useTheme();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Always ensure white status bar for auth pages
+    updateStatusBarColor('#FFFFFF');
+  }, [location.pathname, updateStatusBarColor]);
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-white to-[#F8F8FC]">
       <div className="w-full max-w-md">
