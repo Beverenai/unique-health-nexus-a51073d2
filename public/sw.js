@@ -1,7 +1,7 @@
 
 // Service Worker for Unique Health Nexus PWA
 
-const CACHE_NAME = 'unique-health-cache-v1';
+const CACHE_NAME = 'unique-health-cache-v2'; // Updated cache version
 const urlsToCache = [
   '/',
   '/index.html',
@@ -11,6 +11,7 @@ const urlsToCache = [
 
 // Install event - cache essential files
 self.addEventListener('install', event => {
+  console.log('Service Worker installing with new cache version');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -18,53 +19,13 @@ self.addEventListener('install', event => {
         return cache.addAll(urlsToCache);
       })
   );
+  // Force activation by skipping waiting
+  self.skipWaiting();
 });
 
-// Fetch event - serve from cache or network
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Cache hit - return the response from the cached version
-        if (response) {
-          return response;
-        }
-        
-        // Not in cache - fetch from network
-        return fetch(event.request).then(
-          networkResponse => {
-            // Don't cache if not a valid response
-            if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-              return networkResponse;
-            }
-
-            // Clone the response since it can only be consumed once
-            const responseToCache = networkResponse.clone();
-
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                // Only cache GET requests
-                if (event.request.method === 'GET') {
-                  cache.put(event.request, responseToCache);
-                }
-              });
-
-            return networkResponse;
-          }
-        );
-      }).catch(() => {
-        // If both cache and network fail, show an offline fallback
-        if (event.request.mode === 'navigate') {
-          return caches.match('/');
-        }
-        
-        return new Response('Offline - ingen nettverkstilkobling');
-      })
-  );
-});
-
-// Activate event - clean up old caches
+// Clear old caches when activated
 self.addEventListener('activate', event => {
+  console.log('Service Worker activating and clearing old caches');
   const cacheWhitelist = [CACHE_NAME];
   
   event.waitUntil(
@@ -72,10 +33,68 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (!cacheWhitelist.includes(cacheName)) {
+            console.log('Service Worker: clearing old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
+    }).then(() => {
+      console.log('Service Worker: claiming clients');
+      return self.clients.claim();
     })
   );
+});
+
+// Fetch event - serve from network first, then cache
+self.addEventListener('fetch', event => {
+  // Skip cross-origin requests
+  if (!event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+  
+  // Network first strategy
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        // Don't cache if not a valid response
+        if (!response || response.status !== 200 || response.type !== 'basic') {
+          return response;
+        }
+
+        // Clone the response since it can only be consumed once
+        const responseToCache = response.clone();
+
+        // Only cache GET requests
+        if (event.request.method === 'GET') {
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+
+        return response;
+      })
+      .catch(() => {
+        // If network fails, try serving from cache
+        return caches.match(event.request).then(cachedResponse => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          
+          // If both cache and network fail, show an offline fallback
+          if (event.request.mode === 'navigate') {
+            return caches.match('/');
+          }
+          
+          return new Response('Offline - ingen nettverkstilkobling');
+        });
+      })
+  );
+});
+
+// Force update on message from client
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('Service Worker: received skip waiting instruction');
+    self.skipWaiting();
+  }
 });

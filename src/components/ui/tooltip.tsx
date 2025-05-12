@@ -9,9 +9,14 @@ interface TooltipProps {
   className?: string
 }
 
-// Custom tooltip that doesn't depend on React context
+// Custom tooltip that doesn't depend on React context or Radix
 const CustomTooltip = ({ children, content, side = "top", align = "center", className = "" }: TooltipProps) => {
   const [show, setShow] = React.useState(false);
+  
+  // Add console log to track tooltip usage
+  React.useEffect(() => {
+    console.log('CustomTooltip rendered - NOT using Radix UI');
+  }, []);
   
   if (!content) {
     return <>{children}</>;

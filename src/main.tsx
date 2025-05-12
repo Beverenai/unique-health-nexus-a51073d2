@@ -5,20 +5,46 @@ import App from './App.tsx'
 import './index.css'
 
 // Add debugging log to help identify tooltip issues
-console.log('Starting application - CustomTooltip implementation active');
+console.log('Starting application - Using CustomTooltip implementation only, no Radix tooltips');
 
-// Register service worker for PWA functionality
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => {
-        console.log('Service Worker registered with scope:', registration.scope);
-      })
-      .catch(err => {
-        console.error('Service Worker registration failed:', err);
-      });
-  });
-}
+// Function to unregister all service workers and register new one
+const registerNewServiceWorker = async () => {
+  if ('serviceWorker' in navigator) {
+    try {
+      // Unregister all existing service workers
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      for (const registration of registrations) {
+        console.log('Unregistering old service worker:', registration.scope);
+        await registration.unregister();
+      }
+
+      // Clear caches to remove any old code
+      if ('caches' in window) {
+        const cacheKeys = await caches.keys();
+        await Promise.all(
+          cacheKeys.map(key => {
+            console.log('Deleting cache:', key);
+            return caches.delete(key);
+          })
+        );
+      }
+
+      // Register the new service worker
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      console.log('New Service Worker registered with scope:', registration.scope);
+      
+      // Force update if needed
+      if (registration.waiting) {
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      }
+    } catch (err) {
+      console.error('Service Worker registration or cleanup failed:', err);
+    }
+  }
+};
+
+// Run the service worker registration
+registerNewServiceWorker();
 
 // Create root and render app
 const rootElement = document.getElementById("root");

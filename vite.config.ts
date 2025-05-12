@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => ({
     mode === 'development' &&
     componentTagger(),
     VitePWA({ 
-      registerType: 'autoUpdate',
+      registerType: 'prompt', // Change to prompt to avoid automatic registration
       includeAssets: ['favicon.ico', 'robots.txt', 'icons/*.png', 'lovable-uploads/*.png'],
       manifest: {
         name: 'Unique Health Nexus',
@@ -38,6 +38,19 @@ export default defineConfig(({ mode }) => ({
             purpose: 'any maskable'
           }
         ]
+      },
+      workbox: {
+        // Force Workbox to replace existing precaches
+        cleanupOutdatedCaches: true,
+        // Don't include runtime caching to avoid conflicts
+        runtimeCaching: [],
+        // Add a unique build ID to ensure cache refresh
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,json}'],
+        maximumFileSizeToCacheInBytes: 5000000
+      },
+      devOptions: {
+        enabled: true, // Enable for easier testing
+        type: 'module'
       }
     })
   ].filter(Boolean),
