@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -166,22 +165,11 @@ const MyPlan = () => {
               {activeSection === "nutrition" && (
                 <div className="mt-2 bg-white/70 backdrop-blur shadow-sm rounded-xl border border-gray-100/40 p-4">
                   <NutritionRecommendationsSection 
-                    ingredients={ingredients.slice(0, 2)} 
-                    supplements={supplements.slice(0, 2)}
-                    recipes={recipes.slice(0, 2)}
+                    ingredients={ingredients} 
+                    supplements={supplements}
+                    recipes={recipes}
                     explanations={explanations}
                   />
-                  <div className="mt-3 flex justify-end">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="flex items-center gap-1"
-                      onClick={() => navigate('/recipes')}
-                    >
-                      <BookOpen size={14} />
-                      <span>Se alle oppskrifter</span>
-                    </Button>
-                  </div>
                 </div>
               )}
             </div>

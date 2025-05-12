@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from 'framer-motion';
+import TabViewItem from './tab-view-item';
 
 interface TabItem {
   id: string;
@@ -24,28 +24,26 @@ export const TabView: React.FC<TabViewProps> = ({
   const [activeTab, setActiveTab] = useState(defaultTab);
 
   return (
-    <Tabs 
-      defaultValue={defaultTab} 
-      value={activeTab}
-      onValueChange={setActiveTab}
-      className={className}
-    >
+    <div className={`w-full ${className}`}>
       <motion.div 
         className="w-full overflow-x-auto pb-2"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <TabsList className="bg-gray-100 p-1 w-full justify-between rounded-lg">
+        <div className="flex rounded-xl bg-gray-100 p-1.5 gap-2">
           {tabs.map((tab) => (
-            <TabsTrigger 
-              key={tab.id} 
-              value={tab.id}
-              className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-200 ease-out rounded-md px-4 py-2"
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                activeTab === tab.id 
+                  ? 'bg-white shadow-sm text-[#9b87f5]' 
+                  : 'hover:bg-white/50 text-gray-600'
+              }`}
             >
               {tab.icon && (
                 <motion.div 
-                  initial={{ scale: 0.9 }}
                   animate={{ 
                     scale: activeTab === tab.id ? 1.1 : 1,
                     color: activeTab === tab.id ? "#9b87f5" : "inherit"
@@ -55,42 +53,21 @@ export const TabView: React.FC<TabViewProps> = ({
                   {tab.icon}
                 </motion.div>
               )}
-              <span className="font-medium text-sm">{tab.label}</span>
-            </TabsTrigger>
+              <span>{tab.label}</span>
+            </button>
           ))}
-        </TabsList>
+        </div>
       </motion.div>
 
-      <div className="mt-3 relative">
+      <div className="relative mt-2 min-h-[320px]">
         <AnimatePresence mode="wait">
           {tabs.map((tab) => (
-            activeTab === tab.id && (
-              <motion.div
-                key={tab.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ 
-                  duration: 0.2,
-                  type: "spring",
-                  stiffness: 200,
-                  damping: 25
-                }}
-                className="absolute w-full"
-              >
-                <TabsContent value={tab.id} forceMount className="m-0 outline-none">
-                  {tab.content}
-                </TabsContent>
-              </motion.div>
-            )
+            <TabViewItem key={tab.id} isActive={activeTab === tab.id}>
+              {tab.content}
+            </TabViewItem>
           ))}
         </AnimatePresence>
-        
-        {/* Placeholder to maintain proper layout height */}
-        <div className="invisible">
-          {tabs.find(tab => tab.id === activeTab)?.content}
-        </div>
       </div>
-    </Tabs>
+    </div>
   );
 };

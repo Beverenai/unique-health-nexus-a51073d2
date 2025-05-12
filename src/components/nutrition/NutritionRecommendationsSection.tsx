@@ -6,11 +6,15 @@ import IngredientCard from './IngredientCard';
 import SupplementCard from './SupplementCard';
 import RecipeCard from './RecipeCard';
 import RecipeDetailModal from './RecipeDetailModal';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Apple, Sparkles, BookOpen } from 'lucide-react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Recipe } from '@/types/nutrition';
 import { useRecipes } from '@/hooks/useRecipes';
+import { TabView } from '@/components/ui/tab-view';
+import TabViewItem from '@/components/ui/tab-view-item';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface NutritionRecommendationsSectionProps {
   ingredients: Ingredient[];
@@ -29,96 +33,134 @@ const NutritionRecommendationsSection: React.FC<NutritionRecommendationsSectionP
 }) => {
   const [selectedRecipe, setSelectedRecipe] = React.useState<Recipe | null>(null);
   const { featuredRecipes, isLoading: recipesLoading } = useRecipes();
+  const navigate = useNavigate();
   
   const recipes = propRecipes || featuredRecipes;
 
-  return (
-    <div className="space-y-4">
-      <Tabs defaultValue="ingredients" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="ingredients" className="flex items-center gap-2">
-            <Apple size={16} />
-            <span>Matvarer ({ingredients.length})</span>
-          </TabsTrigger>
-          <TabsTrigger value="supplements" className="flex items-center gap-2">
-            <Sparkles size={16} />
-            <span>Kosttilskudd ({supplements.length})</span>
-          </TabsTrigger>
-          <TabsTrigger value="recipes" className="flex items-center gap-2">
-            <BookOpen size={16} />
-            <span>Oppskrifter ({recipes?.length || 0})</span>
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="ingredients" className="mt-4">
+  // Tab configuration
+  const tabs = [
+    {
+      id: 'ingredients',
+      label: `Matvarer (${ingredients.length})`,
+      icon: <Apple size={18} />,
+      content: (
+        <div className="mt-2">
           {ingredients.length > 0 ? (
-            <ScrollArea className="h-[340px] pr-4">
-              <div className="space-y-3">
+            <ScrollArea className="h-[300px] pr-4">
+              <div className="space-y-3 pb-2">
                 {ingredients.map(ingredient => (
-                  <IngredientCard 
-                    key={ingredient.id} 
-                    ingredient={ingredient} 
-                    reason={explanations[ingredient.id]} 
-                  />
+                  <motion.div
+                    key={ingredient.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <IngredientCard 
+                      ingredient={ingredient} 
+                      reason={explanations[ingredient.id]} 
+                    />
+                  </motion.div>
                 ))}
               </div>
             </ScrollArea>
           ) : (
-            <div className="text-center py-8">
-              <Apple size={24} className="mx-auto mb-2 text-gray-300" />
+            <div className="text-center py-8 bg-gray-50 rounded-lg">
+              <Apple size={32} className="mx-auto mb-2 text-gray-300" />
               <p className="text-gray-500">Ingen matvareanbefalinger for øyeblikket</p>
             </div>
           )}
-        </TabsContent>
-        
-        <TabsContent value="supplements" className="mt-4">
+        </div>
+      )
+    },
+    {
+      id: 'supplements',
+      label: `Kosttilskudd (${supplements.length})`,
+      icon: <Sparkles size={18} />,
+      content: (
+        <div className="mt-2">
           {supplements.length > 0 ? (
-            <ScrollArea className="h-[340px] pr-4">
-              <div className="space-y-3">
+            <ScrollArea className="h-[300px] pr-4">
+              <div className="space-y-3 pb-2">
                 {supplements.map(supplement => (
-                  <SupplementCard 
-                    key={supplement.id} 
-                    supplement={supplement} 
-                    reason={explanations[supplement.id]} 
-                  />
+                  <motion.div
+                    key={supplement.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <SupplementCard 
+                      supplement={supplement} 
+                      reason={explanations[supplement.id]} 
+                    />
+                  </motion.div>
                 ))}
               </div>
             </ScrollArea>
           ) : (
-            <div className="text-center py-8">
-              <Sparkles size={24} className="mx-auto mb-2 text-gray-300" />
+            <div className="text-center py-8 bg-gray-50 rounded-lg">
+              <Sparkles size={32} className="mx-auto mb-2 text-gray-300" />
               <p className="text-gray-500">Ingen kosttilskuddsanbefalinger for øyeblikket</p>
             </div>
           )}
-        </TabsContent>
-        
-        <TabsContent value="recipes" className="mt-4">
+        </div>
+      )
+    },
+    {
+      id: 'recipes',
+      label: `Oppskrifter (${recipes?.length || 0})`,
+      icon: <BookOpen size={18} />,
+      content: (
+        <div className="mt-2">
           {recipesLoading ? (
-            <div className="text-center py-8">
+            <div className="text-center py-8 bg-gray-50 rounded-lg">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#9b87f5] mx-auto"></div>
               <p className="mt-2 text-gray-500">Laster oppskrifter...</p>
             </div>
           ) : recipes && recipes.length > 0 ? (
-            <ScrollArea className="h-[340px] pr-4">
-              <div className="space-y-3">
+            <ScrollArea className="h-[300px] pr-4">
+              <div className="space-y-3 pb-2">
                 {recipes.map(recipe => (
-                  <RecipeCard 
-                    key={recipe.id} 
-                    recipe={recipe} 
-                    reason={explanations[recipe.id]}
-                    onClick={() => setSelectedRecipe(recipe)}
-                  />
+                  <motion.div
+                    key={recipe.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <RecipeCard 
+                      recipe={recipe} 
+                      reason={explanations[recipe.id]}
+                      onClick={() => setSelectedRecipe(recipe)}
+                    />
+                  </motion.div>
                 ))}
               </div>
             </ScrollArea>
           ) : (
-            <div className="text-center py-8">
-              <BookOpen size={24} className="mx-auto mb-2 text-gray-300" />
+            <div className="text-center py-8 bg-gray-50 rounded-lg">
+              <BookOpen size={32} className="mx-auto mb-2 text-gray-300" />
               <p className="text-gray-500">Ingen oppskriftsanbefalinger for øyeblikket</p>
             </div>
           )}
-        </TabsContent>
-      </Tabs>
+          
+          <div className="mt-3 flex justify-end">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="flex items-center gap-1"
+              onClick={() => navigate('/recipes')}
+            >
+              <BookOpen size={14} />
+              <span>Se alle oppskrifter</span>
+            </Button>
+          </div>
+        </div>
+      )
+    }
+  ];
+
+  return (
+    <div>
+      <TabView tabs={tabs} className="overflow-visible" />
       
       {selectedRecipe && (
         <RecipeDetailModal
