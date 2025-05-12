@@ -3,7 +3,7 @@ import React from 'react';
 import { ArrowRight, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { CustomTooltip } from '@/components/ui/tooltip';
 
 interface SystemRelationsProps {
   topSystem: string;
@@ -86,20 +86,17 @@ const SystemRelations: React.FC<SystemRelationsProps> = ({ topSystem, secondSyst
           <span>Viktigste systemsammenhenger</span>
         </div>
         
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-6 w-6">
-                <Info size={14} className="text-gray-500" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-xs max-w-[220px]">
-                Basert på din skanning viser vi de viktigste sammenhengene mellom kroppssystemer.
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <CustomTooltip 
+          content={
+            <p className="text-xs max-w-[220px]">
+              Basert på din skanning viser vi de viktigste sammenhengene mellom kroppssystemer.
+            </p>
+          }
+        >
+          <Button variant="ghost" size="icon" className="h-6 w-6">
+            <Info size={14} className="text-gray-500" />
+          </Button>
+        </CustomTooltip>
       </motion.h4>
       
       <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-3 mb-3">
