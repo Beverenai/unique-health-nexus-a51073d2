@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, History, User, Menu, Scan } from 'lucide-react';
@@ -21,6 +20,7 @@ import {
   SidebarProvider,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
 
 // Menu items
 const menuItems = [
@@ -177,13 +177,15 @@ export function AppSidebar() {
 // Wrapper component to provide sidebar context
 export function AppNavigation({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider defaultOpen={false}>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <div className="flex-1 flex flex-col">
-          {children}
+    <TooltipProvider>
+      <SidebarProvider defaultOpen={false}>
+        <div className="min-h-screen flex w-full">
+          <AppSidebar />
+          <div className="flex-1 flex flex-col">
+            {children}
+          </div>
         </div>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </TooltipProvider>
   );
 }
