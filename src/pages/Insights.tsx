@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { HealthIssue } from '@/types/supabase';
@@ -114,46 +115,48 @@ const Insights: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-[calc(100vh-4rem)] overflow-hidden">
-      <ScrollArea className="h-full pb-0 insights-scroll-area">
-        <main className={`container mx-auto px-3 py-3 ${isMobile ? 'max-w-[100%]' : 'max-w-lg'}`}>
-          <div className="mb-5">
-            <div className="flex justify-between items-center mb-1.5">
-              <h1 className="text-xl sm:text-2xl font-semibold text-center flex-1">Unique+</h1>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-gray-600 hover:text-[#9b87f5]"
-                onClick={() => navigate('/history')}
-              >
-                <History size={18} className="mr-1" />
-                Historikk
-              </Button>
+    <div className="h-screen overflow-hidden bg-[#9b87f5]">
+      <div className="h-full">
+        <ScrollArea className="h-full pb-0 insights-scroll-area">
+          <main className={`container mx-auto px-3 py-3 ${isMobile ? 'max-w-[100%]' : 'max-w-lg'}`}>
+            <div className="mb-5">
+              <div className="flex justify-between items-center mb-1.5">
+                <h1 className="text-xl sm:text-2xl font-semibold text-center flex-1 text-white">Unique+</h1>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-white hover:text-white/80 hover:bg-white/10"
+                  onClick={() => navigate('/history')}
+                >
+                  <History size={18} className="mr-1" />
+                  Historikk
+                </Button>
+              </div>
+              <p className="text-white/80 text-center text-xs sm:text-sm">
+                Avansert analyse basert på din skanning {lastScanDate ? `fra ${lastScanDate.toLocaleDateString('nb-NO', {day: 'numeric', month: 'long'})}` : ''}
+              </p>
             </div>
-            <p className="text-gray-500 text-center text-xs sm:text-sm">
-              Avansert analyse basert på din skanning {lastScanDate ? `fra ${lastScanDate.toLocaleDateString('nb-NO', {day: 'numeric', month: 'long'})}` : ''}
-            </p>
-          </div>
-          
-          {/* Body Systems Insights */}
-          <BodySystemsInsightsCard healthIssues={healthIssues} />
-          
-          {/* Specialist Recommendations */}
-          <SpecialistRecommendationsCard healthIssues={healthIssues} />
-          
-          {/* Enhanced Recommendations */}
-          <EnhancedRecommendationsCard recommendations={recommendations} />
-          
-          {/* Health systems grid */}
-          <div className="mb-0 sm:mb-6">
-            <HealthSystemGrid 
-              healthData={healthSystemData}
-              title="Alle kroppssystemer"
-              description="Trykk på en kategori for å se systemene innen denne kategori"
-            />
-          </div>
-        </main>
-      </ScrollArea>
+            
+            {/* Body Systems Insights */}
+            <BodySystemsInsightsCard healthIssues={healthIssues} />
+            
+            {/* Specialist Recommendations */}
+            <SpecialistRecommendationsCard healthIssues={healthIssues} />
+            
+            {/* Enhanced Recommendations */}
+            <EnhancedRecommendationsCard recommendations={recommendations} />
+            
+            {/* Health systems grid */}
+            <div className="mb-0 sm:mb-6">
+              <HealthSystemGrid 
+                healthData={healthSystemData}
+                title="Alle kroppssystemer"
+                description="Trykk på en kategori for å se systemene innen denne kategori"
+              />
+            </div>
+          </main>
+        </ScrollArea>
+      </div>
     </div>
   );
 };

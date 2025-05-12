@@ -74,7 +74,7 @@ const AppRoutes = () => {
       )}
       <div className="font-sans bg-gradient-to-b from-white to-[#F8F8FC]">
         <div className="min-h-screen flex flex-col">
-          <div className="flex-grow pb-16">
+          <div className="flex-grow pb-24">
             <Routes>
               <Route path="/login" element={<Login />} />
               

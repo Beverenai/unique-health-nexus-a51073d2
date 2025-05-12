@@ -16,7 +16,7 @@ const BottomNavigation = () => {
     { 
       path: '/', 
       label: 'Hjem', 
-      icon: <Home size={isMobile ? 24 : 26} />,
+      icon: <Home size={isMobile ? 28 : 26} />,
       active: currentPath === '/'
     },
     { 
@@ -25,14 +25,14 @@ const BottomNavigation = () => {
       icon: <img 
               src="/lovable-uploads/7f3db508-ef1a-4c8f-8163-91404c131e30.png" 
               alt="Unique+" 
-              className={`h-${isMobile ? '6' : '7'} w-${isMobile ? '6' : '7'} object-contain`} 
+              className={`h-${isMobile ? '7' : '7'} w-${isMobile ? '7' : '7'} object-contain`} 
             />,
       active: currentPath === '/insights'
     },
     { 
       path: '/my-plan', 
       label: 'Min Helse', 
-      icon: <Heart size={isMobile ? 24 : 26} />,
+      icon: <Heart size={isMobile ? 28 : 26} />,
       active: currentPath === '/my-plan'
     }
   ];
@@ -45,9 +45,9 @@ const BottomNavigation = () => {
   };
   
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white shadow-[0_-1px_3px_rgba(0,0,0,0.1)] border-t border-gray-200">
+    <nav className="fixed bottom-6 left-0 right-0 z-40 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.15)] border border-gray-200 mx-4 rounded-2xl">
       <div className="container max-w-md mx-auto">
-        <div className="flex justify-around items-center h-16">
+        <div className="flex justify-around items-center h-[70px]">
           {navItems.map((item) => (
             <Link 
               key={item.path} 
@@ -64,12 +64,12 @@ const BottomNavigation = () => {
                   className="flex flex-col items-center"
                 >
                   {item.icon}
-                  <span className={`${isMobile ? 'text-[11px]' : 'text-sm'} mt-1 font-medium`}>{item.label}</span>
+                  <span className={`${isMobile ? 'text-[13px]' : 'text-sm'} mt-1.5 font-medium`}>{item.label}</span>
                 </motion.div>
               ) : (
                 <div className="flex flex-col items-center">
                   {item.icon}
-                  <span className={`${isMobile ? 'text-[11px]' : 'text-sm'} mt-1`}>{item.label}</span>
+                  <span className={`${isMobile ? 'text-[13px]' : 'text-sm'} mt-1.5`}>{item.label}</span>
                 </div>
               )}
             </Link>
