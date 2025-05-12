@@ -62,53 +62,57 @@ const AppRoutes = () => {
   }, []);
 
   return (
-    <div className="font-sans bg-gradient-to-b from-white to-[#F8F8FC]">
+    <>
       <Toaster />
       <Sonner />
       {showOnboarding && (
         <Onboarding onComplete={() => setShowOnboarding(false)} />
       )}
-      <div className="min-h-screen flex flex-col">
-        <div className="flex-grow pb-16">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            
-            {/* Protected routes */}
-            <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/insights" element={<ProtectedRoute><Insights /></ProtectedRoute>} />
-            <Route path="/issue/:issueId" element={<ProtectedRoute><IssueDetail /></ProtectedRoute>} />
-            <Route path="/priority/:priorityId" element={<ProtectedRoute><PriorityDetail /></ProtectedRoute>} />
-            <Route path="/health-system/:systemId" element={<ProtectedRoute><HealthSystemDetail /></ProtectedRoute>} />
-            <Route path="/my-plan" element={<ProtectedRoute><MyPlan /></ProtectedRoute>} />
-            <Route path="/checkin" element={<ProtectedRoute><CheckIn /></ProtectedRoute>} />
-            <Route path="/daily-report" element={<ProtectedRoute><DailyReport /></ProtectedRoute>} />
-            <Route path="/scan" element={<ProtectedRoute><ScanProcess /></ProtectedRoute>} />
-            
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+      <div className="font-sans bg-gradient-to-b from-white to-[#F8F8FC]">
+        <div className="min-h-screen flex flex-col">
+          <div className="flex-grow pb-16">
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              
+              {/* Protected routes */}
+              <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/insights" element={<ProtectedRoute><Insights /></ProtectedRoute>} />
+              <Route path="/issue/:issueId" element={<ProtectedRoute><IssueDetail /></ProtectedRoute>} />
+              <Route path="/priority/:priorityId" element={<ProtectedRoute><PriorityDetail /></ProtectedRoute>} />
+              <Route path="/health-system/:systemId" element={<ProtectedRoute><HealthSystemDetail /></ProtectedRoute>} />
+              <Route path="/my-plan" element={<ProtectedRoute><MyPlan /></ProtectedRoute>} />
+              <Route path="/checkin" element={<ProtectedRoute><CheckIn /></ProtectedRoute>} />
+              <Route path="/daily-report" element={<ProtectedRoute><DailyReport /></ProtectedRoute>} />
+              <Route path="/scan" element={<ProtectedRoute><ScanProcess /></ProtectedRoute>} />
+              
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+          {session && <BottomNavigation />}
         </div>
-        {session && <BottomNavigation />}
       </div>
-    </div>
+    </>
   );
 };
 
 // Main App component with all providers properly nested
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <BrowserRouter>
-          <ScrollToTop />
-          <TooltipProvider>
-            <AppRoutes />
-          </TooltipProvider>
-        </BrowserRouter>
-      </AuthProvider>
-    </QueryClientProvider>
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <BrowserRouter>
+            <TooltipProvider>
+              <ScrollToTop />
+              <AppRoutes />
+            </TooltipProvider>
+          </BrowserRouter>
+        </AuthProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
   );
 };
 
