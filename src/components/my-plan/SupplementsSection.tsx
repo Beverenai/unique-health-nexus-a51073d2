@@ -43,7 +43,7 @@ const SupplementsSection: React.FC<SupplementsSectionProps> = ({
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => navigate('/nutrition/supplements')}
+            onClick={() => navigate('/category/tilskudd')}
             className="flex items-center gap-1"
           >
             <Sparkles size={14} />
