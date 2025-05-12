@@ -1,10 +1,11 @@
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cva, type VariantProps } from "class-variance-authority"
 import { useSidebar } from "./sidebar-context"
-import { SidebarTooltipSimple as SidebarTooltip } from "./sidebar-tooltip-simple"
+import { SidebarTooltip } from "./sidebar-tooltip"
 
 export const SidebarMenu = React.forwardRef<
   HTMLUListElement,

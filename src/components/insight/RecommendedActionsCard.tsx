@@ -7,7 +7,6 @@ import { Check, Info, CircleHelp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -109,6 +108,29 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
     return colors[category] || 'bg-gray-50 text-gray-700';
   };
 
+  // Custom tooltip component for this card
+  const CustomTooltip = ({ children, content }: { children: React.ReactNode, content: React.ReactNode }) => {
+    const [show, setShow] = React.useState(false);
+    
+    return (
+      <div 
+        className="relative inline-flex" 
+        onMouseEnter={() => setShow(true)} 
+        onMouseLeave={() => setShow(false)}
+      >
+        {children}
+        {show && (
+          <div 
+            className="absolute left-full ml-2 z-50 overflow-hidden rounded-md border bg-white px-3 py-1.5 text-xs text-slate-950 shadow-md animate-in fade-in-0 zoom-in-95"
+            style={{ top: '50%', transform: 'translateY(-50%)' }}
+          >
+            {content}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <motion.div
       variants={containerVariants}
@@ -121,16 +143,9 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
           <CardTitle className={`${isMobile ? 'text-base' : 'text-lg'} font-medium flex items-center justify-between`}>
             <div className="flex items-center gap-2">
               <span>Anbefalte tiltak</span>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <CircleHelp className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-gray-400`} />
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs" side={isMobile ? "bottom" : "top"}>
-                    <p className="text-sm">Tiltak som er tilpasset din situasjon basert på skanningen</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <CustomTooltip content={<p className="text-sm">Tiltak som er tilpasset din situasjon basert på skanningen</p>}>
+                <CircleHelp className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-gray-400 cursor-help`} />
+              </CustomTooltip>
             </div>
             
             <Button 
@@ -206,22 +221,15 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
                           </span>
                           
                           {recommendation.explanation && (
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button 
-                                    variant="ghost" 
-                                    size="sm" 
-                                    className={`${isMobile ? 'h-6 w-6' : 'h-7 w-7'} p-0 rounded-full`}
-                                  >
-                                    <Info size={isMobile ? 12 : 14} className="text-gray-500" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent className="max-w-xs" side={isMobile ? "bottom" : "top"}>
-                                  <p className="text-xs">{recommendation.explanation}</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
+                            <CustomTooltip content={<p className="text-xs">{recommendation.explanation}</p>}>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className={`${isMobile ? 'h-6 w-6' : 'h-7 w-7'} p-0 rounded-full`}
+                              >
+                                <Info size={isMobile ? 12 : 14} className="text-gray-500" />
+                              </Button>
+                            </CustomTooltip>
                           )}
                           
                           {!isCompleted && (

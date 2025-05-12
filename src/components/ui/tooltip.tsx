@@ -1,31 +1,74 @@
 
-"use client"
-
 import * as React from "react"
-import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
-import { cn } from "@/lib/utils"
+interface TooltipProps {
+  children: React.ReactNode
+  content: React.ReactNode
+  side?: "top" | "right" | "bottom" | "left"
+  align?: "start" | "center" | "end"
+  className?: string
+}
 
-const TooltipProvider = TooltipPrimitive.Provider
+const TooltipProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+  return <>{children}</>;
+};
 
-const Tooltip = TooltipPrimitive.Root
+const Tooltip: React.FC<{children: React.ReactNode}> = ({ children }) => {
+  return <>{children}</>;
+};
 
-const TooltipTrigger = TooltipPrimitive.Trigger
+const TooltipTrigger: React.FC<{asChild?: boolean, children: React.ReactNode}> = ({ children }) => {
+  return <>{children}</>;
+};
 
 const TooltipContent = React.forwardRef<
-  React.ElementRef<typeof TooltipPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
->(({ className, sideOffset = 4, ...props }, ref) => (
-  <TooltipPrimitive.Content
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & {
+    side?: "top" | "right" | "bottom" | "left"
+    align?: "start" | "center" | "end"
+    sideOffset?: number
+  }
+>(({ className, ...props }, ref) => (
+  <div
     ref={ref}
-    sideOffset={sideOffset}
-    className={cn(
-      "z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-      className
-    )}
+    className={className}
     {...props}
   />
 ))
-TooltipContent.displayName = TooltipPrimitive.Content.displayName
+TooltipContent.displayName = "TooltipContent"
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+// Custom tooltip that doesn't depend on React context
+const CustomTooltip = ({ children, content, side = "top", align = "center", className = "" }: TooltipProps) => {
+  const [show, setShow] = React.useState(false);
+  
+  return (
+    <div 
+      className="relative inline-flex" 
+      onMouseEnter={() => setShow(true)} 
+      onMouseLeave={() => setShow(false)}
+    >
+      {children}
+      {show && (
+        <div 
+          className={`absolute z-50 overflow-hidden rounded-md border bg-white px-3 py-1.5 text-sm text-slate-950 shadow-md animate-in fade-in-0 zoom-in-95 ${className}`}
+          style={{ 
+            ...(side === "right" && { left: "100%", marginLeft: "8px", top: align === "start" ? "0" : align === "end" ? "auto" : "50%", bottom: align === "end" ? "0" : "auto", transform: align === "center" ? "translateY(-50%)" : "none" }),
+            ...(side === "left" && { right: "100%", marginRight: "8px", top: align === "start" ? "0" : align === "end" ? "auto" : "50%", bottom: align === "end" ? "0" : "auto", transform: align === "center" ? "translateY(-50%)" : "none" }),
+            ...(side === "top" && { bottom: "100%", marginBottom: "8px", left: align === "start" ? "0" : align === "end" ? "auto" : "50%", right: align === "end" ? "0" : "auto", transform: align === "center" ? "translateX(-50%)" : "none" }),
+            ...(side === "bottom" && { top: "100%", marginTop: "8px", left: align === "start" ? "0" : align === "end" ? "auto" : "50%", right: align === "end" ? "0" : "auto", transform: align === "center" ? "translateX(-50%)" : "none" }),
+          }}
+        >
+          {content}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export { 
+  Tooltip, 
+  TooltipTrigger, 
+  TooltipContent, 
+  TooltipProvider,
+  CustomTooltip 
+}
