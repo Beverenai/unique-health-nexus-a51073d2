@@ -26,3 +26,5 @@ export {
   SidebarMenuSubItem,
   SidebarMenuSubButton
 } from './sidebar-group'
+export { SidebarTooltip } from './sidebar-tooltip'
+

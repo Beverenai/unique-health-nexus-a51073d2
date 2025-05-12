@@ -1,16 +1,10 @@
-
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cva, type VariantProps } from "class-variance-authority"
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger 
-} from "@/components/ui/tooltip"
 import { useSidebar } from "./sidebar-context"
+import { SidebarTooltip } from "./sidebar-tooltip"
 
 export const SidebarMenu = React.forwardRef<
   HTMLUListElement,
@@ -66,7 +60,7 @@ export const SidebarMenuButton = React.forwardRef<
     asChild?: boolean
     size?: "default" | "sm" | "lg"
     isActive?: boolean
-    tooltip?: string | React.ComponentProps<typeof TooltipContent>
+    tooltip?: string | React.ComponentProps<typeof import("@/components/ui/tooltip").TooltipContent>
   } & VariantProps<typeof sidebarMenuButtonVariants>
 >(
   (
@@ -82,7 +76,6 @@ export const SidebarMenuButton = React.forwardRef<
     ref
   ) => {
     const Comp = asChild ? Slot : "button"
-    const { isMobile, state } = useSidebar()
 
     const button = (
       <Comp
@@ -95,26 +88,10 @@ export const SidebarMenuButton = React.forwardRef<
       />
     )
 
-    if (!tooltip) {
-      return button
-    }
-
-    if (typeof tooltip === "string") {
-      tooltip = {
-        children: tooltip,
-      }
-    }
-
     return (
-      <Tooltip>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipContent
-          side="right"
-          align="center"
-          hidden={state !== "collapsed" || isMobile}
-          {...tooltip}
-        />
-      </Tooltip>
+      <SidebarTooltip content={tooltip}>
+        {button}
+      </SidebarTooltip>
     )
   }
 )
