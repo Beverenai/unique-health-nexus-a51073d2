@@ -18,7 +18,15 @@ import NutritionRecommendationsSection from '@/components/nutrition/NutritionRec
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { isLoading, error, stats, latestCheckin, recommendations, completeRecommendation } = useDashboardData();
+  const { 
+    isLoading, 
+    error, 
+    latestCheckin, 
+    recommendations, 
+    handleCompleteRecommendation,
+    refetch
+  } = useDashboardData();
+  
   const [scanDate, setScanDate] = useState<Date | undefined>(undefined);
   
   // Add state for collapsible sections
@@ -52,7 +60,7 @@ const Dashboard = () => {
   }
   
   if (error) {
-    return <ErrorState message={error.message} />;
+    return <ErrorState error={error} refetch={refetch} />;
   }
   
   return (
@@ -66,7 +74,7 @@ const Dashboard = () => {
           <DashboardHeader />
           
           <div className="mb-6">
-            <DashboardSummary stats={stats} />
+            <DashboardSummary latestCheckin={latestCheckin} />
           </div>
           
           <div className="mb-6">
@@ -106,7 +114,7 @@ const Dashboard = () => {
           >
             <RecommendationsCard 
               recommendations={recommendations} 
-              onComplete={completeRecommendation} 
+              onComplete={handleCompleteRecommendation} 
             />
           </CollapsibleSection>
           
@@ -117,7 +125,7 @@ const Dashboard = () => {
               onToggle={() => toggleSection('checkin')}
               icon={<CalendarDays size={18} />}
             >
-              <LatestCheckinCard checkin={latestCheckin} />
+              <LatestCheckinCard latestCheckin={latestCheckin} />
             </CollapsibleSection>
             
             <CollapsibleSection 
