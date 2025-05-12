@@ -73,6 +73,16 @@ export default {
 					primary: '#9b87f5',
 					secondary: '#7E69AB',
 				},
+				sidebar: {
+					background: 'hsl(var(--sidebar-background))',
+					foreground: 'hsl(var(--sidebar-foreground))',
+					border: 'hsl(var(--sidebar-border))',
+					primary: 'hsl(var(--sidebar-primary))',
+					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+					accent: 'hsl(var(--sidebar-accent))',
+					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+					ring: 'hsl(var(--sidebar-ring))',
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
