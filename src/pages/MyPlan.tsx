@@ -2,24 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, CalendarClock, CheckCircle2, Flame, ListChecks, Plus, ThumbsUp, Apple, Dumbbell, Sparkles, Brain, Coffee, Heart, BarChart2 } from 'lucide-react';
+import { BarChart2, Apple, Dumbbell, Sparkles, Brain, Coffee, Flame } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import { format, isPast, parseISO } from 'date-fns';
-import { nb } from 'date-fns/locale';
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { tables } from '@/integrations/supabase/client-extensions';
 import { UserPlan, PlanRecommendation } from '@/types/database';
+
+// Import the refactored components
+import PlanHeader from '@/components/my-plan/PlanHeader';
+import PlanSummaryCard from '@/components/my-plan/PlanSummaryCard';
+import CategoryAccordion from '@/components/my-plan/CategoryAccordion';
+import EmptyPlanState from '@/components/my-plan/EmptyPlanState';
 
 const MyPlan = () => {
   const navigate = useNavigate();
@@ -120,31 +113,6 @@ const MyPlan = () => {
     }
   };
   
-  const calculateProgress = () => {
-    if (recommendations.length === 0) return 0;
-    
-    const completed = recommendations.filter(rec => rec.completed).length;
-    return (completed / recommendations.length) * 100;
-  };
-  
-  const progress = calculateProgress();
-  
-  const formatDate = (dateString: string) => {
-    const date = parseISO(dateString);
-    return format(date, 'PPP', { locale: nb });
-  };
-  
-  const isRecommendationOverdue = (recommendation: PlanRecommendation) => {
-    if (!recommendation.due_date) return false;
-    const dueDate = parseISO(recommendation.due_date);
-    return isPast(dueDate);
-  };
-  
-  // Icon for category
-  const getCategoryIcon = (category: string) => {
-    return categories[category as keyof typeof categories] || <CheckCircle2 className="text-gray-500" />;
-  };
-  
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -156,124 +124,15 @@ const MyPlan = () => {
   return (
     <div className="min-h-screen pb-20">
       <div className="container max-w-md mx-auto px-4 pt-6">
-        <header className="mb-6">
-          <div className="flex items-center mb-2">
-            <button 
-              onClick={() => navigate(-1)}
-              className="mr-2 p-1 rounded-full hover:bg-gray-100"
-            >
-              <ArrowLeft size={20} />
-            </button>
-            <h1 className="text-xl font-semibold">Min helse</h1>
-          </div>
-          <p className="text-gray-500">
-            Anbefalinger og helseplan basert på dine resultater
-          </p>
-        </header>
+        <PlanHeader />
         
         {plan ? (
           <div className="space-y-6">
             {/* Plan Summary */}
-            <Card className="bg-white/70 backdrop-blur border-gray-100/20 shadow-sm">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-semibold flex items-center">
-                  <Heart size={20} className="mr-2 text-[#9b87f5]" />
-                  {plan.title}
-                </CardTitle>
-                <CardDescription className="text-gray-500">
-                  {plan.description || 'Personlig helseplan basert på din analyse'}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-600">
-                      Fremdrift:
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      {Math.round(progress)}%
-                    </span>
-                  </div>
-                  <Progress value={progress} className="h-2" />
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600 font-medium">Startdato:</span>
-                      <span className="block text-gray-500">{formatDate(plan.start_date)}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600 font-medium">Sluttdato:</span>
-                      <span className="block text-gray-500">
-                        {plan.end_date ? formatDate(plan.end_date) : 'Ingen sluttdato'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <PlanSummaryCard plan={plan} recommendations={recommendations} />
             
             {/* Categories Accordion */}
-            <Accordion type="multiple" className="w-full" defaultValue={['kosthold', 'tilskudd']}>
-              {Object.entries(categories).map(([category, icon]) => (
-                <AccordionItem key={category} value={category.toLowerCase()}>
-                  <AccordionTrigger className="text-lg font-semibold">
-                    <div className="flex items-center">
-                      {icon}
-                      <span className="ml-2">{category}</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="grid gap-4 p-2">
-                      {recommendations
-                        .filter(rec => rec.category?.toLowerCase() === category.toLowerCase())
-                        .map(recommendation => (
-                          <div 
-                            key={recommendation.id}
-                            className="flex items-center justify-between bg-white p-3 rounded-lg shadow-sm"
-                          >
-                            <div className="space-y-1">
-                              <div className="flex items-center">
-                                <span className="text-sm font-medium">{recommendation.text}</span>
-                                {recommendation.due_date && (
-                                  <Badge 
-                                    variant="secondary"
-                                    className={`ml-2 text-xs ${
-                                      isRecommendationOverdue(recommendation) 
-                                        ? 'bg-red-500 text-white' 
-                                        : 'bg-gray-200 text-gray-700'
-                                    }`}
-                                  >
-                                    {formatDate(recommendation.due_date)}
-                                  </Badge>
-                                )}
-                              </div>
-                              {recommendation.explanation && (
-                                <p className="text-xs text-gray-500">
-                                  {recommendation.explanation}
-                                </p>
-                              )}
-                            </div>
-                            <Button 
-                              variant="outline"
-                              size="icon"
-                              className="h-8 w-8"
-                            >
-                              <ThumbsUp size={16} />
-                            </Button>
-                          </div>
-                        ))}
-                        
-                      {recommendations.filter(rec => rec.category?.toLowerCase() === category.toLowerCase()).length === 0 && (
-                        <div className="text-center py-4">
-                          <p className="text-sm text-gray-500">
-                            Ingen anbefalinger i denne kategorien.
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            <CategoryAccordion categories={categories} recommendations={recommendations} />
             
             <div className="flex justify-center">
               <Button 
@@ -286,22 +145,7 @@ const MyPlan = () => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-64">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-              <Heart size={24} className="text-[#9b87f5]" />
-            </div>
-            <h2 className="text-lg font-medium mb-2">Ingen helseplan</h2>
-            <p className="text-gray-500 text-center mb-6">
-              Du har ingen aktiv helseplan for øyeblikket.
-            </p>
-            <Button 
-              onClick={() => createDefaultPlan()}
-              className="bg-[#9b87f5] hover:bg-[#8a76e5]"
-            >
-              <Plus size={16} className="mr-2" />
-              Opprett personlig helseplan
-            </Button>
-          </div>
+          <EmptyPlanState onCreatePlan={createDefaultPlan} />
         )}
       </div>
     </div>
