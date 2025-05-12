@@ -2,23 +2,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { BarChart2, Apple, Dumbbell, Sparkles, Brain, Coffee, Flame, BookOpen } from 'lucide-react';
+import { BarChart2, Apple, Dumbbell, Sparkles, Brain, Coffee, Flame } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { tables } from '@/integrations/supabase/client-extensions';
 import { UserPlan, PlanRecommendation } from '@/types/database';
-import { Badge } from '@/components/ui/badge';
 
 // Import the refactored components
 import PlanHeader from '@/components/my-plan/PlanHeader';
 import PlanSummaryCard from '@/components/my-plan/PlanSummaryCard';
 import CategoryAccordion from '@/components/my-plan/CategoryAccordion';
 import EmptyPlanState from '@/components/my-plan/EmptyPlanState';
-import { useNutritionRecommendations } from '@/hooks/useNutritionRecommendations';
-import CollapsibleSection from '@/components/dashboard/CollapsibleSection';
-import IngredientCard from '@/components/nutrition/IngredientCard';
-import SupplementCard from '@/components/nutrition/SupplementCard';
-import RecipeCard from '@/components/nutrition/RecipeCard';
+import NutritionSections from '@/components/my-plan/NutritionSections';
 
 const MyPlan = () => {
   const navigate = useNavigate();
@@ -33,9 +28,6 @@ const MyPlan = () => {
     supplements: false,
     recipes: false
   });
-  
-  // Get nutrition recommendations
-  const { ingredients, supplements, recipes, explanations, isLoading: nutritionLoading } = useNutritionRecommendations();
   
   // Add categories with icons for different health recommendations
   const categories = {
@@ -136,11 +128,6 @@ const MyPlan = () => {
     }));
   };
   
-  // Function to navigate to recipe details page
-  const handleViewRecipe = (recipeId: string) => {
-    navigate(`/recipes/${recipeId}`);
-  };
-  
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -159,142 +146,11 @@ const MyPlan = () => {
             {/* Plan Summary */}
             <PlanSummaryCard plan={plan} recommendations={recommendations} />
             
-            {/* Food Section - only show if we have ingredients */}
-            {ingredients.length > 0 && (
-              <CollapsibleSection
-                title="Matvarer"
-                isOpen={openSections.food}
-                onToggle={() => toggleSection('food')}
-                icon={<Apple className="text-green-500" />}
-                badge={
-                  <Badge variant="outline" className="ml-2 bg-green-50 text-green-700">
-                    {ingredients.length}
-                  </Badge>
-                }
-              >
-                {nutritionLoading ? (
-                  <div className="text-center py-4">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#9b87f5] mx-auto"></div>
-                    <p className="mt-2 text-gray-500">Laster matvarer...</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {ingredients.slice(0, 4).map(ingredient => (
-                      <IngredientCard 
-                        key={ingredient.id} 
-                        ingredient={ingredient} 
-                        reason={explanations[ingredient.id]} 
-                      />
-                    ))}
-                    
-                    {ingredients.length > 4 && (
-                      <div className="flex justify-center mt-4">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => navigate('/nutrition/food')}
-                          className="flex items-center gap-1"
-                        >
-                          <Apple size={14} />
-                          <span>Se alle {ingredients.length} matvarer</span>
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CollapsibleSection>
-            )}
-            
-            {/* Supplements Section - only show if we have supplements */}
-            {supplements.length > 0 && (
-              <CollapsibleSection
-                title="Kosttilskudd"
-                isOpen={openSections.supplements}
-                onToggle={() => toggleSection('supplements')}
-                icon={<Sparkles className="text-purple-500" />}
-                badge={
-                  <Badge variant="outline" className="ml-2 bg-purple-50 text-purple-700">
-                    {supplements.length}
-                  </Badge>
-                }
-              >
-                {nutritionLoading ? (
-                  <div className="text-center py-4">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#9b87f5] mx-auto"></div>
-                    <p className="mt-2 text-gray-500">Laster kosttilskudd...</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {supplements.slice(0, 4).map(supplement => (
-                      <SupplementCard 
-                        key={supplement.id} 
-                        supplement={supplement} 
-                        reason={explanations[supplement.id]} 
-                      />
-                    ))}
-                    
-                    {supplements.length > 4 && (
-                      <div className="flex justify-center mt-4">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => navigate('/nutrition/supplements')}
-                          className="flex items-center gap-1"
-                        >
-                          <Sparkles size={14} />
-                          <span>Se alle {supplements.length} kosttilskudd</span>
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CollapsibleSection>
-            )}
-            
-            {/* Recipes Section - only show if we have recipes */}
-            {recipes.length > 0 && (
-              <CollapsibleSection
-                title="Oppskrifter"
-                isOpen={openSections.recipes}
-                onToggle={() => toggleSection('recipes')}
-                icon={<BookOpen className="text-blue-500" />}
-                badge={
-                  <Badge variant="outline" className="ml-2 bg-blue-50 text-blue-700">
-                    {recipes.length}
-                  </Badge>
-                }
-              >
-                {nutritionLoading ? (
-                  <div className="text-center py-4">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#9b87f5] mx-auto"></div>
-                    <p className="mt-2 text-gray-500">Laster oppskrifter...</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {recipes.slice(0, 3).map(recipe => (
-                      <RecipeCard 
-                        key={recipe.id} 
-                        recipe={recipe} 
-                        reason={explanations[recipe.id]}
-                        onClick={() => handleViewRecipe(recipe.id)}
-                      />
-                    ))}
-                    
-                    <div className="flex justify-center mt-4">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => navigate('/recipes')}
-                        className="flex items-center gap-1"
-                      >
-                        <BookOpen size={14} />
-                        <span>Se alle {recipes.length} oppskrifter</span>
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </CollapsibleSection>
-            )}
+            {/* Nutrition Sections */}
+            <NutritionSections
+              openSections={openSections}
+              toggleSection={toggleSection}
+            />
             
             {/* Categories Accordion */}
             <CategoryAccordion categories={categories} recommendations={recommendations} />
