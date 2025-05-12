@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { HealthIssue } from '@/types/supabase';
@@ -6,7 +5,6 @@ import { getHealthIssues } from '@/services/healthIssueService';
 import { getHealthSystems, HealthSystemItem } from '@/services/healthSystemService';
 import { seedDemoData } from '@/services/demoDataService';
 import { mockHealthIssues } from '@/data/mockData';
-import { getSystemConnections } from '@/utils/systemUtils';
 import BodySystemsInsightsCard from '@/components/insight/BodySystemsInsightsCard';
 import EnhancedRecommendationsCard from '@/components/insight/EnhancedRecommendationsCard';
 import SpecialistRecommendationsCard from '@/components/insight/SpecialistRecommendationsCard';
@@ -15,7 +13,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { History } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import SystemConnectionsCard from '@/components/insight/SystemConnectionsCard';
 
 const Insights: React.FC = () => {
   const navigate = useNavigate();
@@ -116,9 +113,6 @@ const Insights: React.FC = () => {
     fetchData();
   }, []);
 
-  // Get system connections based on health issues
-  const systemConnections = getSystemConnections(healthIssues);
-
   return (
     <div className="h-[calc(100vh-4rem)] overflow-hidden">
       <ScrollArea className="h-full pb-0 insights-scroll-area">
@@ -149,11 +143,6 @@ const Insights: React.FC = () => {
           
           {/* Enhanced Recommendations */}
           <EnhancedRecommendationsCard recommendations={recommendations} />
-          
-          {/* System Connections Card - replaces SystemAnalysisSection */}
-          {systemConnections.length > 0 && (
-            <SystemConnectionsCard connections={systemConnections} />
-          )}
           
           {/* Health systems grid */}
           <div className="mb-0 sm:mb-6">
