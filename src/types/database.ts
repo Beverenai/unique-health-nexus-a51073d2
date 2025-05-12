@@ -83,6 +83,7 @@ export interface PlanRecommendation {
   source: string | null;
   issue_id: string | null;
   created_at: string;
+  explanation?: string | null; // Added the missing explanation property
 }
 
 // Define types for user preferences

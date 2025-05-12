@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -211,7 +212,7 @@ const MyPlan = () => {
             </Card>
             
             {/* Categories Accordion */}
-            <Accordion type="multiple" collapsible className="w-full" defaultValue={['kosthold', 'tilskudd']}>
+            <Accordion type="multiple" className="w-full" defaultValue={['kosthold', 'tilskudd']}>
               {Object.entries(categories).map(([category, icon]) => (
                 <AccordionItem key={category} value={category.toLowerCase()}>
                   <AccordionTrigger className="text-lg font-semibold">
