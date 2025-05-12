@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { BarChart2, Apple, Dumbbell, Sparkles, Brain, Coffee, Flame } from 'lucide-react';
+import { Apple, Dumbbell, Sparkles, Brain, Coffee, Flame } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { tables } from '@/integrations/supabase/client-extensions';
@@ -160,7 +160,11 @@ const MyPlan = () => {
                 onClick={() => navigate('/insights')}
                 className="bg-[#9b87f5] hover:bg-[#8a76e5]"
               >
-                <BarChart2 size={16} className="mr-2" />
+                <img 
+                  src="/lovable-uploads/7f3db508-ef1a-4c8f-8163-91404c131e30.png" 
+                  alt="Unique+" 
+                  className="h-5 w-5 mr-2" 
+                />
                 Se dine Unique+ innsikter
               </Button>
             </div>

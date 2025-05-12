@@ -22,7 +22,16 @@ const MembershipCard: React.FC<MembershipCardProps> = ({ isPremium, setIsPremium
   return (
     <Card className="mb-8 bg-white/70 backdrop-blur-sm border border-gray-100/20 shadow-sm rounded-2xl">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-medium">Medlemskap</CardTitle>
+        <div className="flex items-center gap-2">
+          <CardTitle className="text-lg font-medium">Medlemskap</CardTitle>
+          {isPremium && (
+            <img 
+              src="/lovable-uploads/7f3db508-ef1a-4c8f-8163-91404c131e30.png" 
+              alt="Unique+" 
+              className="h-6 w-6" 
+            />
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="flex justify-between items-center">

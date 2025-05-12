@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, BarChart2, Heart } from 'lucide-react';
+import { Home, Heart } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
 
@@ -22,7 +22,11 @@ const BottomNavigation = () => {
     { 
       path: '/insights', 
       label: 'Unique+', 
-      icon: <BarChart2 size={isMobile ? 24 : 26} />,
+      icon: <img 
+              src="/lovable-uploads/7f3db508-ef1a-4c8f-8163-91404c131e30.png" 
+              alt="Unique+" 
+              className={`h-${isMobile ? '6' : '7'} w-${isMobile ? '6' : '7'} object-contain`} 
+            />,
       active: currentPath === '/insights'
     },
     { 
