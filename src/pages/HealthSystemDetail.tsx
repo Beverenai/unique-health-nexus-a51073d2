@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getHealthSystems, HealthSystemItem } from '@/services/healthSystemService';
@@ -107,10 +108,10 @@ const HealthSystemDetail = () => {
           
           {/* Header showing selected category or system */}
           <div className="mb-6">
-            <h1 className="text-2xl font-medium mb-1">
+            <h1 className="text-xl font-medium mb-1">
               {system ? system.area : selectedCategory}
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-500 text-xs">
               {system 
                 ? "Detaljert informasjon om dette systemet" 
                 : `${systems.length} systemer i denne kategorien`}
@@ -123,7 +124,7 @@ const HealthSystemDetail = () => {
           {/* Show either system list or specific system details */}
           {selectedSystemIndex === null ? (
             <div className="space-y-4">
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-xs text-gray-600 mb-4">
                 Velg et system nedenfor for å se mer detaljert informasjon om symptomer, 
                 årsaker og anbefalte tiltak for dette systemet.
               </p>
@@ -132,16 +133,16 @@ const HealthSystemDetail = () => {
                 <div
                   key={`${system.area}-${index}`}
                   onClick={() => handleSystemClick(index)}
-                  className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-sm border border-white/40 cursor-pointer hover:shadow-md transition-all"
+                  className="bg-white/70 backdrop-blur-sm rounded-xl p-3 shadow-sm border border-white/40 cursor-pointer hover:shadow-md transition-all"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <div className="bg-white p-2 rounded-full shadow-sm">
-                      <SystemIcon name={system.area} size={20} />
+                      <SystemIcon name={system.area} size={18} />
                     </div>
-                    <div>
-                      <h2 className="font-medium text-gray-800">{system.area}</h2>
-                      <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">
-                        {system.symptoms.substring(0, 60)}...
+                    <div className="overflow-hidden flex-1">
+                      <h2 className="font-medium text-sm text-gray-800 truncate">{system.area}</h2>
+                      <p className="text-xs text-gray-500 line-clamp-1 mt-0.5 truncate w-full">
+                        {system.symptoms.substring(0, 40)}...
                       </p>
                     </div>
                   </div>
