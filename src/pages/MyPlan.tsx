@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { BarChart2, Apple, Dumbbell, Sparkles, Brain, Coffee, Flame } from 'lucide-react';
+import { BarChart2, Apple, Dumbbell, Sparkles, Brain, Coffee, Flame, BookOpen } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { tables } from '@/integrations/supabase/client-extensions';
@@ -26,7 +26,7 @@ const MyPlan = () => {
   const [activeSection, setActiveSection] = useState<string | null>("nutrition");
   
   // Get nutrition recommendations
-  const { ingredients, supplements, explanations, isLoading: nutritionLoading } = useNutritionRecommendations();
+  const { ingredients, supplements, recipes, explanations, isLoading: nutritionLoading } = useNutritionRecommendations();
   
   // Add categories with icons for different health recommendations
   const categories = {
@@ -166,10 +166,22 @@ const MyPlan = () => {
               {activeSection === "nutrition" && (
                 <div className="mt-2 bg-white/70 backdrop-blur shadow-sm rounded-xl border border-gray-100/40 p-4">
                   <NutritionRecommendationsSection 
-                    ingredients={ingredients} 
-                    supplements={supplements} 
+                    ingredients={ingredients.slice(0, 2)} 
+                    supplements={supplements.slice(0, 2)}
+                    recipes={recipes.slice(0, 2)}
                     explanations={explanations}
                   />
+                  <div className="mt-3 flex justify-end">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="flex items-center gap-1"
+                      onClick={() => navigate('/recipes')}
+                    >
+                      <BookOpen size={14} />
+                      <span>Se alle oppskrifter</span>
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>

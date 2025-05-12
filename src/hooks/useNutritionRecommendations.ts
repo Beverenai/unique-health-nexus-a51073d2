@@ -4,10 +4,12 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Ingredient } from '@/components/nutrition/IngredientCard';
 import { Supplement } from '@/components/nutrition/SupplementCard';
+import { Recipe, RecipeIngredient } from '@/types/nutrition';
 
 interface NutritionData {
   ingredients: Ingredient[];
   supplements: Supplement[];
+  recipes: (Recipe & { ingredients?: RecipeIngredient[] })[];
   explanations: Record<string, string>;
   isLoading: boolean;
   error: Error | null;
@@ -18,6 +20,7 @@ export const useNutritionRecommendations = () => {
   const [data, setData] = useState<NutritionData>({
     ingredients: [],
     supplements: [],
+    recipes: [],
     explanations: {},
     isLoading: true,
     error: null
@@ -28,7 +31,7 @@ export const useNutritionRecommendations = () => {
       if (!user) return;
       
       try {
-        // For demonstration, we're using mock data
+        // For demonstration, we're using mock data for ingredients and supplements
         // In a real implementation, we would fetch from Supabase tables
         
         // Example query structure for future implementation:
@@ -37,7 +40,7 @@ export const useNutritionRecommendations = () => {
         //   .select('*')
         //   .eq('user_id', user.id);
 
-        // Mock data for now
+        // Mock data for ingredients and supplements
         const mockIngredients: Ingredient[] = [
           {
             id: '1',
@@ -102,9 +105,43 @@ export const useNutritionRecommendations = () => {
           '3': 'Hjelper med jernmangel identifisert i skanningen'
         };
         
+        // Fetch real recipes from the database
+        const { data: recipes, error: recipesError } = await supabase
+          .from('recipes')
+          .select('*')
+          .order('created_at', { ascending: false });
+          
+        if (recipesError) throw recipesError;
+        
+        // Fetch ingredients for each recipe
+        const recipeIds = recipes.map((recipe: Recipe) => recipe.id);
+        
+        const { data: recipeIngredients, error: ingredientsError } = await supabase
+          .from('recipe_ingredients')
+          .select('*')
+          .in('recipe_id', recipeIds);
+          
+        if (ingredientsError) throw ingredientsError;
+        
+        // Group ingredients by recipe_id
+        const ingredientsByRecipeId: { [key: string]: RecipeIngredient[] } = {};
+        recipeIngredients.forEach((ingredient: RecipeIngredient) => {
+          if (!ingredientsByRecipeId[ingredient.recipe_id]) {
+            ingredientsByRecipeId[ingredient.recipe_id] = [];
+          }
+          ingredientsByRecipeId[ingredient.recipe_id].push(ingredient);
+        });
+        
+        // Add ingredients to each recipe
+        const recipesWithIngredients = recipes.map((recipe: Recipe) => ({
+          ...recipe,
+          ingredients: ingredientsByRecipeId[recipe.id] || []
+        }));
+        
         setData({
           ingredients: mockIngredients,
           supplements: mockSupplements,
+          recipes: recipesWithIngredients,
           explanations: mockExplanations,
           isLoading: false,
           error: null

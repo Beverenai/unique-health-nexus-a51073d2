@@ -9,12 +9,13 @@ import CalendarCard from './CalendarCard';
 import LoadingState from './LoadingState';
 import ErrorState from './ErrorState';
 import CollapsibleSection from './CollapsibleSection';
-import { Apple, Badge, Calendar, CalendarDays } from 'lucide-react';
+import { Apple, Badge, Calendar, CalendarDays, BookOpen } from 'lucide-react';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useNutritionRecommendations } from '@/hooks/useNutritionRecommendations';
 import NutritionRecommendationsSection from '@/components/nutrition/NutritionRecommendationsSection';
+import { Button } from '@/components/ui/button';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ const Dashboard = () => {
   });
   
   // Get nutrition recommendations
-  const { ingredients, supplements, isLoading: nutritionLoading } = useNutritionRecommendations();
+  const { ingredients, supplements, recipes, isLoading: nutritionLoading } = useNutritionRecommendations();
   
   // Handle toggle sections
   const toggleSection = (section: keyof typeof openSections) => {
@@ -99,10 +100,24 @@ const Dashboard = () => {
                 <p className="mt-2 text-gray-500">Laster ernæringsinformasjon...</p>
               </div>
             ) : (
-              <NutritionRecommendationsSection
-                ingredients={ingredients.slice(0, 2)} // Show limited items on dashboard
-                supplements={supplements.slice(0, 2)} // Show limited items on dashboard
-              />
+              <>
+                <NutritionRecommendationsSection
+                  ingredients={ingredients.slice(0, 2)} // Show limited items on dashboard
+                  supplements={supplements.slice(0, 2)} // Show limited items on dashboard
+                  recipes={recipes.slice(0, 2)}         // Show limited items on dashboard
+                />
+                <div className="mt-3 flex justify-end">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="flex items-center gap-1"
+                    onClick={() => navigate('/recipes')}
+                  >
+                    <BookOpen size={14} />
+                    <span>Se alle oppskrifter</span>
+                  </Button>
+                </div>
+              </>
             )}
           </CollapsibleSection>
           

@@ -104,6 +104,48 @@ export type Database = {
         }
         Relationships: []
       }
+      health_issue_recipes: {
+        Row: {
+          created_at: string
+          health_issue_id: string
+          id: string
+          priority: string | null
+          reason: string | null
+          recipe_id: string
+        }
+        Insert: {
+          created_at?: string
+          health_issue_id: string
+          id?: string
+          priority?: string | null
+          reason?: string | null
+          recipe_id: string
+        }
+        Update: {
+          created_at?: string
+          health_issue_id?: string
+          id?: string
+          priority?: string | null
+          reason?: string | null
+          recipe_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "health_issue_recipes_health_issue_id_fkey"
+            columns: ["health_issue_id"]
+            isOneToOne: false
+            referencedRelation: "health_issues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "health_issue_recipes_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       health_issues: {
         Row: {
           created_at: string
@@ -317,6 +359,92 @@ export type Database = {
           id?: string
           last_name?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      recipe_ingredients: {
+        Row: {
+          amount: string | null
+          created_at: string
+          id: string
+          name: string
+          recipe_id: string
+          unit: string | null
+        }
+        Insert: {
+          amount?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          recipe_id: string
+          unit?: string | null
+        }
+        Update: {
+          amount?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          recipe_id?: string
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_ingredients_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipes: {
+        Row: {
+          cook_time: number | null
+          created_at: string
+          description: string | null
+          difficulty_level: string | null
+          health_benefits: string[] | null
+          id: string
+          image_url: string | null
+          instructions: Json | null
+          name: string
+          nutritional_info: Json | null
+          prep_time: number | null
+          servings: number | null
+          tags: string[] | null
+          user_id: string | null
+        }
+        Insert: {
+          cook_time?: number | null
+          created_at?: string
+          description?: string | null
+          difficulty_level?: string | null
+          health_benefits?: string[] | null
+          id?: string
+          image_url?: string | null
+          instructions?: Json | null
+          name: string
+          nutritional_info?: Json | null
+          prep_time?: number | null
+          servings?: number | null
+          tags?: string[] | null
+          user_id?: string | null
+        }
+        Update: {
+          cook_time?: number | null
+          created_at?: string
+          description?: string | null
+          difficulty_level?: string | null
+          health_benefits?: string[] | null
+          id?: string
+          image_url?: string | null
+          instructions?: Json | null
+          name?: string
+          nutritional_info?: Json | null
+          prep_time?: number | null
+          servings?: number | null
+          tags?: string[] | null
+          user_id?: string | null
         }
         Relationships: []
       }

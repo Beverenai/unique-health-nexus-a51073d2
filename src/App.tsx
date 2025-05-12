@@ -23,6 +23,7 @@ import DailyReport from "./pages/DailyReport";
 import ScanProcess from "./pages/ScanProcess";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Recipes from "./pages/Recipes";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
 // Add debugging log
@@ -88,6 +89,7 @@ const AppRoutes = () => {
               <Route path="/checkin" element={<ProtectedRoute><CheckIn /></ProtectedRoute>} />
               <Route path="/daily-report" element={<ProtectedRoute><DailyReport /></ProtectedRoute>} />
               <Route path="/scan" element={<ProtectedRoute><ScanProcess /></ProtectedRoute>} />
+              <Route path="/recipes" element={<ProtectedRoute><Recipes /></ProtectedRoute>} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -30,6 +30,21 @@ export interface Database {
         Insert: Omit<UserProgress, 'id' | 'created_at'> & { id?: string; created_at?: string };
         Update: Partial<Omit<UserProgress, 'id' | 'user_id'>>;
       };
+      recipes: {
+        Row: Recipe;
+        Insert: Omit<Recipe, 'id' | 'created_at'> & { id?: string; created_at?: string };
+        Update: Partial<Omit<Recipe, 'id'>>;
+      };
+      recipe_ingredients: {
+        Row: RecipeIngredient;
+        Insert: Omit<RecipeIngredient, 'id' | 'created_at'> & { id?: string; created_at?: string };
+        Update: Partial<Omit<RecipeIngredient, 'id' | 'recipe_id'>>;
+      };
+      health_issue_recipes: {
+        Row: HealthIssueRecipe;
+        Insert: Omit<HealthIssueRecipe, 'id' | 'created_at'> & { id?: string; created_at?: string };
+        Update: Partial<Omit<HealthIssueRecipe, 'id'>>;
+      };
       // Include existing tables
       chat_messages: any;
       coherence_data: any;
@@ -104,5 +119,43 @@ export interface UserProgress {
   date: string;
   score: number;
   notes: string | null;
+  created_at: string;
+}
+
+// Define types for recipes
+export interface Recipe {
+  id: string;
+  name: string;
+  description: string | null;
+  prep_time: number | null;
+  cook_time: number | null;
+  servings: number | null;
+  difficulty_level: string | null;
+  image_url: string | null;
+  instructions: Json | null;
+  nutritional_info: Json | null;
+  tags: string[] | null;
+  health_benefits: string[] | null;
+  user_id: string | null;
+  created_at: string;
+}
+
+// Define types for recipe ingredients
+export interface RecipeIngredient {
+  id: string;
+  recipe_id: string;
+  name: string;
+  amount: string | null;
+  unit: string | null;
+  created_at: string;
+}
+
+// Define types for health issue recipes
+export interface HealthIssueRecipe {
+  id: string;
+  health_issue_id: string;
+  recipe_id: string;
+  reason: string | null;
+  priority: string | null;
   created_at: string;
 }
