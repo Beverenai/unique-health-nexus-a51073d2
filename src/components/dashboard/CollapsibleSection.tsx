@@ -53,7 +53,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
             transition={{ duration: 0.3, ease: [0.4, 0.0, 0.2, 1] }}
             className="relative overflow-hidden"
           >
-            <div className="px-4 pb-4 max-h-96 overflow-y-auto">
+            <div className="px-4 pb-4">
               {children}
             </div>
           </motion.div>

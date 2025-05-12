@@ -7,9 +7,10 @@ import { getHealthSystems, HealthSystemItem } from '@/services/healthSystemServi
 import { seedDemoData } from '@/services/demoDataService';
 import { mockHealthIssues } from '@/data/mockData';
 import { getSystemConnections } from '@/utils/systemUtils';
-import InsightsSummaryCard from '@/components/insight/InsightsSummaryCard';
+import BodySystemsInsightsCard from '@/components/insight/BodySystemsInsightsCard';
 import SystemConnectionsCard from '@/components/insight/SystemConnectionsCard';
-import RecommendedActionsCard from '@/components/insight/RecommendedActionsCard';
+import EnhancedRecommendationsCard from '@/components/insight/EnhancedRecommendationsCard';
+import SpecialistRecommendationsCard from '@/components/insight/SpecialistRecommendationsCard';
 import HealthSystemGrid from '@/components/health/HealthSystemGrid';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
@@ -71,6 +72,20 @@ const Insights: React.FC = () => {
       importance: "high",
       explanation: "Søvn er avgjørende for nervesystemets restitusjon og kroppens generelle helbredelsesprosesser.",
       category: "Søvn"
+    },
+    {
+      color: "bg-green-50",
+      text: "Oppsøk osteopat for vurdering av C3-C5 området i nakken.",
+      importance: "high",
+      explanation: "Nervekompresjon i dette området kan påvirke flere systemer i kroppen og bør undersøkes av fagperson.",
+      category: "Spesialister"
+    },
+    {
+      color: "bg-amber-50",
+      text: "Ta Omega-3 tilskudd (2-3g EPA/DHA daglig) for å redusere inflammasjon.",
+      importance: "medium",
+      explanation: "Omega-3 fettsyrer har dokumentert anti-inflammatorisk effekt som kan dempe systemisk betennelse.",
+      category: "Tilskudd"
     }
   ]);
   
@@ -125,20 +140,23 @@ const Insights: React.FC = () => {
             </p>
           </div>
           
-          {/* Main insights summary */}
-          <InsightsSummaryCard healthIssues={healthIssues} />
+          {/* Body Systems Insights */}
+          <BodySystemsInsightsCard healthIssues={healthIssues} />
+          
+          {/* Specialist Recommendations */}
+          <SpecialistRecommendationsCard healthIssues={healthIssues} />
+          
+          {/* Enhanced Recommendations */}
+          <EnhancedRecommendationsCard recommendations={recommendations} />
           
           {/* System connections */}
           <SystemConnectionsCard connections={connections} />
-          
-          {/* Recommended actions */}
-          <RecommendedActionsCard recommendations={recommendations} />
           
           {/* Health systems grid */}
           <div className="mb-0 sm:mb-6">
             <HealthSystemGrid 
               healthData={healthSystemData}
-              title="Kroppssystemer"
+              title="Alle kroppssystemer"
               description="Trykk på en kategori for å se systemene innen denne kategori"
             />
           </div>
