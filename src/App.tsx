@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -26,6 +25,7 @@ import Login from "./pages/Login";
 import Recipes from "./pages/Recipes";
 import RecipeDetail from "./pages/RecipeDetail";
 import FindingsPage from "./pages/FindingsPage";
+import CategoryDetail from "./pages/CategoryDetail";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
 // Add debugging log
@@ -94,6 +94,7 @@ const AppRoutes = () => {
               <Route path="/recipes" element={<ProtectedRoute><Recipes /></ProtectedRoute>} />
               <Route path="/recipes/:recipeId" element={<ProtectedRoute><RecipeDetail /></ProtectedRoute>} />
               <Route path="/findings" element={<ProtectedRoute><FindingsPage /></ProtectedRoute>} />
+              <Route path="/category/:categoryName" element={<ProtectedRoute><CategoryDetail /></ProtectedRoute>} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
