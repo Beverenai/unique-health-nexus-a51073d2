@@ -10,7 +10,6 @@ interface SidebarTooltipProps {
 export function SidebarTooltip({ children, content }: SidebarTooltipProps) {
   const { isMobile, state } = useSidebar()
   const [show, setShow] = React.useState(false)
-  const tooltipRef = React.useRef<HTMLDivElement>(null)
   
   // If no tooltip content or on mobile, just return children
   if (!content || isMobile || state !== "collapsed") {
@@ -25,11 +24,10 @@ export function SidebarTooltip({ children, content }: SidebarTooltipProps) {
       {children}
       {show && (
         <div 
-          ref={tooltipRef}
           className="absolute left-full ml-2 z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95"
           style={{ top: '50%', transform: 'translateY(-50%)' }}
         >
-          {typeof content === "string" ? content : content}
+          {content}
         </div>
       )}
     </div>
