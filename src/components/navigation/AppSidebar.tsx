@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, History, User, Menu, Scan } from 'lucide-react';
@@ -151,41 +152,41 @@ export function AppSidebar() {
   }
   
   return (
-    <Sidebar variant="floating" collapsible="icon">
-      <SidebarHeader>
-        <div className="flex h-14 items-center px-4 font-semibold">
-          <span className="text-[#9b87f5]">Unique</span>
-        </div>
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigasjon</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenuContent />
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
-        <div className="flex h-14 items-center px-4 text-xs text-muted-foreground">
-          <span>Unique Health © 2025</span>
-        </div>
-      </SidebarFooter>
-    </Sidebar>
+    <TooltipProvider>
+      <Sidebar variant="floating" collapsible="icon">
+        <SidebarHeader>
+          <div className="flex h-14 items-center px-4 font-semibold">
+            <span className="text-[#9b87f5]">Unique</span>
+          </div>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Navigasjon</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenuContent />
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter>
+          <div className="flex h-14 items-center px-4 text-xs text-muted-foreground">
+            <span>Unique Health © 2025</span>
+          </div>
+        </SidebarFooter>
+      </Sidebar>
+    </TooltipProvider>
   );
 }
 
 // Wrapper component to provide sidebar context
 export function AppNavigation({ children }: { children: React.ReactNode }) {
   return (
-    <TooltipProvider>
-      <SidebarProvider defaultOpen={false}>
-        <div className="min-h-screen flex w-full">
-          <AppSidebar />
-          <div className="flex-1 flex flex-col">
-            {children}
-          </div>
+    <SidebarProvider defaultOpen={false}>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <div className="flex-1 flex flex-col">
+          {children}
         </div>
-      </SidebarProvider>
-    </TooltipProvider>
+      </div>
+    </SidebarProvider>
   );
 }

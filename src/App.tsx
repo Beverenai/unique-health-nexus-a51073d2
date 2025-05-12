@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -24,6 +25,7 @@ import ScanProcess from "./pages/ScanProcess";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 // Create a new QueryClient instance outside of component
 const queryClient = new QueryClient();
@@ -100,12 +102,14 @@ const AppRoutes = () => {
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <BrowserRouter>
-          <ScrollToTop />
-          <AppRoutes />
-        </BrowserRouter>
-      </AuthProvider>
+      <TooltipProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <AppRoutes />
+          </BrowserRouter>
+        </AuthProvider>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 };
