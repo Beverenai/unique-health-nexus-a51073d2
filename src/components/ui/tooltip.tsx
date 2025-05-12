@@ -13,6 +13,10 @@ interface TooltipProps {
 const CustomTooltip = ({ children, content, side = "top", align = "center", className = "" }: TooltipProps) => {
   const [show, setShow] = React.useState(false);
   
+  if (!content) {
+    return <>{children}</>;
+  }
+  
   return (
     <div 
       className="relative inline-flex" 

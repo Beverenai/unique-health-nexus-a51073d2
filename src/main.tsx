@@ -4,6 +4,9 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
+// Add debugging log to help identify tooltip issues
+console.log('Starting application - CustomTooltip implementation active');
+
 // Register service worker for PWA functionality
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

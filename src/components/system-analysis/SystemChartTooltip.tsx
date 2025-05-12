@@ -3,6 +3,7 @@ import React from 'react';
 import { TooltipProps } from 'recharts';
 import { ChartData } from './types';
 
+// This is specifically a Recharts tooltip, not a Radix UI tooltip
 type SystemChartTooltipProps = TooltipProps<number, string> & {
   data: ChartData[];
 };

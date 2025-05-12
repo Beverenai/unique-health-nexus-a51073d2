@@ -5,7 +5,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { seedHistoricalData } from '@/services/supabaseService';
 import BottomNavigation from "./components/navigation/BottomNavigation";
 import ScrollToTop from "./components/navigation/ScrollToTop";
@@ -25,6 +24,9 @@ import ScanProcess from "./pages/ScanProcess";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+
+// Add debugging log
+console.log('App loaded - using CustomTooltip for tooltips');
 
 // Create a new QueryClient instance outside of component
 const queryClient = new QueryClient();

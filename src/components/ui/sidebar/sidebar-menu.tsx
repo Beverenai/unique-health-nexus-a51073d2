@@ -89,11 +89,11 @@ export const SidebarMenuButton = React.forwardRef<
       />
     )
 
-    return (
+    return tooltip ? (
       <SidebarTooltip content={tooltip}>
         {button}
       </SidebarTooltip>
-    )
+    ) : button
   }
 )
 SidebarMenuButton.displayName = "SidebarMenuButton"
