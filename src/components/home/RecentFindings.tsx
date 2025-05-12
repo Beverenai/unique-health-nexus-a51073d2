@@ -4,12 +4,15 @@ import { motion } from 'framer-motion';
 import { HealthIssue } from '@/types/supabase';
 import { HealthIssuesCarousel } from '@/components/carousel';
 import { Lightbulb } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface RecentFindingsProps {
   healthIssues: HealthIssue[];
 }
 
 const RecentFindings: React.FC<RecentFindingsProps> = ({ healthIssues }) => {
+  const navigate = useNavigate();
+  
   const containerVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: { 
@@ -34,6 +37,10 @@ const RecentFindings: React.FC<RecentFindingsProps> = ({ healthIssues }) => {
         damping: 24
       } 
     }
+  };
+  
+  const handleViewAllFindings = () => {
+    navigate('/findings');
   };
   
   return (
@@ -75,6 +82,7 @@ const RecentFindings: React.FC<RecentFindingsProps> = ({ healthIssues }) => {
         <motion.button 
           className="text-sm text-[#9b87f5] font-medium hover:underline inline-flex items-center"
           whileHover={{ y: -2 }}
+          onClick={handleViewAllFindings}
           transition={{ type: "spring", stiffness: 400 }}
         >
           Se alle helsefunn
