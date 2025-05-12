@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { Info } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 import { CustomTooltip } from '@/components/ui/tooltip';
 
 interface SystemRelationsProps {
@@ -57,7 +56,7 @@ const SystemRelations: React.FC<SystemRelationsProps> = ({ topSystem, secondSyst
     }
     
     // Generic fallback
-    return `${sys1} og ${sys2} kommuniserer gjennom komplekse biokjemiske feedback-mekanismer som påvirker din helhetlige helse.`;
+    return `${sys1} og ${sys2} kommuniserer gjennom biokjemiske feedback-mekanismer som påvirker din helhetlige helse.`;
   };
   
   // Generate a specific description based on the two systems
@@ -70,65 +69,33 @@ const SystemRelations: React.FC<SystemRelationsProps> = ({ topSystem, secondSyst
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3, duration: 0.5 }}
     >
-      <motion.div 
-        className="flex items-center gap-2 mb-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-      >
-        <div className="bg-[#9b87f5]/10 p-2 rounded-full">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#9b87f5]">
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-            <path d="M12 17h.01" />
-          </svg>
-        </div>
-        <h4 className="text-lg font-medium">Systemsammenhenger</h4>
-        
-        <CustomTooltip 
-          content={
-            <p className="text-xs max-w-[220px]">
-              Slik påvirker disse systemene hverandre i kroppen din
-            </p>
-          }
-        >
-          <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto">
-            <Info size={14} className="text-gray-500" />
-          </Button>
-        </CustomTooltip>
-      </motion.div>
+      <div className="mb-4">
+        <h4 className="text-base font-medium text-gray-700">Systemsammenheng</h4>
+      </div>
       
-      {/* Systems connection visualization */}
-      <motion.div 
-        className="flex items-center justify-center gap-4 mb-5"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.5 }}
-      >
-        <div className="p-3 px-4 bg-[#9b87f5]/10 rounded-lg text-[#9b87f5] font-medium">
-          {displayTopSystem}
+      {/* Systems connection visualization - simplified */}
+      <div className="flex flex-col items-center space-y-4 mb-5">
+        <div className="flex items-center justify-center w-full gap-3">
+          <div className="p-2 px-4 bg-[#9b87f5]/10 rounded-lg text-[#9b87f5] font-medium">
+            {displayTopSystem}
+          </div>
+          
+          <CustomTooltip content="Påvirker">
+            <div className="flex items-center">
+              <ArrowRight size={20} className="text-[#9b87f5]" />
+            </div>
+          </CustomTooltip>
+          
+          <div className="p-2 px-4 bg-green-50 rounded-lg text-green-700 font-medium">
+            {displaySecondSystem}
+          </div>
         </div>
         
-        <div className="flex flex-col items-center">
-          <svg width="32" height="10" viewBox="0 0 32 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 5H31M31 5L27 1M31 5L27 9" stroke="#9b87f5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          <span className="text-xs text-gray-500 mt-1">påvirker</span>
+        {/* Connection description */}
+        <div className="p-4 bg-gray-50 rounded-lg text-gray-700 text-sm w-full">
+          {connectionDescription}
         </div>
-        
-        <div className="p-3 px-4 bg-green-50 rounded-lg text-green-700 font-medium">
-          {displaySecondSystem}
-        </div>
-      </motion.div>
-      
-      {/* Connection description */}
-      <motion.div 
-        className="p-4 bg-gray-50 rounded-lg text-gray-700 text-sm"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-      >
-        {connectionDescription}
-      </motion.div>
+      </div>
     </motion.div>
   );
 };

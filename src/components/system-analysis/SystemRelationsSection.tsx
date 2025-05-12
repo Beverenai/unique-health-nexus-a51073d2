@@ -27,7 +27,7 @@ export const SystemRelationsSection: React.FC<SystemRelationsSectionProps> = ({ 
   
   return (
     <motion.div variants={itemVariants} className="mt-4">
-      <h3 className="text-base font-medium text-gray-700 mb-2">Hvordan systemer påvirker hverandre</h3>
+      <h3 className="text-base font-medium text-gray-700 mb-2">Systemsammenhenger</h3>
       
       {systemAverages.length >= 2 ? (
         <SystemRelations 
