@@ -10,6 +10,7 @@ import { tables } from '@/integrations/supabase/client-extensions';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { PlanRecommendation, UserPlan } from '@/types/database';
+import { motion } from 'framer-motion';
 
 const CategoryDetail = () => {
   const { categoryName } = useParams<{ categoryName: string }>();
@@ -97,6 +98,27 @@ const CategoryDetail = () => {
     return categoryName.charAt(0).toUpperCase() + categoryName.slice(1);
   };
   
+  // Determine badge class based on category
+  const getBadgeClass = () => {
+    if (!categoryName) return "";
+    
+    switch (categoryName.toLowerCase()) {
+      case 'mental helse':
+        return "bg-amber-50 text-amber-700";
+      case 'bevegelse':
+        return "bg-blue-50 text-blue-700";
+      case 'søvn':
+        return "bg-indigo-50 text-indigo-700";
+      case 'stress':
+        return "bg-red-50 text-red-700";
+      case 'tilskudd':
+        return "bg-purple-50 text-purple-700";
+      case 'kosthold':
+      default:
+        return "bg-green-50 text-green-700";
+    }
+  };
+  
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -121,8 +143,10 @@ const CategoryDetail = () => {
           </Button>
           
           <div className="flex items-center mb-2">
-            {getCategoryIcon()}
-            <h1 className="text-2xl font-bold ml-2">{formatCategoryName()}</h1>
+            <div className="h-8 w-8 rounded-full bg-gray-50/80 flex items-center justify-center mr-2">
+              {getCategoryIcon()}
+            </div>
+            <h1 className="text-2xl font-bold">{formatCategoryName()}</h1>
           </div>
           
           <p className="text-gray-500 text-sm">
@@ -134,40 +158,47 @@ const CategoryDetail = () => {
         <div className="space-y-4">
           {recommendations.length > 0 ? (
             recommendations.map(recommendation => (
-              <div 
+              <motion.div 
                 key={recommendation.id}
-                className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border border-gray-100/20"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="space-y-1">
-                  <div className="flex items-center">
-                    <span className="text-sm font-medium">{recommendation.text}</span>
-                    {recommendation.due_date && (
-                      <Badge 
-                        variant="secondary"
-                        className={`ml-2 text-xs ${
-                          isRecommendationOverdue(recommendation) 
-                            ? 'bg-red-500 text-white' 
-                            : 'bg-gray-200 text-gray-700'
-                        }`}
-                      >
-                        {formatDate(recommendation.due_date)}
-                      </Badge>
-                    )}
+                <div className="overflow-hidden border-white/20 backdrop-blur-sm bg-white p-4 rounded-lg shadow-sm">
+                  <div className="flex items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium text-gray-800">{recommendation.text}</h3>
+                        {recommendation.due_date && (
+                          <Badge 
+                            variant="secondary"
+                            className={`ml-2 text-xs ${
+                              isRecommendationOverdue(recommendation) 
+                                ? 'bg-red-500 text-white' 
+                                : 'bg-gray-200 text-gray-700'
+                            }`}
+                          >
+                            {formatDate(recommendation.due_date)}
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      {recommendation.explanation && (
+                        <p className="mt-1 text-sm text-gray-500">
+                          {recommendation.explanation}
+                        </p>
+                      )}
+                    </div>
+                    
+                    <Button 
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 flex-shrink-0 ml-2"
+                    >
+                      <ThumbsUp size={16} />
+                    </Button>
                   </div>
-                  {recommendation.explanation && (
-                    <p className="text-xs text-gray-500">
-                      {recommendation.explanation}
-                    </p>
-                  )}
                 </div>
-                <Button 
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 flex-shrink-0 ml-2"
-                >
-                  <ThumbsUp size={16} />
-                </Button>
-              </div>
+              </motion.div>
             ))
           ) : (
             <div className="text-center py-6 bg-white/70 backdrop-blur shadow-sm rounded-xl border border-gray-100/40">
