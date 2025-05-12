@@ -99,18 +99,16 @@ const AppRoutes = () => {
 // Main App component with all providers properly nested
 const App = () => {
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <BrowserRouter>
-            <ScrollToTop />
-            <TooltipProvider>
-              <AppRoutes />
-            </TooltipProvider>
-          </BrowserRouter>
-        </AuthProvider>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          <TooltipProvider>
+            <AppRoutes />
+          </TooltipProvider>
+        </BrowserRouter>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 };
 
