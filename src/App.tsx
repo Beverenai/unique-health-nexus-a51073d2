@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -44,7 +45,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 const AppContent = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const isMobile = useIsMobile();
   const { session } = useAuth();
   
   useEffect(() => {
@@ -59,33 +59,6 @@ const AppContent = () => {
       seedHistoricalData();
     }
   }, []);
-
-  const renderContent = () => (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex-grow pb-16">
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          
-          {/* Protected routes */}
-          <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-          <Route path="/insights" element={<ProtectedRoute><Insights /></ProtectedRoute>} />
-          <Route path="/issue/:issueId" element={<ProtectedRoute><IssueDetail /></ProtectedRoute>} />
-          <Route path="/priority/:priorityId" element={<ProtectedRoute><PriorityDetail /></ProtectedRoute>} />
-          <Route path="/health-system/:systemId" element={<ProtectedRoute><HealthSystemDetail /></ProtectedRoute>} />
-          <Route path="/my-plan" element={<ProtectedRoute><MyPlan /></ProtectedRoute>} />
-          <Route path="/checkin" element={<ProtectedRoute><CheckIn /></ProtectedRoute>} />
-          <Route path="/daily-report" element={<ProtectedRoute><DailyReport /></ProtectedRoute>} />
-          <Route path="/scan" element={<ProtectedRoute><ScanProcess /></ProtectedRoute>} />
-          
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </div>
-      {session && <BottomNavigation />}
-    </div>
-  );
 
   return (
     <div className="font-sans bg-gradient-to-b from-white to-[#F8F8FC]">
