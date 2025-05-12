@@ -6,14 +6,25 @@ import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { PlanRecommendation } from '@/types/database';
 import { getCategoryIcon } from '@/utils/categoryUtils';
+import { useNutritionRecommendations } from '@/hooks/useNutritionRecommendations';
 import CategoryHeader from '@/components/category-detail/CategoryHeader';
 import RecommendationsList from '@/components/category-detail/RecommendationsList';
+import IngredientCard from '@/components/nutrition/IngredientCard';
+import SupplementCard from '@/components/nutrition/SupplementCard';
 
 const CategoryDetail = () => {
   const { categoryName } = useParams<{ categoryName: string }>();
   const { user } = useAuth();
   const [recommendations, setRecommendations] = useState<PlanRecommendation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Get nutrition data
+  const { 
+    ingredients, 
+    supplements, 
+    explanations, 
+    isLoading: nutritionLoading 
+  } = useNutritionRecommendations();
   
   // Get the category icon
   const categoryIcon = getCategoryIcon(categoryName);
@@ -62,7 +73,56 @@ const CategoryDetail = () => {
     }
   };
   
-  if (isLoading) {
+  const renderNutritionItems = () => {
+    if (nutritionLoading) {
+      return (
+        <div className="text-center py-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#9b87f5] mx-auto"></div>
+          <p className="mt-2 text-gray-500">Laster...</p>
+        </div>
+      );
+    }
+
+    // For "tilskudd" category, show supplements
+    if (categoryName?.toLowerCase() === 'tilskudd') {
+      return (
+        <div className="space-y-4 mt-4">
+          <h2 className="text-xl font-semibold mb-2">Anbefalte kosttilskudd</h2>
+          <div className="space-y-3">
+            {supplements.map(supplement => (
+              <SupplementCard 
+                key={supplement.id} 
+                supplement={supplement} 
+                reason={explanations[supplement.id]} 
+              />
+            ))}
+          </div>
+        </div>
+      );
+    }
+    
+    // For "kosthold" category, show ingredients/food
+    if (categoryName?.toLowerCase() === 'kosthold') {
+      return (
+        <div className="space-y-4 mt-4">
+          <h2 className="text-xl font-semibold mb-2">Anbefalte matvarer</h2>
+          <div className="space-y-3">
+            {ingredients.map(ingredient => (
+              <IngredientCard 
+                key={ingredient.id} 
+                ingredient={ingredient} 
+                reason={explanations[ingredient.id]} 
+              />
+            ))}
+          </div>
+        </div>
+      );
+    }
+    
+    return null;
+  };
+  
+  if (isLoading && nutritionLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9b87f5]"></div>
@@ -78,7 +138,26 @@ const CategoryDetail = () => {
           categoryIcon={categoryIcon} 
         />
         
-        <RecommendationsList recommendations={recommendations} />
+        {/* Show standard recommendations for all categories */}
+        {recommendations.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-2">Anbefalinger</h2>
+            <RecommendationsList recommendations={recommendations} />
+          </div>
+        )}
+        
+        {/* Show specialized content for nutrition categories */}
+        {renderNutritionItems()}
+        
+        {/* Show a message if there is no content */}
+        {recommendations.length === 0 && 
+         !['tilskudd', 'kosthold'].includes(categoryName?.toLowerCase() || '') && (
+          <div className="text-center py-6 bg-white/70 backdrop-blur shadow-sm rounded-xl border border-gray-100/40">
+            <p className="text-gray-500">
+              Ingen anbefalinger funnet for denne kategorien.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -43,7 +43,7 @@ const FoodSection: React.FC<FoodSectionProps> = ({
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => navigate('/nutrition/food')}
+            onClick={() => navigate('/category/kosthold')}
             className="flex items-center gap-1"
           >
             <Apple size={14} />
