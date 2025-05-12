@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Connection } from './ConnectionList';
 import { CircleHelp } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { CustomTooltip } from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SystemConnectionsCardProps {
@@ -48,16 +48,9 @@ const SystemConnectionsCard: React.FC<SystemConnectionsCardProps> = ({ connectio
         <CardHeader className={`${isMobile ? 'pb-0 p-4' : 'pb-0'}`}>
           <CardTitle className={`${isMobile ? 'text-base' : 'text-lg'} font-medium flex items-center gap-2`}>
             <span>Systemsammenhenger</span>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <CircleHelp className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-gray-400`} />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs" side={isMobile ? "bottom" : "top"}>
-                  <p className="text-sm">Sammenhenger mellom ulike systemer i kroppen din basert på skanningen</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <CustomTooltip content={<p className="text-sm">Sammenhenger mellom ulike systemer i kroppen din basert på skanningen</p>} side={isMobile ? "bottom" : "top"}>
+              <CircleHelp className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-gray-400`} />
+            </CustomTooltip>
           </CardTitle>
         </CardHeader>
         <CardContent className={`${isMobile ? 'pt-3 p-4' : 'pt-4'}`}>

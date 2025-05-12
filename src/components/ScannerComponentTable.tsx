@@ -4,7 +4,7 @@ import { ScannerComponent } from '@/types/supabase';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { InfoIcon } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { CustomTooltip } from '@/components/ui/tooltip';
 
 interface ScannerComponentTableProps {
   components: ScannerComponent[];
@@ -52,18 +52,13 @@ const ScannerComponentTable: React.FC<ScannerComponentTableProps> = ({ component
         <div key={category} className="bg-white/50 rounded-xl p-4">
           <h3 className="text-sm font-medium mb-3 text-gray-700 uppercase flex items-center gap-2">
             {category}
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <InfoIcon size={14} className="text-gray-400 cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p className="max-w-xs text-xs">
-                    Verdier over 60% kan indikere betydelige utfordringer i denne kategorien.
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <CustomTooltip content={
+              <p className="max-w-xs text-xs">
+                Verdier over 60% kan indikere betydelige utfordringer i denne kategorien.
+              </p>
+            }>
+              <InfoIcon size={14} className="text-gray-400 cursor-help" />
+            </CustomTooltip>
           </h3>
           
           <div className="space-y-3">

@@ -9,34 +9,6 @@ interface TooltipProps {
   className?: string
 }
 
-const TooltipProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
-  return <>{children}</>;
-};
-
-const Tooltip: React.FC<{children: React.ReactNode}> = ({ children }) => {
-  return <>{children}</>;
-};
-
-const TooltipTrigger: React.FC<{asChild?: boolean, children: React.ReactNode}> = ({ children }) => {
-  return <>{children}</>;
-};
-
-const TooltipContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & {
-    side?: "top" | "right" | "bottom" | "left"
-    align?: "start" | "center" | "end"
-    sideOffset?: number
-  }
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={className}
-    {...props}
-  />
-))
-TooltipContent.displayName = "TooltipContent"
-
 // Custom tooltip that doesn't depend on React context
 const CustomTooltip = ({ children, content, side = "top", align = "center", className = "" }: TooltipProps) => {
   const [show, setShow] = React.useState(false);
@@ -65,10 +37,4 @@ const CustomTooltip = ({ children, content, side = "top", align = "center", clas
   );
 };
 
-export { 
-  Tooltip, 
-  TooltipTrigger, 
-  TooltipContent, 
-  TooltipProvider,
-  CustomTooltip 
-}
+export { CustomTooltip }

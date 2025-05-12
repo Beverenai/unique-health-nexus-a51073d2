@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useIsMobile } from '@/hooks/use-mobile';
+import { CustomTooltip } from '@/components/ui/tooltip';
 
 interface Recommendation {
   color: string;
@@ -106,29 +107,6 @@ const RecommendedActionsCard: React.FC<RecommendedActionsCardProps> = ({ recomme
     };
     
     return colors[category] || 'bg-gray-50 text-gray-700';
-  };
-
-  // Custom tooltip component for this card
-  const CustomTooltip = ({ children, content }: { children: React.ReactNode, content: React.ReactNode }) => {
-    const [show, setShow] = React.useState(false);
-    
-    return (
-      <div 
-        className="relative inline-flex" 
-        onMouseEnter={() => setShow(true)} 
-        onMouseLeave={() => setShow(false)}
-      >
-        {children}
-        {show && (
-          <div 
-            className="absolute left-full ml-2 z-50 overflow-hidden rounded-md border bg-white px-3 py-1.5 text-xs text-slate-950 shadow-md animate-in fade-in-0 zoom-in-95"
-            style={{ top: '50%', transform: 'translateY(-50%)' }}
-          >
-            {content}
-          </div>
-        )}
-      </div>
-    );
   };
 
   return (
