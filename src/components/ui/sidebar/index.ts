@@ -1,25 +1,23 @@
 
-// This file now just re-exports all the sidebar components from their respective files
-// for backwards compatibility
-
+export { useSidebar, SidebarProvider } from './sidebar-context'
+export { Sidebar, SidebarTrigger, SidebarRail } from './sidebar'
 export {
-  useSidebar,
-  SidebarProvider,
-  Sidebar,
-  SidebarTrigger,
-  SidebarRail,
   SidebarInset,
   SidebarInput,
   SidebarHeader,
   SidebarFooter,
   SidebarSeparator,
-  SidebarContent,
+  SidebarContent
+} from './sidebar-layout'
+export {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarMenuAction,
   SidebarMenuBadge,
-  SidebarMenuSkeleton,
+  SidebarMenuSkeleton
+} from './sidebar-menu'
+export {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupAction,
@@ -27,4 +25,4 @@ export {
   SidebarMenuSub,
   SidebarMenuSubItem,
   SidebarMenuSubButton
-} from './sidebar/index'
+} from './sidebar-group'
