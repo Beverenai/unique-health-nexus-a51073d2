@@ -60,10 +60,10 @@ const HealthDataDisplay: React.FC<HealthDataDisplayProps> = ({
       initial="hidden"
       animate="visible"
     >
-      {/* Welcome animation overlay - simplified for Apple-like minimal aesthetic */}
+      {/* Welcome animation overlay - using white bg to match the new style */}
       {showWelcome && (
         <motion.div 
-          className="fixed inset-0 bg-white/95 backdrop-blur-md z-50 flex flex-col items-center justify-center"
+          className="fixed inset-0 bg-white backdrop-blur-md z-50 flex flex-col items-center justify-center"
           initial={{ opacity: 1 }}
           animate={{ opacity: 0 }}
           transition={{ duration: 1.5, delay: 0.7 }}

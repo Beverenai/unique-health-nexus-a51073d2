@@ -130,15 +130,15 @@ const MyPlan = () => {
   
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="h-screen bg-white flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9b87f5]"></div>
       </div>
     );
   }
   
   return (
-    <div className="min-h-screen pb-20">
-      <div className="container max-w-md mx-auto px-4 pt-6">
+    <div className="h-screen bg-white overflow-y-auto">
+      <div className="container max-w-md mx-auto px-4 pt-6 pb-20">
         <PlanHeader />
         
         {plan ? (

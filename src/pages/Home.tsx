@@ -39,7 +39,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-screen bg-white overflow-y-auto">
       <PullToRefresh onRefresh={handleRefresh}>
         <main className="container max-w-md mx-auto px-4 pb-20">
           <div className="relative">
