@@ -2,7 +2,7 @@
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface CollapsibleSectionProps {
   title: string;
@@ -44,17 +44,21 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
         />
       </button>
       
-      {isOpen && (
-        <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="px-4 pb-4"
-        >
-          {children}
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.4, 0.0, 0.2, 1] }}
+            className="relative overflow-hidden"
+          >
+            <div className="px-4 pb-4 max-h-96 overflow-y-auto">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

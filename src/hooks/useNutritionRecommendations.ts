@@ -40,7 +40,7 @@ export const useNutritionRecommendations = () => {
         //   .select('*')
         //   .eq('user_id', user.id);
 
-        // Mock data for ingredients and supplements
+        // Mock data for ingredients with expanded selection
         const mockIngredients: Ingredient[] = [
           {
             id: '1',
@@ -68,9 +68,55 @@ export const useNutritionRecommendations = () => {
             nutrients: ['Jern', 'Vitamin A', 'Vitamin K'],
             description: 'Næringsrik grønn bladgrønnsak som er rik på jern.',
             imageUrl: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
-          }
+          },
+          {
+            id: '4',
+            name: 'Laks',
+            category: 'Protein',
+            benefits: ['Hjernehelse', 'Anti-inflammatorisk'],
+            nutrients: ['Omega-3', 'Protein', 'Vitamin D'],
+            description: 'Fet fisk rik på omega-3 fettsyrer og protein.',
+            imageUrl: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
+          },
+          {
+            id: '5',
+            name: 'Valnøtter',
+            category: 'Nøtter',
+            benefits: ['Hjernehelse', 'Kolesterolreduserende'],
+            nutrients: ['Omega-3', 'Antioksidanter', 'Protein'],
+            description: 'Form som ligner hjernen, og er faktisk bra for hjernen.',
+            imageUrl: 'https://images.unsplash.com/photo-1563412887837-8f9b1417eba1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
+          },
+          {
+            id: '6',
+            name: 'Brokkoli',
+            category: 'Grønnsaker',
+            benefits: ['Detox', 'Kreftforebyggende'],
+            nutrients: ['Vitamin C', 'Folat', 'Fiber'],
+            description: 'Korsblomst med sterke antioksidanter og sulforforbindelser.',
+            imageUrl: 'https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
+          },
+          {
+            id: '7',
+            name: 'Ingefær',
+            category: 'Urter',
+            benefits: ['Anti-inflammatorisk', 'Fordøyelse'],
+            nutrients: ['Gingerol', 'Antioksidanter'],
+            description: 'Kraftig rot med anti-inflammatoriske egenskaper.',
+            imageUrl: 'https://images.unsplash.com/photo-1573414405945-71179a439a74?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
+          },
+          {
+            id: '8',
+            name: 'Chiafrø',
+            category: 'Frø',
+            benefits: ['Omega-3', 'Fordøyelse'],
+            nutrients: ['Fiber', 'Protein', 'Omega-3'],
+            description: 'Små frø med høyt innhold av fiber og omega-3.',
+            imageUrl: 'https://images.unsplash.com/photo-1541595825372-7b8995a66baa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
+          },
         ];
         
+        // Expanded mock data for supplements
         const mockSupplements: Supplement[] = [
           {
             id: '1',
@@ -96,13 +142,51 @@ export const useNutritionRecommendations = () => {
             benefits: ['Muskelfunksjon', 'Nervesystem', 'Søvnkvalitet'],
             dosage: '300-400mg daglig',
             description: 'Viktig for over 300 biokjemiske reaksjoner i kroppen.'
-          }
+          },
+          {
+            id: '4',
+            name: 'Probiotika',
+            category: 'Tarmhelse',
+            benefits: ['Fordøyelse', 'Immunforsvar', 'Tarmflora'],
+            dosage: '10-50 milliarder CFU daglig',
+            description: 'Gode bakterier som støtter tarmfloraen og fordøyelsen.'
+          },
+          {
+            id: '5',
+            name: 'Sink',
+            category: 'Mineraler',
+            benefits: ['Immunforsvar', 'Sårheling', 'Hormonfunksjon'],
+            dosage: '15-30mg daglig',
+            description: 'Viktig mineral for immunforsvar og cellefunksjon.'
+          },
+          {
+            id: '6',
+            name: 'C-vitamin',
+            category: 'Vitaminer',
+            benefits: ['Immunforsvar', 'Kollagenproduksjon', 'Antioksidant'],
+            dosage: '500-1000mg daglig',
+            description: 'Støtter immunforsvaret og er viktig for vevshelse.'
+          },
+          {
+            id: '7',
+            name: 'Kurkumin',
+            category: 'Planteekstrakter',
+            benefits: ['Anti-inflammatorisk', 'Antioksidant', 'Leddhelse'],
+            dosage: '500-1000mg daglig',
+            description: 'Aktiv forbindelse i gurkemeie med kraftige anti-inflammatoriske egenskaper.'
+          },
         ];
         
+        // Expanded explanations
         const mockExplanations: Record<string, string> = {
           '1': 'Basert på lavt antioksidantnivå i blodet',
           '2': 'Anbefalt for bedre fettbalanse og hjertehelse',
-          '3': 'Hjelper med jernmangel identifisert i skanningen'
+          '3': 'Hjelper med jernmangel identifisert i skanningen',
+          '4': 'Støtter omega-3-nivåer og hjernehelse',
+          '5': 'Anbefalt for bedre hjernefunksjon og kognisjon',
+          '6': 'Støtter avgiftningssystemet og beskytter mot toksiner',
+          '7': 'Hjelper med kronisk betennelsestilstand',
+          '8': 'Øker omega-3-inntaket og støtter fordøyelsen'
         };
         
         // Fetch real recipes from the database
