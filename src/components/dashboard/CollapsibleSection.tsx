@@ -24,14 +24,14 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   description
 }) => {
   return (
-    <div className="mb-6 bg-white/70 backdrop-blur shadow-sm rounded-xl border border-gray-100/40 overflow-hidden">
+    <div className="mb-6 bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden">
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between p-4 text-left"
       >
         <div className="flex items-center gap-3">
           {icon && (
-            <div className="h-8 w-8 rounded-full bg-gray-50/80 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-full bg-gray-50 flex items-center justify-center">
               {icon}
             </div>
           )}

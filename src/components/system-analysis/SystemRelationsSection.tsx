@@ -27,6 +27,8 @@ export const SystemRelationsSection: React.FC<SystemRelationsSectionProps> = ({ 
   
   return (
     <motion.div variants={itemVariants} className="mt-4">
+      <h3 className="text-base font-medium text-gray-700 mb-2">Hvordan systemer påvirker hverandre</h3>
+      
       {systemAverages.length >= 2 ? (
         <SystemRelations 
           topSystem={topSystem} 
@@ -40,16 +42,6 @@ export const SystemRelationsSection: React.FC<SystemRelationsSectionProps> = ({ 
           </AlertDescription>
         </Alert>
       )}
-      
-      {/* Show additional info about why these connections are important */}
-      <motion.div 
-        className="mt-2 text-xs text-gray-500 bg-gray-50/50 p-2 rounded-lg"
-        variants={itemVariants}
-        transition={{ delay: 1.2 }}
-      >
-        Forstå hvordan ulike kroppssystemer påvirker hverandre er nøkkelen til å bedre din helse.
-        Kroppen fungerer som ett helhetlig system, og belastning i ett område kan påvirke andre.
-      </motion.div>
     </motion.div>
   );
 };

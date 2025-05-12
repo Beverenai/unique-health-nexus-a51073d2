@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowRight, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { CustomTooltip } from '@/components/ui/tooltip';
@@ -65,106 +65,69 @@ const SystemRelations: React.FC<SystemRelationsProps> = ({ topSystem, secondSyst
   
   return (
     <motion.div 
-      className="bg-gradient-to-br from-[#9b87f5]/10 to-[#9b87f5]/5 backdrop-blur-sm rounded-xl p-5 border border-[#9b87f5]/20 shadow-sm"
+      className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3, duration: 0.5 }}
     >
-      <motion.h4 
-        className="font-semibold text-gray-800 mb-3 flex items-center justify-between"
+      <motion.div 
+        className="flex items-center gap-2 mb-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
       >
-        <div className="flex items-center">
-          <span className="bg-[#9b87f5]/20 p-1.5 rounded-full mr-2">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-[#9b87f5]">
-              <path d="M2 2a2 2 0 0 1 2-2h5.5A2 2 0 0 1 11 2c0 1.6.8 3 2 4 1.9 1.6 3 4 3 6.5V14c0 2.2 1.8 4 4 4v2H0v-2c2.2 0 4-1.8 4-4v-1.5c0-2.5 1.1-4.9 3-6.5 1.2-1 2-2.4 2-4 0-1.1-.9-2-2-2H2z" />
-              <path d="M18.4 2.2c2.1.6 3.6 2.5 3.6 4.8v1" />
-            </svg>
-          </span>
-          <span>Viktigste systemsammenhenger</span>
+        <div className="bg-[#9b87f5]/10 p-2 rounded-full">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#9b87f5]">
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <path d="M12 17h.01" />
+          </svg>
         </div>
+        <h4 className="text-lg font-medium">Systemsammenhenger</h4>
         
         <CustomTooltip 
           content={
             <p className="text-xs max-w-[220px]">
-              Basert på din skanning viser vi de viktigste sammenhengene mellom kroppssystemer.
+              Slik påvirker disse systemene hverandre i kroppen din
             </p>
           }
         >
-          <Button variant="ghost" size="icon" className="h-6 w-6">
+          <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto">
             <Info size={14} className="text-gray-500" />
           </Button>
         </CustomTooltip>
-      </motion.h4>
+      </motion.div>
       
-      <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-3 mb-3">
-        <motion.div 
-          className="bg-white/80 rounded-lg px-3 py-1.5 text-sm font-medium text-[#9b87f5] shadow-sm border border-[#9b87f5]/10"
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.5, type: "spring" }}
-          whileHover={{ scale: 1.03, boxShadow: "0 4px 12px rgba(155, 135, 245, 0.15)" }}
-        >
+      {/* Systems connection visualization */}
+      <motion.div 
+        className="flex items-center justify-center gap-4 mb-5"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.5 }}
+      >
+        <div className="p-3 px-4 bg-[#9b87f5]/10 rounded-lg text-[#9b87f5] font-medium">
           {displayTopSystem}
-        </motion.div>
+        </div>
         
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.6 }}
-          className="relative"
-        >
-          <ArrowRight size={16} className="text-gray-400 hidden sm:block" />
-          <ArrowRight size={16} className="text-gray-400 rotate-90 block sm:hidden mx-auto" />
-          
-          <motion.div 
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                      bg-[#9b87f5]/20 text-[#9b87f5] text-xs font-medium rounded-full px-1.5 py-0.5
-                      hidden sm:block"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-          >
-            påvirker
-          </motion.div>
-        </motion.div>
+        <div className="flex flex-col items-center">
+          <svg width="32" height="10" viewBox="0 0 32 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 5H31M31 5L27 1M31 5L27 9" stroke="#9b87f5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span className="text-xs text-gray-500 mt-1">påvirker</span>
+        </div>
         
-        <motion.div 
-          className="bg-white/80 rounded-lg px-3 py-1.5 text-sm font-medium text-[#9b87f5] shadow-sm border border-[#9b87f5]/10"
-          initial={{ x: 20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.7, type: "spring" }}
-          whileHover={{ scale: 1.03, boxShadow: "0 4px 12px rgba(155, 135, 245, 0.15)" }}
-        >
+        <div className="p-3 px-4 bg-green-50 rounded-lg text-green-700 font-medium">
           {displaySecondSystem}
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
       
-      <motion.p 
-        className="text-sm text-gray-700 leading-relaxed bg-white/50 p-3 rounded-lg shadow-sm border border-gray-100/60"
+      {/* Connection description */}
+      <motion.div 
+        className="p-4 bg-gray-50 rounded-lg text-gray-700 text-sm"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
+        transition={{ delay: 0.6 }}
       >
         {connectionDescription}
-      </motion.p>
-      
-      <motion.div 
-        className="mt-3 pt-3 border-t border-[#9b87f5]/10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-      >
-        <motion.button 
-          className="text-xs text-[#9b87f5] font-medium flex items-center hover:underline"
-          whileHover={{ x: 5 }}
-          transition={{ type: "spring", stiffness: 400 }}
-        >
-          Se alle systemsammenhenger
-          <ArrowRight size={12} className="ml-1" />
-        </motion.button>
       </motion.div>
     </motion.div>
   );
