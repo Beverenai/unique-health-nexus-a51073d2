@@ -64,10 +64,11 @@ export const useDashboardData = () => {
     try {
       console.log('Fetching dashboard data for user:', currentUserId);
       
-      // Fetch recommendations
+      // Fetch recommendations that are longer-term (not daily)
       const { data: recommendationData, error: recommendationError } = await tables.planRecommendations()
         .select('*')
         .eq('completed', false)
+        .not('text', 'ilike', '%daglig%') // Filter out daily recommendations
         .order('priority', { ascending: false })
         .limit(3);
         
@@ -79,7 +80,7 @@ export const useDashboardData = () => {
         setRecommendations(recommendationData as unknown as Recommendation[]);
       }
       
-      // Fetch the latest checkin
+      // Fetch the latest checkin (treated as health check-up result)
       const { data: checkinData, error: checkinError } = await tables.healthCheckins()
         .select('*')
         .eq('user_id', currentUserId)
@@ -88,7 +89,7 @@ export const useDashboardData = () => {
         
       if (checkinError) {
         console.error('Error fetching checkin:', checkinError);
-        toast.error('Kunne ikke hente siste dagslogg');
+        toast.error('Kunne ikke hente siste helsesjekk');
       } else if (checkinData && checkinData.length > 0) {
         console.log('Latest checkin loaded:', checkinData[0]);
         setLatestCheckin(checkinData[0] as unknown as Checkin);

@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, ListChecks, LineChart, BookOpen } from 'lucide-react';
+import { ListChecks, LineChart, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const QuickActions: React.FC = () => {
@@ -34,20 +34,10 @@ const QuickActions: React.FC = () => {
       <motion.div variants={itemVariants}>
         <Button 
           className="w-full justify-start bg-gradient-to-br from-[#9b87f5] to-[#8a76e5] hover:opacity-90 transition-opacity shadow-sm"
-          onClick={() => navigate('/checkin')}
-        >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          Dagslogg
-        </Button>
-      </motion.div>
-      
-      <motion.div variants={itemVariants}>
-        <Button 
-          className="w-full justify-start bg-gradient-to-br from-[#9b87f5] to-[#8a76e5] hover:opacity-90 transition-opacity shadow-sm"
           onClick={() => navigate('/scan')}
         >
           <ListChecks className="mr-2 h-4 w-4" />
-          Helsesjekk
+          Ny helsesjekk
         </Button>
       </motion.div>
       

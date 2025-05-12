@@ -69,9 +69,9 @@ const DashboardSummary: React.FC<DashboardSummaryProps> = ({ latestCheckin }) =>
           {/* Health Status */}
           <motion.div variants={itemVariants} className="flex justify-between items-center">
             <div className="flex flex-col">
-              <h3 className="font-medium text-lg text-gray-900">Dagens helsetilstand</h3>
+              <h3 className="font-medium text-lg text-gray-900">Helsetilstand</h3>
               <span className="text-sm text-gray-500">
-                {latestCheckin ? 'Basert på siste dagslogg' : 'Ingen ny dagslogg i dag'}
+                {latestCheckin ? 'Basert på siste helsesjekk' : 'Ingen helsesjekk gjennomført ennå'}
               </span>
             </div>
             <div className={`rounded-full px-3 py-1 text-sm font-medium ${getStatusColor(healthScore)}`}>
@@ -103,7 +103,7 @@ const DashboardSummary: React.FC<DashboardSummaryProps> = ({ latestCheckin }) =>
               <span className="text-sm font-medium text-gray-800">
                 {latestCheckin ? `${latestCheckin.mood}/10` : '–'}
               </span>
-              <span className="text-xs text-gray-500">Humør</span>
+              <span className="text-xs text-gray-500">Balanse</span>
             </div>
             
             <div className="flex flex-col items-center bg-gray-50 rounded-xl p-3">
@@ -113,7 +113,7 @@ const DashboardSummary: React.FC<DashboardSummaryProps> = ({ latestCheckin }) =>
               <span className="text-sm font-medium text-gray-800">
                 {latestCheckin ? `${latestCheckin.energy_level}/10` : '–'}
               </span>
-              <span className="text-xs text-gray-500">Energi</span>
+              <span className="text-xs text-gray-500">Vitalitet</span>
             </div>
             
             <div className="flex flex-col items-center bg-gray-50 rounded-xl p-3">
@@ -123,7 +123,7 @@ const DashboardSummary: React.FC<DashboardSummaryProps> = ({ latestCheckin }) =>
               <span className="text-sm font-medium text-gray-800">
                 {latestCheckin ? `${latestCheckin.sleep_quality}/10` : '–'}
               </span>
-              <span className="text-xs text-gray-500">Søvn</span>
+              <span className="text-xs text-gray-500">Flyt</span>
             </div>
           </motion.div>
           
@@ -132,9 +132,9 @@ const DashboardSummary: React.FC<DashboardSummaryProps> = ({ latestCheckin }) =>
             <Button 
               variant="outline"
               className="w-full mt-2 bg-white hover:bg-gray-50"
-              onClick={() => navigate('/checkin')}
+              onClick={() => navigate('/scan')}
             >
-              {latestCheckin ? 'Oppdater dagslogg' : 'Registrer dagslogg'}
+              Start ny helsesjekk
             </Button>
           </motion.div>
         </motion.div>

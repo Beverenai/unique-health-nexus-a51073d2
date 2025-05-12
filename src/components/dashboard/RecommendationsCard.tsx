@@ -95,8 +95,8 @@ const RecommendationsCard: React.FC<RecommendationsCardProps> = ({ recommendatio
       ) : (
         <div className="text-center py-8 bg-gray-50 rounded-lg">
           <Sparkles className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-          <p className="text-gray-500">Ingen anbefalinger for i dag!</p>
-          <p className="text-gray-400 text-sm mt-1">Kom tilbake i morgen for nye anbefalinger.</p>
+          <p className="text-gray-500">Ingen anbefalinger for øyeblikket!</p>
+          <p className="text-gray-400 text-sm mt-1">Gjennomfør en ny helsesjekk for å få anbefalinger.</p>
         </div>
       )}
     </div>

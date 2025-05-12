@@ -27,8 +27,8 @@ const CalendarCard: React.FC<CalendarCardProps> = ({ date, onDateChange }) => {
   return (
     <Card className="bg-white/70 backdrop-blur border-gray-100/20 shadow-sm">
       <CardHeader>
-        <CardTitle>Kalender</CardTitle>
-        <CardDescription>Se dine dagslogger og avtaler.</CardDescription>
+        <CardTitle>Scan historikk</CardTitle>
+        <CardDescription>Se tidligere helseskanninger.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
         <Popover>

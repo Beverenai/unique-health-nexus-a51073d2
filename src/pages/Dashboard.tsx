@@ -156,7 +156,7 @@ const Dashboard = () => {
         >
           <AccordionItem value="recommendations" className="bg-white/70 backdrop-blur shadow-sm rounded-xl border border-gray-100/40 overflow-hidden">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
-              <h2 className="text-lg font-medium">Dagens anbefalinger</h2>
+              <h2 className="text-lg font-medium">Langvarige anbefalinger</h2>
             </AccordionTrigger>
             <AccordionContent className="px-6 pb-4">
               <RecommendationsCard 
