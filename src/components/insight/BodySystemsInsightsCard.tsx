@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -113,8 +112,10 @@ const BodySystemsInsightsCard: React.FC<BodySystemsInsightsCardProps> = ({ healt
     }
   };
 
-  const handleNavigateToSystem = (system: string) => {
-    navigate(`/system/${system.toLowerCase()}`);
+  // Update to use the correct route format with index
+  const handleNavigateToSystem = (system: string, index: number) => {
+    // Pass the index of the system in the array as the systemId parameter
+    navigate(`/health-system/${index}`);
   };
   
   return (
@@ -135,7 +136,7 @@ const BodySystemsInsightsCard: React.FC<BodySystemsInsightsCardProps> = ({ healt
         
         <CardContent className="p-4">
           <div className="space-y-4">
-            {groupedIssues.map(([system, issues]) => {
+            {groupedIssues.map(([system, issues], idx) => {
               const topIssue = issues.sort((a, b) => b.load - a.load)[0];
               const systemBgColor = getSystemBgColor(system);
               const systemTextColor = getSystemAccentColor(system);
@@ -195,7 +196,7 @@ const BodySystemsInsightsCard: React.FC<BodySystemsInsightsCardProps> = ({ healt
                     variant="ghost"
                     size="sm"
                     className={`w-full justify-between font-normal ${systemTextColor} hover:bg-white/50`}
-                    onClick={() => handleNavigateToSystem(system)}
+                    onClick={() => handleNavigateToSystem(system, idx)}
                   >
                     <span>Se alle funn</span>
                     <ChevronRight size={16} />
