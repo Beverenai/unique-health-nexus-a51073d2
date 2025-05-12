@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, History, User, Menu, Scan } from 'lucide-react';
@@ -21,7 +20,6 @@ import {
   SidebarProvider,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { TooltipProvider } from '@/components/ui/tooltip';
 
 // Menu items
 const menuItems = [
@@ -152,28 +150,26 @@ export function AppSidebar() {
   }
   
   return (
-    <TooltipProvider>
-      <Sidebar variant="floating" collapsible="icon">
-        <SidebarHeader>
-          <div className="flex h-14 items-center px-4 font-semibold">
-            <span className="text-[#9b87f5]">Unique</span>
-          </div>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>Navigasjon</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenuContent />
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter>
-          <div className="flex h-14 items-center px-4 text-xs text-muted-foreground">
-            <span>Unique Health © 2025</span>
-          </div>
-        </SidebarFooter>
-      </Sidebar>
-    </TooltipProvider>
+    <Sidebar variant="floating" collapsible="icon">
+      <SidebarHeader>
+        <div className="flex h-14 items-center px-4 font-semibold">
+          <span className="text-[#9b87f5]">Unique</span>
+        </div>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Navigasjon</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenuContent />
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter>
+        <div className="flex h-14 items-center px-4 text-xs text-muted-foreground">
+          <span>Unique Health © 2025</span>
+        </div>
+      </SidebarFooter>
+    </Sidebar>
   );
 }
 

@@ -60,7 +60,7 @@ export const SidebarMenuButton = React.forwardRef<
     asChild?: boolean
     size?: "default" | "sm" | "lg"
     isActive?: boolean
-    tooltip?: string | React.ComponentProps<typeof import("@/components/ui/tooltip").TooltipContent>
+    tooltip?: string | React.ReactNode
   } & VariantProps<typeof sidebarMenuButtonVariants>
 >(
   (
